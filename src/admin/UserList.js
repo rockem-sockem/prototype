@@ -1,12 +1,18 @@
 var React = require('react');
 var $ = require('jquery');
 
+var Auth = require('../Auth.js');
+var Table = require('react-bootstrap/lib/Table');
+var Button = require('react-bootstrap/lib/Button');
+
 var UserList = React.createClass({
 	render: function() {
+		// console.log("In userlist = ", Auth.getUsername());
 		return(
 			<div>
-				<h1>User Data</h1>
-				<button onClick={this.handleRefresh}>Refresh</button>
+				<h3>User Data</h3>
+				<Button onClick={this.handleRefresh}>Refresh</Button>
+				<br/>
 				<br/>
 				<UserTable users={this.state.users} />
 			</div>
@@ -40,7 +46,7 @@ var UserTable = React.createClass({
 		});
 		
 		return(
-			<table>
+			<Table striped bordered condensed hover>
 				<thead>
 					<tr>
 						<th>Username</th>
@@ -52,18 +58,27 @@ var UserTable = React.createClass({
 				<tbody>
 					{userRows}
 				</tbody>
-			</table>
+			</Table>
 		);
 	}	
 });
 
 var UserRow = React.createClass({
 	render: function() {
+		var td1 = (this.state.username != Auth.getUsername()) ?
+			this.state.username
+			: "";
+		var td2 = (this.state.username != Auth.getUsername()) ?
+			this.state.role
+			: "";
+		var td3 = (this.state.username != Auth.getUsername()) ?
+		    <Button onClick={this.handleSwitch} bsStyle="info">Toggle</Button>
+			: "";
 		return(
 			<tr>
-				<td>{this.state.username}</td>
-				<td>{this.state.role}</td>
-				<td><button onClick={this.handleSwitch} /></td>
+				<td>{td1}</td> 	
+				<td>{td2}</td>
+				<td>{td3}</td>
 			</tr>
 		);
 	},

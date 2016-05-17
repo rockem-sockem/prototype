@@ -1,20 +1,23 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
+var Panel = require('react-bootstrap/lib/Panel');
+var Input = require('react-bootstrap/lib/Input');
+var ButtonInput = require('react-bootstrap/lib/ButtonInput');
+
 var BugFilter = React.createClass({
   render: function() {
     console.log("Rendering BugFilter");
     return (
-      <div>
-        <h3>Filter</h3>
-        Title:
-        <input type ="text" value={this.state.title} onChange={this.onChangeTitle}></input>
-        <br/>
-        Developer:
-        <input type ="text" value={this.state.devleoper} onChange={this.onChangeDeveloper}></input>
-        <br/>
-        <button onClick={this.submit}>Apply</button>
-      </div>
+		
+		<div>
+			<Panel>
+				<Input type="text" value={this.state.title} placeholder="Title" onChange={this.onChangeTitle}/> <br/>
+				<Input type="text" value={this.state.developer} placeholder="Developer" onChange={this.onChangeDeveloper}/> <br/>
+				<ButtonInput bsStyle="primary" value="Apply" onClick={this.submit} />
+			</Panel>
+			<br/>
+		</div>
       )
   },
 

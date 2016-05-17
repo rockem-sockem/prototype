@@ -12,7 +12,7 @@ var TabContent = require('react-bootstrap/lib/TabContainer');
 var Glyphicon = require('react-bootstrap/lib/Glyphicon');
 
 var Home = require('../Home');
-var Settings = require('../Settings');
+var Settings = require('../admin/Setting');
 var Search = require('../Search');
 
 // Represent the Navbar layout

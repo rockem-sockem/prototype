@@ -1,10 +1,13 @@
 var React = require('react');
 var $ = require('jquery');
 
+var BugList = require('./API/BugList');
+var BugFilter = require('./API/BugFilter');
+
 var Grid = require('react-bootstrap/lib/Grid');
 var Row = require('react-bootstrap/lib/Row');
 var Col = require('react-bootstrap/lib/Col');
-var Input = require('react-bootstrap/lib/Input');
+var Panel = require('react-bootstrap/lib/Panel');
 var ButtonInput = require('react-bootstrap/lib/ButtonInput');
 
 // Class used to sign up an user to the app.
@@ -21,10 +24,7 @@ var Search = React.createClass({
 						<Col xs={1} md={1}></Col>
 						<Col xs={10} md={10}>
 							<h1>Search</h1> <br/>
-							<form name="searchForm">
-								<Input type="text" name="filters" placeholder="Enter tags"/> <br/>
-								<ButtonInput bsStyle="primary" value="Search" onClick={this.handleSearch} />
-							</form>
+								<BugList />
 						</Col>
 						<Col xs={1} md={1}></Col>
 					</Row>

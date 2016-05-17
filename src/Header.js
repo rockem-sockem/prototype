@@ -91,12 +91,6 @@ var Header = React.createClass({
 		};
 	},
 	/**
-	 * Needed to use context.router 
-	 */
-	contextTypes: { 
-		router: React.PropTypes.object.isRequired
-	},
-	/**
 	 * Whenever a page refreshes or a page is open, it'll
 	 * relog the user if it hasn't logout.
 	 */
