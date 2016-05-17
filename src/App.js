@@ -8,9 +8,6 @@ var IndexRoute = require('react-router').IndexRoute;
 var $ = require('jquery');
 
 var Layout = require('./Layout');
-var Home = require('./Home');
-var Welcome = require('./Welcome');
-var Content = require('./Content');
 
 var NoMatch = React.createClass({
 	render: function() {
@@ -78,17 +75,6 @@ function restrict(role, path) {
 	return restricted;
 }
 /** Main react render with routing components **/
-ReactDOM.render(
-	(	
-	<Router history={hashHistory}>
-		<Route path="/" component={Layout}>
-			<IndexRoute component={Home} onEnter={requireAuth} />
-			<Route path="/welcome" component={Welcome} onEnter={requireAuth} />
-			<Route path="/content" component={Content} onEnter={requireAuth} />
-			<Route path="*" component={NoMatch} />
-		</Route>
-		<Route path="*" component={NoMatch} />
-	</Router>
-	),
+ReactDOM.render(<Layout />,
 	document.getElementById('main_container')
 );

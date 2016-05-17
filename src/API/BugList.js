@@ -2,6 +2,8 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var $ = require('jquery');
 
+var Table = require('react-bootstrap/lib/Table');
+
 var BugFilter = require('./BugFilter');
 var BugAdd = require('./BugAdd');
 
@@ -31,7 +33,7 @@ var BugTable = React.createClass({
       return <BugRow key={bug._id} bug={bug} ranking={++counter} />
     });
     return (
-      <table>
+      <Table striped bordered condensed hover>
         <thead>
           <tr>
             <th>ID</th>
@@ -46,7 +48,7 @@ var BugTable = React.createClass({
         <tbody>
           {bugRows}
         </tbody>
-      </table>
+      </Table>
     )
   }
 });

@@ -1,6 +1,9 @@
 var React = require('react');
 var $ = require('jquery');
 
+var Input = require('react-bootstrap/lib/Input');
+var ButtonInput = require('react-bootstrap/lib/ButtonInput');
+
 // Class used to sign up an user to the app.
 var Signup = React.createClass({
 	/**
@@ -10,11 +13,11 @@ var Signup = React.createClass({
 	render: function() {
 		return(
 			<div>
-				<h1>Sign Up</h1> <br/>
+				<h2>Welcome to Project ACAI!</h2> <br/>
 				<form name="signUpForm">
-					<input type="text" name="username" placeholder="Username"/> <br/>
-					<input type="password" name="password" placeholder="Password"/> <br/>
-					<button onClick={this.handleSignup}>Sign Up</button>
+					<Input type="text" name="username" placeholder="Username"/> <br/>
+					<Input type="password" name="password" placeholder="Password"/> <br/>
+					<ButtonInput bsStyle="primary" value="Sign Up" onClick={this.handleSignup} />
 				</form>
 			</div>
 		);
