@@ -11,7 +11,6 @@ var Image = require('react-bootstrap/lib/Image');
 var Button = require('react-bootstrap/lib/Button');
 var PageHeader = require('react-bootstrap/lib/PageHeader');
 var Input = require('react-bootstrap/lib/Input');
-var ButtonInput = require('react-bootstrap/lib/ButtonInput');
 
 var Overlay = require('react-bootstrap/lib/Overlay');
 var OverlayTrigger = require('react-bootstrap/lib/OverlayTrigger');

@@ -128,8 +128,8 @@ app.post('/api/signup/', function(req, res) {
 		assert.equal(null, err);
 		if(doc == null) { // Valid user
 			// Inserting the user into the database
-			appdb.collection("users").insertOne(newUser, function(err, doc) {
-				assert.equal(null, err);
+			appdb.collection("users").insertOne(newUser, function(err2, doc2) {
+				assert.equal(null, err2);
 				res.json(newUser);
 			});
 		} else { // null => found duplicate
@@ -200,10 +200,25 @@ app.post('/api/switchRole', function(req, res) {
 	query.username = req.body.username;
 	var update = {$set : {role: req.body.role}};
 	
-	console.log("> Tis username is ", query.username);
-	console.log("> Tis role is ", req.body.role);
 	appdb.collection("users").update(query, update);
 	res.end();
+});
+
+app.post('/field/add', function(req, res) {
+	var field = { name: req.body.field} ;
+	// Checking if field exist
+	appdb.collection("fields").find(field).next(function(err, doc) {
+		assert.equal(null, err);
+		if(doc == null) { // valid field
+			// Inserting the field into the database 
+			appdb.collection("fields").insertOne(field, function(err2, doc2) {
+				assert.equal(null, err2);
+				res.json(field);
+			});
+		} else { // null => found duplicate
+			res.json(null);
+		}
+	});
 });
 
 

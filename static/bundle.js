@@ -44675,7 +44675,7 @@ var ReactDOM = require('react-dom');
 
 var Panel = require('react-bootstrap/lib/Panel');
 var Input = require('react-bootstrap/lib/Input');
-var ButtonInput = require('react-bootstrap/lib/ButtonInput');
+var Button = require('react-bootstrap/lib/Button');
 
 var BugFilter = React.createClass({
   displayName: 'BugFilter',
@@ -44693,7 +44693,11 @@ var BugFilter = React.createClass({
         React.createElement(Input, { type: 'text', value: this.state.developer, placeholder: 'Developer', onChange: this.onChangeDeveloper }),
         ' ',
         React.createElement('br', null),
-        React.createElement(ButtonInput, { bsStyle: 'primary', value: 'Apply', onClick: this.submit })
+        React.createElement(
+          Button,
+          { bsStyle: 'primary', onClick: this.submit },
+          'Apply'
+        )
       ),
       React.createElement('br', null)
     );
@@ -44716,7 +44720,7 @@ var BugFilter = React.createClass({
 
 module.exports = BugFilter;
 
-},{"react":394,"react-bootstrap/lib/ButtonInput":27,"react-bootstrap/lib/Input":37,"react-bootstrap/lib/Panel":51,"react-dom":189}],396:[function(require,module,exports){
+},{"react":394,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/Input":37,"react-bootstrap/lib/Panel":51,"react-dom":189}],396:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
 var $ = require('jquery');
@@ -45102,7 +45106,6 @@ var Image = require('react-bootstrap/lib/Image');
 var Button = require('react-bootstrap/lib/Button');
 var PageHeader = require('react-bootstrap/lib/PageHeader');
 var Input = require('react-bootstrap/lib/Input');
-var ButtonInput = require('react-bootstrap/lib/ButtonInput');
 
 var Overlay = require('react-bootstrap/lib/Overlay');
 var OverlayTrigger = require('react-bootstrap/lib/OverlayTrigger');
@@ -45286,7 +45289,7 @@ var Header = React.createClass({
 
 module.exports = Header;
 
-},{"./Auth":398,"./Signin":403,"jquery":25,"react":394,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/ButtonInput":27,"react-bootstrap/lib/Col":28,"react-bootstrap/lib/Grid":35,"react-bootstrap/lib/Image":36,"react-bootstrap/lib/Input":37,"react-bootstrap/lib/Modal":40,"react-bootstrap/lib/ModalBody":41,"react-bootstrap/lib/ModalDialog":42,"react-bootstrap/lib/ModalFooter":43,"react-bootstrap/lib/ModalHeader":44,"react-bootstrap/lib/ModalTitle":45,"react-bootstrap/lib/Overlay":48,"react-bootstrap/lib/OverlayTrigger":49,"react-bootstrap/lib/PageHeader":50,"react-bootstrap/lib/Row":52}],400:[function(require,module,exports){
+},{"./Auth":398,"./Signin":403,"jquery":25,"react":394,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/Col":28,"react-bootstrap/lib/Grid":35,"react-bootstrap/lib/Image":36,"react-bootstrap/lib/Input":37,"react-bootstrap/lib/Modal":40,"react-bootstrap/lib/ModalBody":41,"react-bootstrap/lib/ModalDialog":42,"react-bootstrap/lib/ModalFooter":43,"react-bootstrap/lib/ModalHeader":44,"react-bootstrap/lib/ModalTitle":45,"react-bootstrap/lib/Overlay":48,"react-bootstrap/lib/OverlayTrigger":49,"react-bootstrap/lib/PageHeader":50,"react-bootstrap/lib/Row":52}],400:[function(require,module,exports){
 var React = require('react');
 var Signup = require('./Signup');
 
@@ -45450,7 +45453,7 @@ var Layout = React.createClass({
 
 module.exports = Layout;
 
-},{"./Header":399,"./navbar/Navbar":407,"react":394}],402:[function(require,module,exports){
+},{"./Header":399,"./navbar/Navbar":408,"react":394}],402:[function(require,module,exports){
 var React = require('react');
 var $ = require('jquery');
 
@@ -45522,7 +45525,7 @@ module.exports = Search;
 var React = require('react');
 var $ = require('jquery');
 var Input = require('react-bootstrap/lib/Input');
-var ButtonInput = require('react-bootstrap/lib/ButtonInput');
+var Button = require('react-bootstrap/lib/Button');
 var Auth = require('./Auth.js');
 
 // Class used to sign up an user to the app.
@@ -45553,7 +45556,11 @@ var Signin = React.createClass({
 				React.createElement(Input, { type: 'password', name: 'password', placeholder: 'Password' }),
 				' ',
 				React.createElement('br', null),
-				React.createElement(ButtonInput, { bsStyle: 'primary', value: 'Sign In', onClick: this.handleLogin })
+				React.createElement(
+					Button,
+					{ bsStyle: 'primary', onClick: this.handleLogin },
+					'Sign In'
+				)
 			)
 		);
 	},
@@ -45603,12 +45610,12 @@ var Signin = React.createClass({
 
 module.exports = Signin;
 
-},{"./Auth.js":398,"jquery":25,"react":394,"react-bootstrap/lib/ButtonInput":27,"react-bootstrap/lib/Input":37}],404:[function(require,module,exports){
+},{"./Auth.js":398,"jquery":25,"react":394,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/Input":37}],404:[function(require,module,exports){
 var React = require('react');
 var $ = require('jquery');
 
 var Input = require('react-bootstrap/lib/Input');
-var ButtonInput = require('react-bootstrap/lib/ButtonInput');
+var Button = require('react-bootstrap/lib/Button');
 
 // Class used to sign up an user to the app.
 var Signup = React.createClass({
@@ -45638,7 +45645,11 @@ var Signup = React.createClass({
 				React.createElement(Input, { type: 'password', name: 'password', placeholder: 'Password' }),
 				' ',
 				React.createElement('br', null),
-				React.createElement(ButtonInput, { bsStyle: 'primary', value: 'Sign Up', onClick: this.handleSignup })
+				React.createElement(
+					Button,
+					{ bsStyle: 'primary', onClick: this.handleSignup },
+					'Sign Up'
+				)
 			)
 		);
 	},
@@ -45685,7 +45696,91 @@ var Signup = React.createClass({
 
 module.exports = Signup;
 
-},{"jquery":25,"react":394,"react-bootstrap/lib/ButtonInput":27,"react-bootstrap/lib/Input":37}],405:[function(require,module,exports){
+},{"jquery":25,"react":394,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/Input":37}],405:[function(require,module,exports){
+var React = require('react');
+var $ = require('jquery');
+
+var Panel = require('react-bootstrap/lib/Panel');
+var Input = require('react-bootstrap/lib/Input');
+var Button = require('react-bootstrap/lib/Button');
+
+var FieldPanel = React.createClass({
+	displayName: 'FieldPanel',
+
+	render: function () {
+		return React.createElement(
+			'div',
+			null,
+			React.createElement(
+				Panel,
+				null,
+				React.createElement(FieldAdd, null),
+				React.createElement('br', null)
+			)
+		);
+	}
+});
+
+var FieldAdd = React.createClass({
+	displayName: 'FieldAdd',
+
+	render: function () {
+		return React.createElement(
+			'div',
+			null,
+			React.createElement(
+				'h2',
+				null,
+				'Add Field'
+			),
+			React.createElement(
+				'form',
+				{ name: 'addFieldForm' },
+				React.createElement(Input, { type: 'text', name: 'field', placeholder: 'Field' }),
+				' ',
+				React.createElement('br', null),
+				React.createElement(
+					Button,
+					{ bsStyle: 'primary', onClick: this.addField },
+					'Add Field'
+				)
+			)
+		);
+	},
+	addField: function (e) {
+		e.preventDefault();
+		var form = document.forms.addFieldForm;
+		var field = form.field.value;
+		var sendData = { "field": field };
+
+		if (field == null || field == "") {
+			alert("Empty field");
+			return;
+		}
+
+		$.ajax({
+			type: 'POST',
+			url: '/field/add',
+			contentType: 'application/json',
+			data: JSON.stringify(sendData),
+			// @param {data} username, role
+			success: function (data) {
+				if (data != null) {
+					form.field.value = "";
+				} else {
+					alert("Field already exists!");
+				}
+			}.bind(this),
+			error: function (xhr, status, err) {
+				console.log("(FieldPanel.addField)Callback error! ", err);
+			}
+		});
+	}
+});
+
+module.exports = FieldPanel;
+
+},{"jquery":25,"react":394,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/Input":37,"react-bootstrap/lib/Panel":51}],406:[function(require,module,exports){
 var React = require('react');
 
 var Grid = require('react-bootstrap/lib/Grid');
@@ -45694,6 +45789,7 @@ var Col = require('react-bootstrap/lib/Col');
 var Panel = require('react-bootstrap/lib/Panel');
 
 var UserList = require('./UserList');
+var FieldPanel = require('./FieldPanel');
 
 // Testing
 var Content = React.createClass({
@@ -45723,6 +45819,8 @@ var Content = React.createClass({
 							' Modify or grant user restrictions'
 						),
 						React.createElement('hr', null),
+						React.createElement(FieldPanel, null),
+						React.createElement('hr', null),
 						React.createElement(UserList, null)
 					)
 				)
@@ -45733,7 +45831,7 @@ var Content = React.createClass({
 
 module.exports = Content;
 
-},{"./UserList":406,"react":394,"react-bootstrap/lib/Col":28,"react-bootstrap/lib/Grid":35,"react-bootstrap/lib/Panel":51,"react-bootstrap/lib/Row":52}],406:[function(require,module,exports){
+},{"./FieldPanel":405,"./UserList":407,"react":394,"react-bootstrap/lib/Col":28,"react-bootstrap/lib/Grid":35,"react-bootstrap/lib/Panel":51,"react-bootstrap/lib/Row":52}],407:[function(require,module,exports){
 var React = require('react');
 var $ = require('jquery');
 
@@ -45897,7 +45995,7 @@ var UserRow = React.createClass({
 
 module.exports = UserList;
 
-},{"../Auth.js":398,"jquery":25,"react":394,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/Table":58}],407:[function(require,module,exports){
+},{"../Auth.js":398,"jquery":25,"react":394,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/Table":58}],408:[function(require,module,exports){
 var React = require('react');
 var $ = require('jquery');
 var Auth = require('../Auth.js');
@@ -46006,4 +46104,4 @@ var Navbar = React.createClass({
 
 module.exports = Navbar;
 
-},{"../Auth.js":398,"../Home":400,"../Search":402,"../admin/Setting":405,"jquery":25,"react":394,"react-bootstrap/lib/Col":28,"react-bootstrap/lib/Glyphicon":34,"react-bootstrap/lib/Grid":35,"react-bootstrap/lib/Row":52,"react-bootstrap/lib/Tab":54,"react-bootstrap/lib/TabContainer":55,"react-bootstrap/lib/Tabs":59}]},{},[397]);
+},{"../Auth.js":398,"../Home":400,"../Search":402,"../admin/Setting":406,"jquery":25,"react":394,"react-bootstrap/lib/Col":28,"react-bootstrap/lib/Glyphicon":34,"react-bootstrap/lib/Grid":35,"react-bootstrap/lib/Row":52,"react-bootstrap/lib/Tab":54,"react-bootstrap/lib/TabContainer":55,"react-bootstrap/lib/Tabs":59}]},{},[397]);

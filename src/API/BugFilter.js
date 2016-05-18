@@ -3,7 +3,7 @@ var ReactDOM = require('react-dom');
 
 var Panel = require('react-bootstrap/lib/Panel');
 var Input = require('react-bootstrap/lib/Input');
-var ButtonInput = require('react-bootstrap/lib/ButtonInput');
+var Button = require('react-bootstrap/lib/Button');
 
 var BugFilter = React.createClass({
   render: function() {
@@ -13,7 +13,7 @@ var BugFilter = React.createClass({
 			<Panel>
 				<Input type="text" value={this.state.title} placeholder="Title" onChange={this.onChangeTitle}/> <br/>
 				<Input type="text" value={this.state.developer} placeholder="Developer" onChange={this.onChangeDeveloper}/> <br/>
-				<ButtonInput bsStyle="primary" value="Apply" onClick={this.submit} />
+				<Button bsStyle="primary" onClick={this.submit}>Apply</Button>
 			</Panel>
 			<br/>
 		</div>

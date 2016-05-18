@@ -6,6 +6,7 @@ var Col = require('react-bootstrap/lib/Col');
 var Panel = require('react-bootstrap/lib/Panel');
 
 var UserList = require('./UserList');
+var FieldPanel = require('./FieldPanel');
 
 // Testing
 var Content = React.createClass({
@@ -17,7 +18,9 @@ var Content = React.createClass({
 						<Col>
 							<h3>Admin Settings</h3>
 							<p>	Modify or grant user restrictions</p>
-							<hr/>
+							<hr />
+							<FieldPanel />
+							<hr />
 							<UserList />
 						</Col>
 					</Row>
