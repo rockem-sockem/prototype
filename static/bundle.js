@@ -44726,175 +44726,246 @@ var Table = require('react-bootstrap/lib/Table');
 var BugFilter = require('./BugFilter');
 
 var BugRow = React.createClass({
-		displayName: 'BugRow',
+	displayName: 'BugRow',
 
-		render: function () {
-				// console.log("Rendering BugRow:", this.props.bug);
-				// console.log("genre is ", this.props.bug.genres);
-				var genres = "";
-				var length = this.props.bug.genres.length;
-				for (var i = 0; i < length; i++) {
-						var cur = this.props.bug.genres[i];
+	render: function () {
+		var genres = this.formatGenres();
+		var devices = this.formatDevices();
 
-						if (i < length - 1) {
-								genres += cur + ", ";
-						} else {
-								genres += cur;
-						}
-				}
+		return React.createElement(
+			'tr',
+			null,
+			React.createElement(
+				'td',
+				null,
+				this.props.ranking
+			),
+			React.createElement(
+				'td',
+				null,
+				this.props.bug.title
+			),
+			React.createElement(
+				'td',
+				null,
+				this.props.bug.developer
+			),
+			React.createElement(
+				'td',
+				null,
+				this.props.bug.price
+			),
+			React.createElement(
+				'td',
+				null,
+				genres
+			),
+			React.createElement(
+				'td',
+				null,
+				devices
+			)
+		);
+	},
+	formatGenres: function () {
+		var genres = "";
+		var length = this.props.bug.genres.length;
 
-				var devices = "";
-				length = this.props.bug.devices.length;
-				for (var i = 0; i < length; i++) {
-						var cur = this.props.bug.devices[i];
+		for (var i = 0; i < length; i++) {
+			var cur = this.props.bug.genres[i];
 
-						if (i < length - 1) {
-								devices += cur + ", ";
-						} else {
-								devices += cur;
-						}
-				}
-
-				return React.createElement(
-						'tr',
-						null,
-						React.createElement(
-								'td',
-								null,
-								this.props.ranking
-						),
-						React.createElement(
-								'td',
-								null,
-								this.props.bug.title
-						),
-						React.createElement(
-								'td',
-								null,
-								this.props.bug.developer
-						),
-						React.createElement(
-								'td',
-								null,
-								this.props.bug.price
-						),
-						React.createElement(
-								'td',
-								null,
-								genres
-						),
-						React.createElement(
-								'td',
-								null,
-								devices
-						)
-				);
+			if (i < length - 1) {
+				genres += cur + ", ";
+			} else {
+				genres += cur;
+			}
 		}
+		return genres;
+	},
+	formatDevices: function () {
+		var devices = "";
+		if (this.props.bug.devices == null) {
+			return devices;
+		}
+
+		var length = this.props.bug.devices.length;
+
+		for (var i = 0; i < length; i++) {
+			var cur = this.props.bug.devices[i];
+
+			if (i < length - 1) {
+				devices += cur + ", ";
+			} else {
+				devices += cur;
+			}
+		}
+		return devices;
+	}
 });
 
 var BugTable = React.createClass({
-		displayName: 'BugTable',
+	displayName: 'BugTable',
 
-		render: function () {
-				// console.log("Rendering bug table, num items:", this.props.bugs.length);
-				var counter = 0;
-				var bugRows = this.props.bugs.map(function (bug) {
-						return React.createElement(BugRow, { key: bug._id, bug: bug, ranking: ++counter });
-				});
-				return React.createElement(
-						Table,
-						{ striped: true, bordered: true, condensed: true, hover: true },
-						React.createElement(
-								'thead',
-								null,
-								React.createElement(
-										'tr',
-										null,
-										React.createElement(
-												'th',
-												null,
-												'Rank'
-										),
-										React.createElement(
-												'th',
-												null,
-												'Title'
-										),
-										React.createElement(
-												'th',
-												null,
-												'Developer'
-										),
-										React.createElement(
-												'th',
-												null,
-												'Price'
-										),
-										React.createElement(
-												'th',
-												null,
-												'Category'
-										),
-										React.createElement(
-												'th',
-												null,
-												'Device'
-										)
-								)
-						),
-						React.createElement(
-								'tbody',
-								null,
-								bugRows
-						)
-				);
-		}
+	render: function () {
+		// console.log("Rendering bug table, num items:", this.props.bugs.length);
+		var counter = 0;
+		var bugRows = this.props.bugs.map(function (bug) {
+			return React.createElement(BugRow, { key: bug._id, bug: bug, ranking: ++counter });
+		});
+		return React.createElement(
+			Table,
+			{ striped: true, bordered: true, condensed: true, hover: true },
+			React.createElement(
+				'thead',
+				null,
+				React.createElement(
+					'tr',
+					null,
+					React.createElement(
+						'th',
+						null,
+						'Rank'
+					),
+					React.createElement(
+						'th',
+						null,
+						'Title'
+					),
+					React.createElement(
+						'th',
+						null,
+						'Developer'
+					),
+					React.createElement(
+						'th',
+						null,
+						'Price'
+					),
+					React.createElement(
+						'th',
+						null,
+						'Category'
+					),
+					React.createElement(
+						'th',
+						null,
+						'Device'
+					)
+				)
+			),
+			React.createElement(
+				'tbody',
+				null,
+				bugRows
+			)
+		);
+	}
 });
 
 var BugList = React.createClass({
-		displayName: 'BugList',
+	displayName: 'BugList',
 
-		getInitialState: function () {
-				return { bugs: [] };
-		},
-		render: function () {
-				// console.log("Rendering bug list, num items:", this.state.bugs.length);
-				return React.createElement(
-						'div',
-						null,
-						React.createElement(BugFilter, { submitHandler: this.loadData }),
-						React.createElement('hr', null),
-						React.createElement(BugTable, { bugs: this.state.bugs })
-				);
-		},
+	render: function () {
+		return React.createElement(
+			'div',
+			null,
+			React.createElement(BugFilter, { submitHandler: this.loadData }),
+			React.createElement('hr', null),
+			React.createElement(DataDDMenu, { collections: this.state.collections, cbChangeColl: this.changeColl }),
+			React.createElement('br', null),
+			React.createElement('hr', null),
+			React.createElement(BugTable, { bugs: this.state.bugs })
+		);
+	},
+	getInitialState: function () {
+		return {
+			bugs: [],
+			collections: []
+		};
+	},
+	componentDidMount: function () {
+		this.loadData({});
+	},
+	loadData: function (filter) {
+		$.ajax('/api/bugs', { data: filter }).done(function (data) {
+			this.setState({ bugs: data });
+		}.bind(this));
+		// In production, we'd also handle errors.
 
-		componentDidMount: function () {
-				this.loadData({});
-		},
-		loadData: function (filter) {
-				$.ajax('/api/bugs', { data: filter }).done(function (data) {
-						this.setState({ bugs: data });
-				}.bind(this));
-				// In production, we'd also handle errors.
-		},
+		$.ajax('/api/datadbCollections', { data: filter }).done(function (data) {
+			this.setState({ collections: data });
+		}.bind(this));
+	},
 
-		addBug: function (bug) {
-				// console.log("Adding bug:", bug);
-				$.ajax({
-						type: 'POST', url: '/api/bugs', contentType: 'application/json',
-						data: JSON.stringify(bug),
-						success: function (data) {
-								var bug = data;
-								// We're advised not to modify the state, it's immutable. So, make a copy.
-								var bugsModified = this.state.bugs.concat(bug);
-								this.setState({ bugs: bugsModified });
-						}.bind(this),
-						error: function (xhr, status, err) {
-								// ideally, show error to user.
-								console.log("Error adding bug:", err);
-						}
-				});
-		}
+	changeColl: function () {
+		var filter = {};
+		$.ajax('/api/bugs', { data: filter }).done(function (data) {
+			this.setState({ bugs: data });
+		}.bind(this));
+	},
+	addBug: function (bug) {
+		$.ajax({
+			type: 'POST', url: '/api/bugs', contentType: 'application/json',
+			data: JSON.stringify(bug),
+			success: function (data) {
+				var bug = data;
+				// We're advised not to modify the state, it's immutable. So, make a copy.
+				var bugsModified = this.state.bugs.concat(bug);
+				this.setState({ bugs: bugsModified });
+			}.bind(this),
+			error: function (xhr, status, err) {
+				// ideally, show error to user.
+				console.log("Error adding bug:", err);
+			}
+		});
+	}
+});
+
+var DataDDMenu = React.createClass({
+	displayName: 'DataDDMenu',
+
+	render: function () {
+		var options = this.props.collections.map(function (coll) {
+			if (coll.name != "system.indexes") {
+				return React.createElement(DataOptions, { key: coll.name, collections: coll });
+			}
+		});
+
+		return React.createElement(
+			'select',
+			{ id: 'coll', onChange: this.getSelectedColl },
+			options
+		);
+	},
+	getSelectedColl: function () {
+		var selected = document.getElementById("coll").value;
+		var query = { name: selected };
+
+		$.ajax({
+			type: 'POST', url: '/api/changeDatadbCollection',
+			contentType: 'application/json',
+			data: JSON.stringify(query),
+			success: function () {
+				this.props.cbChangeColl();
+			}.bind(this),
+			error: function (xhr, status, err) {
+				// ideally, show error to user.
+				console.log("Error changing collections:", err);
+			}
+		});
+	}
+});
+
+var DataOptions = React.createClass({
+	displayName: 'DataOptions',
+
+	render: function () {
+		return React.createElement(
+			'option',
+			null,
+			this.props.collections.name
+		);
+	}
 });
 
 module.exports = BugList;
@@ -45173,10 +45244,10 @@ var Header = React.createClass({
 			success: function () {
 				this.setState({ logged: false });
 				Auth.setLogout();
-				console.log("In handlelogout");
-				Auth.printLoggedUser();
+				// console.log("In handlelogout");
+				// Auth.printLoggedUser();
 				this.props.getLoggedState(this.state.logged);
-				this.props.getLoggedState(this.state.logged);
+				// this.props.getLoggedState(this.state.logged);
 			}.bind(this),
 			error: function (xhr, status, err) {
 				console.log("(handleLogout)Callback error! ", err);
@@ -45532,8 +45603,8 @@ var Signin = React.createClass({
 				if (data != null) {
 					// Sending the role to the parent(Navbar) component
 					Auth.setLoggedUser(data);
-					console.log("In handlelogin");
-					Auth.printLoggedUser();
+					// console.log("In handlelogin");
+					// Auth.printLoggedUser();
 					this.props.signinOnSuccess();
 				} else {
 					alert("Invalid username or wrong password");
@@ -45690,7 +45761,6 @@ var UserList = React.createClass({
 	displayName: 'UserList',
 
 	render: function () {
-		// console.log("In userlist = ", Auth.getUsername());
 		return React.createElement(
 			'div',
 			null,
@@ -45732,7 +45802,9 @@ var UserTable = React.createClass({
 
 	render: function () {
 		var userRows = this.props.users.map(function (user) {
-			return React.createElement(UserRow, { key: user._id, user: user });
+			if (user.username != Auth.getUsername()) {
+				return React.createElement(UserRow, { key: user._id, user: user });
+			}
 		});
 
 		return React.createElement(
@@ -45774,36 +45846,41 @@ var UserRow = React.createClass({
 	displayName: 'UserRow',
 
 	render: function () {
-		var td1 = this.state.username != Auth.getUsername() ? this.state.username : "";
-		var td2 = this.state.username != Auth.getUsername() ? this.state.role : "";
-		var td3 = this.state.username != Auth.getUsername() ? React.createElement(
-			Button,
-			{ onClick: this.handleSwitch, bsStyle: 'info' },
-			'Toggle'
-		) : "";
+		// var td1 = (this.state.username != Auth.getUsername()) ?
+		// this.state.username
+		// : "";
+		// var td2 = (this.state.username != Auth.getUsername()) ?
+		// this.state.role
+		// : "";
+		// var td3 = (this.state.username != Auth.getUsername()) ?
+		// <Button onClick={this.handleSwitch} bsStyle="info">Toggle</Button>
+		// : "";
 		return React.createElement(
 			'tr',
 			null,
 			React.createElement(
 				'td',
 				null,
-				td1
+				this.props.user.username
 			),
 			React.createElement(
 				'td',
 				null,
-				td2
+				this.state.role
 			),
 			React.createElement(
 				'td',
 				null,
-				td3
+				React.createElement(
+					Button,
+					{ onClick: this.handleSwitch, bsStyle: 'info' },
+					'Toggle'
+				)
 			)
 		);
 	},
 	getInitialState: function () {
 		return {
-			username: this.props.user.username,
 			role: this.props.user.role
 		};
 	},

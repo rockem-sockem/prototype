@@ -107,8 +107,8 @@ var Header = React.createClass({
 			success: function() {
 				this.setState({ logged: false });
 				Auth.setLogout();
-				console.log("In handlelogout");
-				Auth.printLoggedUser();
+				// console.log("In handlelogout");
+				// Auth.printLoggedUser();
 				this.props.getLoggedState(this.state.logged);
 				// this.props.getLoggedState(this.state.logged);
 			}.bind(this),

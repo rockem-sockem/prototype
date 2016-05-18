@@ -28,8 +28,8 @@ module.exports = {
 		db = database;
 		curColl = collection;
 		var date = new Date();
-		var time = date.getUTCFullYear() + "-" + (date.getUTCMonth() + 1)  + "-" + 
-			date.getUTCDate() + "-" + date.getUTCHours() + "-" + date.getUTCMinutes();
+		var time = date.getUTCFullYear() + "_" + (date.getUTCMonth() + 1)  + "_" + 
+			date.getUTCDate() + "_" + date.getUTCHours() + "_" + date.getUTCMinutes();
 
 		switch(datapath)
 		{
@@ -95,15 +95,15 @@ function modifyDataAndUpdate() {
 	db.collection(curColl).find().each(function(err, doc) {
 		assert.equal(err, null);
 		if(doc != null) {
-			if(doc.price == "$0.00") {
+			if(doc.price == "$0.00" || doc.price == "") {
 				var query = {_id: doc._id};
 				var update = {$set : {price: "Free"}};
 				db.collection(curColl).update(query, update);
 			}
 		
 			for(var i=0; i < doc.genres.length; i++) { 
-				// console.log("genre > ", doc.genres[i]);
 				var cat;
+				
 				switch(doc.genres[i]) {
 					case 0:
 						cat = "All"; break;
@@ -192,7 +192,7 @@ function modifyDataAndUpdate() {
 					case 7019:
 						cat = "Word"; break;
 					default:
-						cat = "";
+						cat = doc.genres[i];
 				}
 				var genresIndex = "genres."+i;
 				var query = {_id: doc._id};

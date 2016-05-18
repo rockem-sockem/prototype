@@ -15,7 +15,7 @@ var db2_url = 'mongodb://localhost/datadb';
 var datadb, appdb;
 var data; // JSON data fetch from AppTweak
 var req; // HTTPS request for AppTweak
-var curColl = ""; // Current used collection
+var curColl = ""; // Current collection used in datadb. Collection will change.
 var sched; // Schedule/frequency of fetching data
 
 app.use(bodyParser.json());
@@ -39,7 +39,6 @@ app.use(session({
 
 //Route to display the information on the table -> filtering is work in progress
 app.get('/api/bugs', function(req,res){
-	// console.log("Query string", req.query);
 	var filter = {};
 	if(req.query.title)
 		filter.title = {"$in": [new RegExp(req.query.title,"i")]};
@@ -53,17 +52,27 @@ app.get('/api/bugs', function(req,res){
 
 //POST request from demo -> Not in use currently
 app.post('/api/bugs/', function(req, res) {
-	console.log("Req body:", req.body);
 	var newBug = req.body;
 	newBug.id = bugData.length + 1;
 	bugData.push(newBug);
 	res.json(newBug);
 });
 
+app.post('/api/changeDatadbCollection', function(req, res) {
+	curColl = req.body.name;
+	res.end()
+});
+
+app.get('/api/datadbCollections', function(req,res){
+	datadb.listCollections().toArray(function(err, collections){
+		res.json(collections);
+	});
+});
+
 function requestAPI() {
 	// For every minute: '*/1 * * * *'
 	// Scheduled a minute apart to prevent race conditions
-	sched = schedule.scheduleJob('1 0 * * *', function() {
+	/* sched = schedule.scheduleJob('1 0 * * *', function() {
 		Scraping.requestToAppTweak("/ios/categories/6014/top.json", datadb, curColl);
 	});
 	sched = schedule.scheduleJob('2 0 * * *', function() {
@@ -80,17 +89,17 @@ function requestAPI() {
 	});
 	sched = schedule.scheduleJob('6 0 * * *', function() {
 		Scraping.requestToAppTweak("/android/categories/game/top.json?type=grossing", datadb, curColl);
-	}); 
+	});  */
 	
 	// Use these for testing only.git 
 	// Scraping.requestToAppTweak("/ios/categories/6014/top.json", datadb, curColl);
 	// Scraping.requestToAppTweak("/ios/categories/6014/top.json?type=paid", datadb, curColl);
-	Scraping.requestToAppTweak("/ios/categories/6014/top.json?type=grossing", datadb, curColl);
+	// Scraping.requestToAppTweak("/ios/categories/6014/top.json?type=grossing", datadb, curColl);
 	// Scraping.requestToAppTweak("/android/categories/game/top.json", datadb, curColl);
 	// Scraping.requestToAppTweak("/android/categories/game/top.json?type=paid", datadb, curColl);
 	// Scraping.requestToAppTweak("/android/categories/game/top.json?type=grossing", datadb, curColl);
 	
-	curColl = Scraping.getColl();
+	// curColl = Scraping.getColl();
 	// console.log(">>>>>>This is curColl = ", curColl);
 }
 
@@ -100,9 +109,9 @@ function requestAPI() {
 /**********************************************/
 
 // Sends back the user's role from the session
-app.post('/api/getRole', function(req, res) {
-	res.json({"role": req.session.role});
-});
+// app.post('/api/getRole', function(req, res) {
+	// res.json({"role": req.session.role});
+// });
 
 // Inserts a user into the "users" collection db
 // user: username, password, role
@@ -209,7 +218,8 @@ mongodb.connect(db1_url, function(err, dbConnection) {
 	mongodb.connect(db2_url, function(err2, dbConnection2) {
 		assert.equal(null, err2)
 		datadb = dbConnection2;
-		requestAPI();
+		// requestAPI();
+		curColl = "IOS_TopFree_2016_5_18_5_21";
 	
 		var server = app.listen(app_port, function() {
 			console.log('> Application listening on port ' + app_port + '!');

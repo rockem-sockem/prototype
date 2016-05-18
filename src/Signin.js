@@ -55,8 +55,8 @@ var Signin = React.createClass({
 				if(data != null) {
 					// Sending the role to the parent(Navbar) component
 					Auth.setLoggedUser(data);
-					console.log("In handlelogin");
-					Auth.printLoggedUser();
+					// console.log("In handlelogin");
+					// Auth.printLoggedUser();
 					this.props.signinOnSuccess();
 				} else {
 					alert("Invalid username or wrong password");

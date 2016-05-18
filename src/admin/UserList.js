@@ -7,7 +7,6 @@ var Button = require('react-bootstrap/lib/Button');
 
 var UserList = React.createClass({
 	render: function() {
-		// console.log("In userlist = ", Auth.getUsername());
 		return(
 			<div>
 				<h3>User Data</h3>
@@ -42,7 +41,9 @@ var UserList = React.createClass({
 var UserTable = React.createClass({
 	render: function() {
 		var userRows = this.props.users.map(function(user) {
-			return <UserRow key={user._id} user={user} />
+			if(user.username != Auth.getUsername()) {
+				return <UserRow key={user._id} user={user} />;
+			}
 		});
 		
 		return(
@@ -65,26 +66,25 @@ var UserTable = React.createClass({
 
 var UserRow = React.createClass({
 	render: function() {
-		var td1 = (this.state.username != Auth.getUsername()) ?
-			this.state.username
-			: "";
-		var td2 = (this.state.username != Auth.getUsername()) ?
-			this.state.role
-			: "";
-		var td3 = (this.state.username != Auth.getUsername()) ?
-		    <Button onClick={this.handleSwitch} bsStyle="info">Toggle</Button>
-			: "";
+		// var td1 = (this.state.username != Auth.getUsername()) ?
+			// this.state.username
+			// : "";
+		// var td2 = (this.state.username != Auth.getUsername()) ?
+			// this.state.role
+			// : "";
+		// var td3 = (this.state.username != Auth.getUsername()) ?
+		    // <Button onClick={this.handleSwitch} bsStyle="info">Toggle</Button>
+			// : "";
 		return(
 			<tr>
-				<td>{td1}</td> 	
-				<td>{td2}</td>
-				<td>{td3}</td>
+				<td>{this.props.user.username}</td> 	
+				<td>{this.state.role}</td>
+				<td><Button onClick={this.handleSwitch} bsStyle="info">Toggle</Button></td>
 			</tr>
 		);
 	},
 	getInitialState: function() {
 		return{
-			username: this.props.user.username,
 			role: this.props.user.role
 		};
 	},
