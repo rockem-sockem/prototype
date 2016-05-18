@@ -61,7 +61,7 @@ var Home = React.createClass({
 				
 				<Modal show={this.state.showModal} onHide={this.close}>
 					<Modal.Header closeButton>
-						<Modal.Title><h1>Sign Up</h1></Modal.Title>
+						<Modal.Title>Sign Up</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>
 						<Signup />

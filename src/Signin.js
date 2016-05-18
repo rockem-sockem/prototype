@@ -29,6 +29,7 @@ var Signin = React.createClass({
 	 * @param {e} button onClick event listener
 	 */
 	handleLogin: function(e) {
+		console.log("Start handleLogin");
 		e.preventDefault();
 		var form = document.forms.signinForm;
 		var username = form.username.value;
@@ -53,10 +54,7 @@ var Signin = React.createClass({
 			// @param {data} username, role
 			success: function(data) {
 				if(data != null) {
-					// Sending the role to the parent(Navbar) component
 					Auth.setLoggedUser(data);
-					// console.log("In handlelogin");
-					// Auth.printLoggedUser();
 					this.props.signinOnSuccess();
 				} else {
 					alert("Invalid username or wrong password");

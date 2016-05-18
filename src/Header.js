@@ -28,37 +28,37 @@ var Header = React.createClass({
 	 * @return Header view
 	 */
 	render: function() {
-            var login = (this.state.logged) ?
-				<div>
-					<h5>{this.state.username}</h5>
-					<Button bsStyle="link" bsSize="xsmall" onClick={this.handleLogout}>
-						Sign Out
-					</Button>
-				</div>
-				:
-				<div>
-					<h5>Welcome</h5>
-					<Button bsStyle="link" bsSize="xsmall" onClick={this.open}>
-						Sign In
-					</Button>
-				</div>;
+		var login = (this.state.logged) ?
+			<div>
+				<h5>{this.state.username}</h5>
+				<Button bsStyle="link" bsSize="xsmall" onClick={this.handleLogout}>
+					Sign Out
+				</Button>
+			</div>
+			:
+			<div>
+				<h5>Welcome</h5>
+				<Button bsStyle="link" bsSize="xsmall" onClick={this.open}>
+					Sign In
+				</Button>
+			</div>;
                 
 		return(
 			<div>                            
 				<Grid>
 					<Row className="show-grid">
-							<Col xs={10} md={10}>
-									<PageHeader>Project Acai</PageHeader>
-							</Col>
-							<Col xs={2} md={2}>
-								{login}
-							</Col>
+						<Col xs={10} md={10}>
+							<PageHeader>Project Acai</PageHeader>
+						</Col>
+						<Col xs={2} md={2}>
+							{login}
+						</Col>
 					</Row>
 				</Grid>
 				
 				<Modal show={this.state.showModal} onHide={this.close}>
 					<Modal.Header closeButton>
-						<Modal.Title><h1>Sign In</h1></Modal.Title>
+						<Modal.Title>Sign In</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>
 						<Signin signinOnSuccess={this.signinOnSuccess} />
@@ -89,9 +89,6 @@ var Header = React.createClass({
 	componentDidMount: function() {
 		this.relog();
 	},
-	componentWillReceiveProps: function() {
-		// this.relog();
-	},
 	/**
 	 * Logs the user out if logout button was click and 
 	 * destroying the user's session.
@@ -107,10 +104,7 @@ var Header = React.createClass({
 			success: function() {
 				this.setState({ logged: false });
 				Auth.setLogout();
-				// console.log("In handlelogout");
-				// Auth.printLoggedUser();
 				this.props.getLoggedState(this.state.logged);
-				// this.props.getLoggedState(this.state.logged);
 			}.bind(this),
 			error: function(xhr, status, err) {
 				console.log("(handleLogout)Callback error! ", err);

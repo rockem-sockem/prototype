@@ -45183,11 +45183,7 @@ var Header = React.createClass({
 					React.createElement(
 						Modal.Title,
 						null,
-						React.createElement(
-							'h1',
-							null,
-							'Sign In'
-						)
+						'Sign In'
 					)
 				),
 				React.createElement(
@@ -45244,10 +45240,7 @@ var Header = React.createClass({
 			success: function () {
 				this.setState({ logged: false });
 				Auth.setLogout();
-				// console.log("In handlelogout");
-				// Auth.printLoggedUser();
 				this.props.getLoggedState(this.state.logged);
-				// this.props.getLoggedState(this.state.logged);
 			}.bind(this),
 			error: function (xhr, status, err) {
 				console.log("(handleLogout)Callback error! ", err);
@@ -45407,11 +45400,7 @@ var Home = React.createClass({
 					React.createElement(
 						Modal.Title,
 						null,
-						React.createElement(
-							'h1',
-							null,
-							'Sign Up'
-						)
+						'Sign Up'
 					)
 				),
 				React.createElement(
@@ -45601,10 +45590,7 @@ var Signin = React.createClass({
 			// @param {data} username, role
 			success: function (data) {
 				if (data != null) {
-					// Sending the role to the parent(Navbar) component
 					Auth.setLoggedUser(data);
-					// console.log("In handlelogin");
-					// Auth.printLoggedUser();
 					this.props.signinOnSuccess();
 				} else {
 					alert("Invalid username or wrong password");
