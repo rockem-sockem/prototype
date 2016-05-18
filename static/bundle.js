@@ -45222,9 +45222,6 @@ var Header = React.createClass({
 	componentDidMount: function () {
 		this.relog();
 	},
-	componentWillReceiveProps: function () {
-		// this.relog();
-	},
 	/**
   * Logs the user out if logout button was click and 
   * destroying the user's session.
@@ -45567,6 +45564,7 @@ var Signin = React.createClass({
   * @param {e} button onClick event listener
   */
 	handleLogin: function (e) {
+		console.log("Start handleLogin");
 		e.preventDefault();
 		var form = document.forms.signinForm;
 		var username = form.username.value;
@@ -45832,15 +45830,6 @@ var UserRow = React.createClass({
 	displayName: 'UserRow',
 
 	render: function () {
-		// var td1 = (this.state.username != Auth.getUsername()) ?
-		// this.state.username
-		// : "";
-		// var td2 = (this.state.username != Auth.getUsername()) ?
-		// this.state.role
-		// : "";
-		// var td3 = (this.state.username != Auth.getUsername()) ?
-		// <Button onClick={this.handleSwitch} bsStyle="info">Toggle</Button>
-		// : "";
 		return React.createElement(
 			'tr',
 			null,
@@ -45875,7 +45864,7 @@ var UserRow = React.createClass({
 		e.preventDefault();
 		var switchedRole = this.switchRole(this.state.role);
 		var user = {
-			username: this.state.username,
+			username: this.props.user.username,
 			role: switchedRole
 		};
 
@@ -45884,7 +45873,7 @@ var UserRow = React.createClass({
 			url: '/api/switchRole',
 			contentType: 'application/json',
 			data: JSON.stringify(user),
-			success: function (data) {
+			success: function () {
 				this.setState({
 					role: switchedRole
 				});

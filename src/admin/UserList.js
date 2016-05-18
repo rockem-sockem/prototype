@@ -66,15 +66,6 @@ var UserTable = React.createClass({
 
 var UserRow = React.createClass({
 	render: function() {
-		// var td1 = (this.state.username != Auth.getUsername()) ?
-			// this.state.username
-			// : "";
-		// var td2 = (this.state.username != Auth.getUsername()) ?
-			// this.state.role
-			// : "";
-		// var td3 = (this.state.username != Auth.getUsername()) ?
-		    // <Button onClick={this.handleSwitch} bsStyle="info">Toggle</Button>
-			// : "";
 		return(
 			<tr>
 				<td>{this.props.user.username}</td> 	
@@ -94,7 +85,7 @@ var UserRow = React.createClass({
 		e.preventDefault();
 		var switchedRole = this.switchRole(this.state.role);
 		var user = { 
-			username: this.state.username,
+			username: this.props.user.username,
 			role: switchedRole
 		};
 		
@@ -103,7 +94,7 @@ var UserRow = React.createClass({
 			url: '/api/switchRole', 
 			contentType: 'application/json',
 			data: JSON.stringify(user),
-			success: function(data) {
+			success: function() {
 				this.setState({
 					role: switchedRole
 				});

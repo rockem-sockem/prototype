@@ -198,8 +198,10 @@ app.get('/api/users', function(req,res){
 app.post('/api/switchRole', function(req, res) {
 	var query = {};
 	query.username = req.body.username;
-	
 	var update = {$set : {role: req.body.role}};
+	
+	console.log("> Tis username is ", query.username);
+	console.log("> Tis role is ", req.body.role);
 	appdb.collection("users").update(query, update);
 	res.end();
 });
