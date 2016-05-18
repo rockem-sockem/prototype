@@ -142,7 +142,7 @@ app.post('/api/login/', function(req, res) {
 		if(doc != null && passwordHash.verify(req.body.password, doc.password)) {
 			req.session.username = doc.username;
 			req.session.role = doc.role;
-			res.json(doc);
+			res.json(req.session);
 		} else {
 			res.json(null); // No username found or password does not match
 		}

@@ -23,14 +23,6 @@ var ModalHeader = require('react-bootstrap/lib/ModalHeader');
 var ModalTitle = require('react-bootstrap/lib/ModalTitle');
 
 var Header = React.createClass({
-	close: function() {
-		this.setState({ showModal: false });
-	},
-
-	open: function() {
-		this.setState({ showModal: true });
-	},
-	
 	/**
 	 * Renders the title, logo, and installation information
 	 * @return Header view
@@ -69,7 +61,7 @@ var Header = React.createClass({
 						<Modal.Title><h1>Sign In</h1></Modal.Title>
 					</Modal.Header>
 					<Modal.Body>
-						<Signin close={this.closeModal} session={this.getSession}/>
+						<Signin signinOnSuccess={this.signinOnSuccess} />
 					</Modal.Body>
 					<Modal.Footer>
 						<Button onClick={this.close}>Close</Button>
@@ -86,9 +78,8 @@ var Header = React.createClass({
 	getInitialState: function() {
 		return {
 			logged : false,
-			username: "",
-			showModal: false,
-			role: ""
+			usernamme: "",
+			showModal: false
 		};
 	},
 	/**
@@ -114,16 +105,12 @@ var Header = React.createClass({
 			url: '/api/logout', 
 			contentType: 'application/json',
 			success: function() {
-				this.setState({
-					logged: false,
-					username: "",
-					role: ""
-				});
+				this.setState({ logged: false });
 				Auth.setLogout();
 				console.log("In handlelogout");
 				Auth.printLoggedUser();
-				this.props.getRole(this.state.role);
-				this.props.getRole(this.state.role);
+				this.props.getLoggedState(this.state.logged);
+				// this.props.getLoggedState(this.state.logged);
 			}.bind(this),
 			error: function(xhr, status, err) {
 				console.log("(handleLogout)Callback error! ", err);
@@ -141,12 +128,12 @@ var Header = React.createClass({
 			contentType: 'application/json',
 			success: function(session) {
 				if(session != null) {
-					this.setState({
+					Auth.setLoggedUser(session);
+					this.setState({	
 						logged: true,
-						username: session.username,
-						role: session.role
+						username: Auth.getUsername()
 					}); 
-					this.props.getRole(this.state.role);
+					this.props.getLoggedState(this.state.logged);
 				}
 			}.bind(this),
 			error: function(xhr, status, err) {
@@ -154,16 +141,19 @@ var Header = React.createClass({
 			}
 		});
 	},
-	getSession: function(session) {
-		this.setState({
-			logged: true,
-			username: session.username,
-			role: session.role
+	signinOnSuccess: function() {
+		this.setState({ 
+			username: Auth.getUsername(),
+			logged: true
 		});
-		this.props.getRole(this.state.role);
-	},
-	closeModal: function() {
 		this.close();
+		this.props.getLoggedState(this.state.logged);
+	},
+	close: function() {
+		this.setState({ showModal: false });
+	},
+	open: function() {
+		this.setState({ showModal: true });
 	}
 });
 

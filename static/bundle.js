@@ -45045,14 +45045,6 @@ var ModalTitle = require('react-bootstrap/lib/ModalTitle');
 var Header = React.createClass({
 	displayName: 'Header',
 
-	close: function () {
-		this.setState({ showModal: false });
-	},
-
-	open: function () {
-		this.setState({ showModal: true });
-	},
-
 	/**
   * Renders the title, logo, and installation information
   * @return Header view
@@ -45130,7 +45122,7 @@ var Header = React.createClass({
 				React.createElement(
 					Modal.Body,
 					null,
-					React.createElement(Signin, { close: this.closeModal, session: this.getSession })
+					React.createElement(Signin, { signinOnSuccess: this.signinOnSuccess })
 				),
 				React.createElement(
 					Modal.Footer,
@@ -45152,9 +45144,8 @@ var Header = React.createClass({
 	getInitialState: function () {
 		return {
 			logged: false,
-			username: "",
-			showModal: false,
-			role: ""
+			usernamme: "",
+			showModal: false
 		};
 	},
 	/**
@@ -45180,16 +45171,12 @@ var Header = React.createClass({
 			url: '/api/logout',
 			contentType: 'application/json',
 			success: function () {
-				this.setState({
-					logged: false,
-					username: "",
-					role: ""
-				});
+				this.setState({ logged: false });
 				Auth.setLogout();
 				console.log("In handlelogout");
 				Auth.printLoggedUser();
-				this.props.getRole(this.state.role);
-				this.props.getRole(this.state.role);
+				this.props.getLoggedState(this.state.logged);
+				this.props.getLoggedState(this.state.logged);
 			}.bind(this),
 			error: function (xhr, status, err) {
 				console.log("(handleLogout)Callback error! ", err);
@@ -45207,12 +45194,12 @@ var Header = React.createClass({
 			contentType: 'application/json',
 			success: function (session) {
 				if (session != null) {
+					Auth.setLoggedUser(session);
 					this.setState({
 						logged: true,
-						username: session.username,
-						role: session.role
+						username: Auth.getUsername()
 					});
-					this.props.getRole(this.state.role);
+					this.props.getLoggedState(this.state.logged);
 				}
 			}.bind(this),
 			error: function (xhr, status, err) {
@@ -45220,16 +45207,19 @@ var Header = React.createClass({
 			}
 		});
 	},
-	getSession: function (session) {
+	signinOnSuccess: function () {
 		this.setState({
-			logged: true,
-			username: session.username,
-			role: session.role
+			username: Auth.getUsername(),
+			logged: true
 		});
-		this.props.getRole(this.state.role);
-	},
-	closeModal: function () {
 		this.close();
+		this.props.getLoggedState(this.state.logged);
+	},
+	close: function () {
+		this.setState({ showModal: false });
+	},
+	open: function () {
+		this.setState({ showModal: true });
 	}
 });
 
@@ -45388,20 +45378,16 @@ var Layout = React.createClass({
 		return React.createElement(
 			'div',
 			null,
-			React.createElement(Header, { getRole: this.getRole }),
-			React.createElement(Navbar, { role: this.state.role }),
+			React.createElement(Header, { getLoggedState: this.getLoggedState }),
+			React.createElement(Navbar, { logged: this.state.logged }),
 			this.props.children
 		);
 	},
 	getInitialState: function () {
-		return {
-			role: ""
-		};
+		return { logged: false };
 	},
-	getRole: function (r) {
-		this.setState({
-			role: r
-		});
+	getLoggedState: function (result) {
+		this.setState({ logged: result });
 	}
 });
 
@@ -45541,14 +45527,14 @@ var Signin = React.createClass({
 			url: '/api/login',
 			contentType: 'application/json',
 			data: JSON.stringify(user),
-			// @param {data}
+			// @param {data} username, role
 			success: function (data) {
 				if (data != null) {
 					// Sending the role to the parent(Navbar) component
-					this.props.session(data);
 					Auth.setLoggedUser(data);
+					console.log("In handlelogin");
 					Auth.printLoggedUser();
-					this.props.close();
+					this.props.signinOnSuccess();
 				} else {
 					alert("Invalid username or wrong password");
 				}
@@ -45862,6 +45848,7 @@ module.exports = UserList;
 },{"../Auth.js":398,"jquery":25,"react":394,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/Table":58}],407:[function(require,module,exports){
 var React = require('react');
 var $ = require('jquery');
+var Auth = require('../Auth.js');
 
 var Grid = require('react-bootstrap/lib/Grid');
 var Row = require('react-bootstrap/lib/Row');
@@ -45928,7 +45915,7 @@ var Navbar = React.createClass({
   */
 	getInitialState: function () {
 		return {
-			role: "",
+			logged: this.props.logged,
 			showHome: true,
 			showSearch: false,
 			showSettings: false
@@ -45937,33 +45924,10 @@ var Navbar = React.createClass({
 	componentWillReceiveProps: function () {
 		this.setTab();
 	},
-	/**
-  * Gets the role after a user logs in or relogs from 
-  * the child(Login) class.
-  * @param {res} the result/response after the function was 
-  * 		used in the Login class
-  */
-	getRole: function () {
-		$.ajax({
-			type: 'POST',
-			url: '/api/relog',
-			contentType: 'application/json',
-			success: function (session) {
-				if (session != null) {
-					this.setState({
-						role: session.role
-					});
-					this.setTab();
-					console.log("role ", this.state.role);
-				}
-			}.bind(this),
-			error: function (xhr, status, err) {
-				console.log("(relog)Callback error! ", err);
-			}
-		});
-	},
 	setTab: function () {
-		switch (this.props.role) {
+		var role = Auth.getRole();
+
+		switch (role) {
 			case "admin":
 				this.setState({
 					showHome: true,
@@ -45990,4 +45954,4 @@ var Navbar = React.createClass({
 
 module.exports = Navbar;
 
-},{"../Home":400,"../Search":402,"../admin/Setting":405,"jquery":25,"react":394,"react-bootstrap/lib/Col":28,"react-bootstrap/lib/Glyphicon":34,"react-bootstrap/lib/Grid":35,"react-bootstrap/lib/Row":52,"react-bootstrap/lib/Tab":54,"react-bootstrap/lib/TabContainer":55,"react-bootstrap/lib/Tabs":59}]},{},[397]);
+},{"../Auth.js":398,"../Home":400,"../Search":402,"../admin/Setting":405,"jquery":25,"react":394,"react-bootstrap/lib/Col":28,"react-bootstrap/lib/Glyphicon":34,"react-bootstrap/lib/Grid":35,"react-bootstrap/lib/Row":52,"react-bootstrap/lib/Tab":54,"react-bootstrap/lib/TabContainer":55,"react-bootstrap/lib/Tabs":59}]},{},[397]);

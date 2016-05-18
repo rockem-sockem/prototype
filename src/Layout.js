@@ -8,21 +8,17 @@ var Layout = React.createClass({
 	render: function() {
 		return( 
 			<div>
-				<Header getRole={this.getRole} />
-                <Navbar role={this.state.role}/>
+				<Header getLoggedState={this.getLoggedState} />
+                <Navbar logged={this.state.logged} />
 				{this.props.children}
 			</div>
 		);
 	},
 	getInitialState: function() {
-		return{
-			role: ""
-		};
+		return{ logged: false };
 	},
-	getRole: function(r) {
-		this.setState({
-			role: r
-		});
+	getLoggedState: function(result) {
+		this.setState({ logged: result });
 	}
 });
 

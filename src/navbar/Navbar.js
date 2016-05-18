@@ -1,5 +1,6 @@
 var React = require('react');
 var $ = require('jquery');
+var Auth = require('../Auth.js');
 
 var Grid = require('react-bootstrap/lib/Grid');
 var Row = require('react-bootstrap/lib/Row');
@@ -52,7 +53,7 @@ var Navbar = React.createClass({
 	 */
 	getInitialState: function() {
 		return {
-			role: "",
+			logged: this.props.logged,
 			showHome: true,
 			showSearch: false,
 			showSettings: false 
@@ -61,33 +62,10 @@ var Navbar = React.createClass({
 	componentWillReceiveProps: function() {
 		this.setTab();
 	},
-	/**
-	 * Gets the role after a user logs in or relogs from 
-	 * the child(Login) class.
-	 * @param {res} the result/response after the function was 
-	 * 		used in the Login class
-	 */
-	getRole: function() {
-		$.ajax({
-			type: 'POST',
-			url: '/api/relog',
-			contentType: 'application/json',
-			success: function(session) {
-				if(session != null) {
-					this.setState({
-						role: session.role
-					});
-					this.setTab();
-					console.log("role ", this.state.role);
-				}
-			}.bind(this),
-			error: function(xhr, status, err) {
-				console.log("(relog)Callback error! ", err);
-			}
-		});
-	},
 	setTab: function() {
-		switch(this.props.role) {
+		var role = Auth.getRole();
+		
+		switch(role) {
 			case "admin":
 				this.setState({
 					showHome: true,
