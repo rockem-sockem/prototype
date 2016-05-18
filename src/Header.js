@@ -1,6 +1,7 @@
 var React = require('react');
 var $ = require('jquery');
 var Signin = require('./Signin');
+var Auth = require('./Auth');
 
 var Grid = require('react-bootstrap/lib/Grid');
 var Row = require('react-bootstrap/lib/Row');
@@ -98,7 +99,7 @@ var Header = React.createClass({
 		this.relog();
 	},
 	componentWillReceiveProps: function() {
-		this.relog();
+		// this.relog();
 	},
 	/**
 	 * Logs the user out if logout button was click and 
@@ -118,6 +119,9 @@ var Header = React.createClass({
 					username: "",
 					role: ""
 				});
+				Auth.setLogout();
+				console.log("In handlelogout");
+				Auth.printLoggedUser();
 				this.props.getRole(this.state.role);
 				this.props.getRole(this.state.role);
 			}.bind(this),

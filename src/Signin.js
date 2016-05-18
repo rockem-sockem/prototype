@@ -1,8 +1,8 @@
 var React = require('react');
 var $ = require('jquery');
-
 var Input = require('react-bootstrap/lib/Input');
 var ButtonInput = require('react-bootstrap/lib/ButtonInput');
+var Auth = require('./Auth.js');
 
 // Class used to sign up an user to the app.
 var Signin = React.createClass({
@@ -50,10 +50,14 @@ var Signin = React.createClass({
 			url: '/api/login', 
 			contentType: 'application/json',
 			data: JSON.stringify(user),
+			// @param {data} 
 			success: function(data) {
 				if(data != null) {
 					// Sending the role to the parent(Navbar) component
 					this.props.session(data);
+					Auth.setLoggedUser(data);
+					console.log("In handlelogin");
+					Auth.printLoggedUser();
 					this.props.close();
 				} else {
 					alert("Invalid username or wrong password");

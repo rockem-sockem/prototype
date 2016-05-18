@@ -7,7 +7,6 @@ var ButtonInput = require('react-bootstrap/lib/ButtonInput');
 
 var BugFilter = React.createClass({
   render: function() {
-    console.log("Rendering BugFilter");
     return (
 		
 		<div>
