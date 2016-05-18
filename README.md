@@ -1,8 +1,15 @@
-# AppTest
-=======
 # prototype
 
-
+Database used:
+	appdb:
+		users: Registered users
+		fields: Represents descriptions/features of a game. Makes a up the "column".
+		mySession: session storing the current logged user until logout or 14 days expiration.
+	datadb:
+		Each collections represents the data fetch from different categories at different times.
+		Format - DEVICE_CATEGORY_YEAR_MONTH_DAY_HOURS_MINUTES eg. "IOS_TopFree_2016_5_18_5_21"
+		
+		
 To create an admin, first sign up as a regular user
 so we create a hashed password for the admin and 
 then update its role in the mongo shell.
@@ -11,12 +18,13 @@ then update its role in the mongo shell.
 
 > db.COLLECTION_NAME.update( /*collection name of the user's list*/
 
-    { "username" : ADMIN_NAME },
+>    { "username" : ADMIN_NAME },
 	
-    { $set: { "role": "admin" }}
+>    { $set: { "role": "admin" }}
 	
-  )
+>  )
 
+=======
 
 ---Small bugs/features/things to consider:
 
@@ -28,7 +36,8 @@ then update its role in the mongo shell.
 
 *Fix deprecated functions.
 
-*Fix login or singing up twice. (Issue may be in modal)
+*FIXED!!!: Fix login or singing up twice. (Issue may be in modal). @REASON: Buttoninput
+	was deprecated and so Button was used.
 
 *Design data collection drop-down menu
 
