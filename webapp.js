@@ -93,11 +93,11 @@ function requestAPI() {
 	
 	// Use these for testing only.git 
 	Scraping.requestToAppTweak("/ios/categories/6014/top.json", datadb, curColl);
-	Scraping.requestToAppTweak("/ios/categories/6014/top.json?type=paid", datadb, curColl);
-	Scraping.requestToAppTweak("/ios/categories/6014/top.json?type=grossing", datadb, curColl);
-	Scraping.requestToAppTweak("/android/categories/game/top.json", datadb, curColl);
-	Scraping.requestToAppTweak("/android/categories/game/top.json?type=paid", datadb, curColl);
-	Scraping.requestToAppTweak("/android/categories/game/top.json?type=grossing", datadb, curColl);
+	//Scraping.requestToAppTweak("/ios/categories/6014/top.json?type=paid", datadb, curColl);
+	//Scraping.requestToAppTweak("/ios/categories/6014/top.json?type=grossing", datadb, curColl);
+	//Scraping.requestToAppTweak("/android/categories/game/top.json", datadb, curColl);
+	//Scraping.requestToAppTweak("/android/categories/game/top.json?type=paid", datadb, curColl);
+	//Scraping.requestToAppTweak("/android/categories/game/top.json?type=grossing", datadb, curColl);
 	
 	curColl = Scraping.getColl();
 	console.log(">>>>>>This is curColl = ", curColl);
