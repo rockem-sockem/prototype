@@ -9,7 +9,7 @@ var schedule = require('node-schedule');
 var Scraping = require('./ScrapingAPI');
 
 var app = express();
-var app_port = 3000;
+var app_port =  process.env.PORT || 3000;
 var db1_url = 'mongodb://Kevin:adrian@ds025772.mlab.com:25772/data';
 var db2_url = 'mongodb://Kevin:adrian@ds025772.mlab.com:25772/data';
 var datadb, appdb;
