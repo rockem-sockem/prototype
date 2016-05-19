@@ -10,8 +10,8 @@ var Scraping = require('./ScrapingAPI');
 
 var app = express();
 var app_port = 3000;
-var db1_url = 'mongodb://localhost/appdb';
-var db2_url = 'mongodb://localhost/datadb';
+var db1_url = 'mongodb://Kevin:adrian@ds025772.mlab.com:25772/data';
+var db2_url = 'mongodb://Kevin:adrian@ds025772.mlab.com:25772/data';
 var datadb, appdb;
 var data; // JSON data fetch from AppTweak
 var req; // HTTPS request for AppTweak
