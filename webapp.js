@@ -92,15 +92,15 @@ function requestAPI() {
 	});  */
 	
 	// Use these for testing only.git 
-	// Scraping.requestToAppTweak("/ios/categories/6014/top.json", datadb, curColl);
-	// Scraping.requestToAppTweak("/ios/categories/6014/top.json?type=paid", datadb, curColl);
-	// Scraping.requestToAppTweak("/ios/categories/6014/top.json?type=grossing", datadb, curColl);
-	// Scraping.requestToAppTweak("/android/categories/game/top.json", datadb, curColl);
-	// Scraping.requestToAppTweak("/android/categories/game/top.json?type=paid", datadb, curColl);
-	// Scraping.requestToAppTweak("/android/categories/game/top.json?type=grossing", datadb, curColl);
+	Scraping.requestToAppTweak("/ios/categories/6014/top.json", datadb, curColl);
+	Scraping.requestToAppTweak("/ios/categories/6014/top.json?type=paid", datadb, curColl);
+	Scraping.requestToAppTweak("/ios/categories/6014/top.json?type=grossing", datadb, curColl);
+	Scraping.requestToAppTweak("/android/categories/game/top.json", datadb, curColl);
+	Scraping.requestToAppTweak("/android/categories/game/top.json?type=paid", datadb, curColl);
+	Scraping.requestToAppTweak("/android/categories/game/top.json?type=grossing", datadb, curColl);
 	
-	// curColl = Scraping.getColl();
-	// console.log(">>>>>>This is curColl = ", curColl);
+	curColl = Scraping.getColl();
+	console.log(">>>>>>This is curColl = ", curColl);
 }
 
 
@@ -235,8 +235,8 @@ mongodb.connect(db1_url, function(err, dbConnection) {
 	mongodb.connect(db2_url, function(err2, dbConnection2) {
 		assert.equal(null, err2)
 		datadb = dbConnection2;
-		// requestAPI();
-		curColl = "IOS_TopFree_2016_5_18_5_21";
+		requestAPI();
+		//curColl = "IOS_TopFree_2016_5_18_5_21";
 	
 		var server = app.listen(app_port, function() {
 			console.log('> Application listening on port ' + app_port + '!');
