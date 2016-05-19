@@ -29,7 +29,6 @@ var Signin = React.createClass({
 	 * @param {e} button onClick event listener
 	 */
 	handleLogin: function(e) {
-		console.log("Start handleLogin");
 		e.preventDefault();
 		var form = document.forms.signinForm;
 		var username = form.username.value;

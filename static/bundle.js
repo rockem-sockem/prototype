@@ -44729,92 +44729,89 @@ var Table = require('react-bootstrap/lib/Table');
 
 var BugFilter = require('./BugFilter');
 
-var BugRow = React.createClass({
-	displayName: 'BugRow',
+var BugList = React.createClass({
+	displayName: 'BugList',
 
 	render: function () {
-		var genres = this.formatGenres();
-		var devices = this.formatDevices();
-
 		return React.createElement(
-			'tr',
+			'div',
 			null,
-			React.createElement(
-				'td',
-				null,
-				this.props.ranking
-			),
-			React.createElement(
-				'td',
-				null,
-				this.props.bug.title
-			),
-			React.createElement(
-				'td',
-				null,
-				this.props.bug.developer
-			),
-			React.createElement(
-				'td',
-				null,
-				this.props.bug.price
-			),
-			React.createElement(
-				'td',
-				null,
-				genres
-			),
-			React.createElement(
-				'td',
-				null,
-				devices
-			)
+			React.createElement(BugFilter, { submitHandler: this.loadData }),
+			React.createElement('hr', null),
+			React.createElement(DataDDMenu, { collections: this.state.collections, cbChangeColl: this.changeColl }),
+			React.createElement('br', null),
+			React.createElement('hr', null),
+			React.createElement(BugTable, { bugs: this.state.bugs, fields: this.state.fields })
 		);
 	},
-	formatGenres: function () {
-		var genres = "";
-		var length = this.props.bug.genres.length;
-
-		for (var i = 0; i < length; i++) {
-			var cur = this.props.bug.genres[i];
-
-			if (i < length - 1) {
-				genres += cur + ", ";
-			} else {
-				genres += cur;
-			}
-		}
-		return genres;
+	getInitialState: function () {
+		return {
+			bugs: [], // data in collection
+			collections: [], // collection holding data
+			fields: [] // new fields that will create the extra column
+		};
 	},
-	formatDevices: function () {
-		var devices = "";
-		if (this.props.bug.devices == null) {
-			return devices;
-		}
+	componentDidMount: function () {
+		this.loadData({});
+	},
+	loadData: function (filter) {
+		// Initial loading of scraped data for the table
+		$.ajax('/api/bugs', { data: filter }).done(function (data) {
+			this.setState({ bugs: data });
+		}.bind(this));
+		// In production, we'd also handle errors.
 
-		var length = this.props.bug.devices.length;
+		// Initial loading of collections name for dropdown menu
+		$.ajax('/api/datadbCollections', { data: filter }).done(function (data) {
+			this.setState({ collections: data });
+		}.bind(this));
 
-		for (var i = 0; i < length; i++) {
-			var cur = this.props.bug.devices[i];
+		// Initial loading of extra columns in the table
+		$.ajax('/field', { data: filter }).done(function (data) {
+			this.setState({ fields: data });
+		}.bind(this));
+	},
 
-			if (i < length - 1) {
-				devices += cur + ", ";
-			} else {
-				devices += cur;
+	changeColl: function () {
+		// Gets collection according to user selection
+		var filter = {};
+		$.ajax('/api/bugs', { data: filter }).done(function (data) {
+			this.setState({ bugs: data });
+		}.bind(this));
+	},
+	addBug: function (bug) {
+		$.ajax({
+			type: 'POST', url: '/api/bugs', contentType: 'application/json',
+			data: JSON.stringify(bug),
+			success: function (data) {
+				var bug = data;
+				// We're advised not to modify the state, it's immutable. So, make a copy.
+				var bugsModified = this.state.bugs.concat(bug);
+				this.setState({ bugs: bugsModified });
+			}.bind(this),
+			error: function (xhr, status, err) {
+				// ideally, show error to user.
+				console.log("Error adding bug:", err);
 			}
-		}
-		return devices;
+		});
 	}
 });
+
+/**********************************************/
+/**** Table Components ************************/
+/**********************************************/
 
 var BugTable = React.createClass({
 	displayName: 'BugTable',
 
 	render: function () {
-		// console.log("Rendering bug table, num items:", this.props.bugs.length);
 		var counter = 0;
+		var pFields = this.props.fields;
+		var fields = this.props.fields.map(function (field) {
+			return React.createElement(Field, { key: field._id, field: field });
+		});
 		var bugRows = this.props.bugs.map(function (bug) {
-			return React.createElement(BugRow, { key: bug._id, bug: bug, ranking: ++counter });
+			return React.createElement(BugRow, { key: bug._id, bug: bug, ranking: ++counter, fields: pFields });
 		});
 		return React.createElement(
 			Table,
@@ -44854,7 +44851,8 @@ var BugTable = React.createClass({
 						'th',
 						null,
 						'Device'
-					)
+					),
+					fields
 				)
 			),
 			React.createElement(
@@ -44866,64 +44864,116 @@ var BugTable = React.createClass({
 	}
 });
 
-var BugList = React.createClass({
-	displayName: 'BugList',
+var Field = React.createClass({
+	displayName: 'Field',
 
 	render: function () {
 		return React.createElement(
-			'div',
+			'th',
 			null,
-			React.createElement(BugFilter, { submitHandler: this.loadData }),
-			React.createElement('hr', null),
-			React.createElement(DataDDMenu, { collections: this.state.collections, cbChangeColl: this.changeColl }),
-			React.createElement('br', null),
-			React.createElement('hr', null),
-			React.createElement(BugTable, { bugs: this.state.bugs })
+			this.props.field.name
 		);
-	},
-	getInitialState: function () {
-		return {
-			bugs: [],
-			collections: []
-		};
-	},
-	componentDidMount: function () {
-		this.loadData({});
-	},
-	loadData: function (filter) {
-		$.ajax('/api/bugs', { data: filter }).done(function (data) {
-			this.setState({ bugs: data });
-		}.bind(this));
-		// In production, we'd also handle errors.
-
-		$.ajax('/api/datadbCollections', { data: filter }).done(function (data) {
-			this.setState({ collections: data });
-		}.bind(this));
-	},
-
-	changeColl: function () {
-		var filter = {};
-		$.ajax('/api/bugs', { data: filter }).done(function (data) {
-			this.setState({ bugs: data });
-		}.bind(this));
-	},
-	addBug: function (bug) {
-		$.ajax({
-			type: 'POST', url: '/api/bugs', contentType: 'application/json',
-			data: JSON.stringify(bug),
-			success: function (data) {
-				var bug = data;
-				// We're advised not to modify the state, it's immutable. So, make a copy.
-				var bugsModified = this.state.bugs.concat(bug);
-				this.setState({ bugs: bugsModified });
-			}.bind(this),
-			error: function (xhr, status, err) {
-				// ideally, show error to user.
-				console.log("Error adding bug:", err);
-			}
-		});
 	}
 });
+
+var FieldValue = React.createClass({
+	displayName: 'FieldValue',
+
+	render: function () {
+		return React.createElement(
+			'td',
+			null,
+			this.props.bug[this.props.field.name]
+		);
+	}
+});
+
+var BugRow = React.createClass({
+	displayName: 'BugRow',
+
+	render: function () {
+		var bug = this.props.bug;
+		var genres = this.formatGenres();
+		var devices = this.formatDevices();
+		var fieldValues = this.props.fields.map(function (field) {
+			return React.createElement(FieldValue, { key: field._id, bug: bug, field: field });
+		});
+
+		return React.createElement(
+			'tr',
+			null,
+			React.createElement(
+				'td',
+				null,
+				this.props.ranking
+			),
+			React.createElement(
+				'td',
+				null,
+				this.props.bug.title
+			),
+			React.createElement(
+				'td',
+				null,
+				this.props.bug.developer
+			),
+			React.createElement(
+				'td',
+				null,
+				this.props.bug.price
+			),
+			React.createElement(
+				'td',
+				null,
+				genres
+			),
+			React.createElement(
+				'td',
+				null,
+				devices
+			),
+			fieldValues
+		);
+	},
+	formatGenres: function () {
+		var genres = "";
+		var length = this.props.bug.genres.length;
+
+		for (var i = 0; i < length; i++) {
+			var cur = this.props.bug.genres[i];
+
+			if (i < length - 1) {
+				genres += cur + ", ";
+			} else {
+				genres += cur;
+			}
+		}
+		return genres;
+	},
+	formatDevices: function () {
+		var devices = "";
+		if (this.props.bug.devices == null) {
+			return devices;
+		}
+
+		var length = this.props.bug.devices.length;
+
+		for (var i = 0; i < length; i++) {
+			var cur = this.props.bug.devices[i];
+
+			if (i < length - 1) {
+				devices += cur + ", ";
+			} else {
+				devices += cur;
+			}
+		}
+		return devices;
+	}
+});
+
+/**********************************************/
+/**** Collection Drop-down Menu ***************/
+/**********************************************/
 
 var DataDDMenu = React.createClass({
 	displayName: 'DataDDMenu',
@@ -45571,7 +45621,6 @@ var Signin = React.createClass({
   * @param {e} button onClick event listener
   */
 	handleLogin: function (e) {
-		console.log("Start handleLogin");
 		e.preventDefault();
 		var form = document.forms.signinForm;
 		var username = form.username.value;
@@ -45715,7 +45764,8 @@ var FieldPanel = React.createClass({
 				Panel,
 				null,
 				React.createElement(FieldAdd, null),
-				React.createElement('br', null)
+				React.createElement('br', null),
+				React.createElement(FieldUpdate, null)
 			)
 		);
 	}
@@ -45736,7 +45786,7 @@ var FieldAdd = React.createClass({
 			React.createElement(
 				'form',
 				{ name: 'addFieldForm' },
-				React.createElement(Input, { type: 'text', name: 'field', placeholder: 'Field' }),
+				React.createElement(Input, { type: 'text', name: 'field', placeholder: 'Field name' }),
 				' ',
 				React.createElement('br', null),
 				React.createElement(
@@ -45772,7 +45822,76 @@ var FieldAdd = React.createClass({
 				}
 			}.bind(this),
 			error: function (xhr, status, err) {
-				console.log("(FieldPanel.addField)Callback error! ", err);
+				console.log("(FieldPanel-FieldAdd.addField)Callback error! ", err);
+			}
+		});
+	}
+});
+
+var FieldUpdate = React.createClass({
+	displayName: 'FieldUpdate',
+
+	render: function () {
+		return React.createElement(
+			'div',
+			null,
+			React.createElement(
+				'h2',
+				null,
+				'Update Data'
+			),
+			React.createElement(
+				'form',
+				{ name: 'updateDataForm' },
+				React.createElement(Input, { type: 'text', name: 'field', placeholder: 'Field name' }),
+				' ',
+				React.createElement('br', null),
+				React.createElement(Input, { type: 'text', name: 'title', placeholder: 'Game Title' }),
+				' ',
+				React.createElement('br', null),
+				React.createElement(Input, { type: 'text', name: 'data', placeholder: 'Data to be inserted or modified' }),
+				' ',
+				React.createElement('br', null),
+				React.createElement(
+					Button,
+					{ bsStyle: 'primary', onClick: this.updateData },
+					'Update data'
+				)
+			)
+		);
+	},
+	updateData: function (e) {
+		e.preventDefault();
+		var form = document.forms.updateDataForm;
+		var field = form.field.value;
+		var title = form.title.value;
+		var newData = form.data.value;
+		var sendData = {
+			"field": field,
+			"title": title,
+			"data": newData
+		};
+
+		if (field == null || field == "" || title == null || title == "") {
+			alert("Empty field or title");
+			return;
+		}
+
+		$.ajax({
+			type: 'POST',
+			url: '/field/data/update',
+			contentType: 'application/json',
+			data: JSON.stringify(sendData),
+			// @param {data} username, role
+			success: function (data) {
+				if (data != null) {
+					form.field.value = "";
+					form.title.value = "";
+					form.data.value = "";
+				}
+			}.bind(this),
+			error: function (xhr, status, err) {
+				console.log("(FieldPanel-FieldUpdate.updateData)Callback error! ", err);
 			}
 		});
 	}

@@ -12,7 +12,7 @@ var FieldPanel = React.createClass({
 				<Panel>
 					<FieldAdd />
 					<br />
-					
+					<FieldUpdate />
 				</Panel>
 			</div>
 		);
@@ -25,7 +25,7 @@ var FieldAdd = React.createClass({
 			<div>
 				<h2>Add Field</h2>
 				<form name="addFieldForm">
-					<Input type="text" name="field" placeholder="Field"/> <br/>
+					<Input type="text" name="field" placeholder="Field name"/> <br/>
 					<Button bsStyle="primary" onClick={this.addField}>Add Field</Button>
 				</form>
 			</div>
@@ -56,7 +56,58 @@ var FieldAdd = React.createClass({
 				}
 			}.bind(this),
 			error: function(xhr, status, err) {
-				console.log("(FieldPanel.addField)Callback error! ", err);
+				console.log("(FieldPanel-FieldAdd.addField)Callback error! ", err);
+			}
+		});
+	}
+});
+
+var FieldUpdate = React.createClass({
+	render: function() {
+		return(
+			<div>
+				<h2>Update Data</h2>
+				<form name="updateDataForm">
+					<Input type="text" name="field" placeholder="Field name"/> <br/>
+					<Input type="text" name="title" placeholder="Game Title"/> <br/>
+					<Input type="text" name="data" placeholder="Data to be inserted or modified"/> <br/>
+					<Button bsStyle="primary" onClick={this.updateData}>Update data</Button>
+				</form>
+			</div>
+		);
+	},
+	updateData: function(e) {
+		e.preventDefault();
+		var form = document.forms.updateDataForm;
+		var field = form.field.value;
+		var title = form.title.value;
+		var newData = form.data.value;
+		var sendData = { 
+			"field" : field,
+			"title" : title,
+			"data" : newData
+		};
+		
+		if(field == null || field == "" || title == null || title == "") {
+			alert("Empty field or title");
+			return;
+		}
+		
+		$.ajax({
+			type: 'POST', 
+			url: '/field/data/update', 
+			contentType: 'application/json',
+			data: JSON.stringify(sendData),
+			// @param {data} username, role
+			success: function(data) {
+				if(data != null) {
+					form.field.value = "";
+					form.title.value = "";
+					form.data.value = "";
+				} 
+			}.bind(this),
+			error: function(xhr, status, err) {
+				console.log("(FieldPanel-FieldUpdate.updateData)Callback error! ", err);
 			}
 		});
 	}

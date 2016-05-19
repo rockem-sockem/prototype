@@ -45,7 +45,8 @@ app.get('/api/bugs', function(req,res){
 	if(req.query.developer)
 		filter.developer = {"$in" : [new RegExp(req.query.developer,"i")]};
 
-	datadb.collection(curColl).find(filter).toArray(function(err,docs) {
+	datadb.collection(curColl).find(filter).toArray(function(err, docs) {
+		assert.equal(null, err);
 		res.json(docs); 
 	});
 });
@@ -63,9 +64,17 @@ app.post('/api/changeDatadbCollection', function(req, res) {
 	res.end()
 });
 
-app.get('/api/datadbCollections', function(req,res){
+app.get('/api/datadbCollections', function(req, res){
 	datadb.listCollections().toArray(function(err, collections){
+		assert.equal(null, err);
 		res.json(collections);
+	});
+});
+
+app.get('/field', function(req, res) {
+	appdb.collection("fields").find({}).toArray(function(err, docs) {
+		assert.equal(null, err);
+		res.json(docs); 
 	});
 });
 
@@ -190,7 +199,8 @@ app.get('/api/users', function(req,res){
 	if(req.query.username)
 		filter.username = req.query.username;
 
-	appdb.collection("users").find(filter).toArray(function(err,docs) {
+	appdb.collection("users").find(filter).toArray(function(err, docs) {
+		assert.equal(null, err);
 		res.json(docs); 
 	});
 });
@@ -219,6 +229,24 @@ app.post('/field/add', function(req, res) {
 			res.json(null);
 		}
 	});
+});
+
+app.post('/field/data/update', function(req, res) {
+	var fieldName = { "name" : req.body.field };
+	var gameTitle = { "title" : req.body.title };
+	var update = {$set : {[req.body.field]: req.body.data}};
+	
+	appdb.collection("fields").find(fieldName).next(function(err, doc) {
+		if(doc != null) { // exists
+			datadb.collection(curColl).find(gameTitle).next(function(err2, doc2) {
+				if(doc2 != null) { // exists
+					datadb.collection(curColl).update(gameTitle, update);
+				} 
+			});
+		} 
+	});
+	
+	res.json("end");
 });
 
 
