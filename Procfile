@@ -1,1 +1,1 @@
-web: node wedapp.js
+web: node webapp.js
