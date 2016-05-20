@@ -7,6 +7,10 @@ var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var schedule = require('node-schedule');
 var Scraping = require('./ScrapingAPI');
+var https = require('https');
+
+var events = require('events');
+var eventEmitter = new events.EventEmitter();
 
 var app = express();
 var app_port =  process.env.PORT || 3000;
@@ -17,6 +21,7 @@ var data; // JSON data fetch from AppTweak
 var req; // HTTPS request for AppTweak
 var curColl = ""; // Current collection used in datadb. Collection will change.
 var sched; // Schedule/frequency of fetching data
+var sendData = "";
 
 app.use(bodyParser.json());
 app.use(express.static('static'));
@@ -167,6 +172,72 @@ app.post('/api/login/', function(req, res) {
 		
 	});
 });
+
+app.post('/api/gameDetails', function(req, res) {	
+	var device = req.body.device;
+	var id = req.body.id;
+	//console.log("device", device);
+	//console.log("id", id);
+	requestForGameDetails(id, device);
+	
+	eventEmitter.on('got_data', function() {
+		console.log("this data ", sendData);
+		res.json(sendData);
+	});
+});
+
+//  Passes a data of the game being clicked in BugList and grabs all relevant data
+//  @param {id} is the id of the game
+//  @param {device} is the device used for the game
+function requestForGameDetails(id, device) {
+	
+	var datapath = "/" + device + "/applications/" + id + "/information.json";
+	console.log(datapath);
+	
+	
+	var header = {"X-Apptweak-Key": "QS5NiFFrLERBRML_ptL208cJoWc"};
+	var options = {
+		hostname: "api.apptweak.com",
+		port: 443,
+		path: "/",
+		"rejectUnauthorized": false,
+		method:"GET",
+		headers: header
+	};
+	
+	options.path = datapath;
+	// console.log(options);
+	req = https.request(options, function(res) {
+		var responseBody =""; 
+		// console.log("> Response from server started."); 
+		// console.log(`> Server Status: ${res.statusCode}`); 
+		// console.log("> Response Headers: %j", res.headers);
+		res.setEncoding("UTF-8"); 
+		//retrieve the data in chunks
+		res.on("data", function(chunk) {
+			responseBody += chunk;
+		});
+
+		res.on("end", function(){
+			//Once completed we parse the data in JSON format
+			sendData = JSON.parse(responseBody);
+			//console.log(sendData);
+			eventEmitter.emit('got_data');
+		});
+	});
+	
+	req.on("error", function(err) {
+		console.log(`problem with request: ${err.message}`);
+	});
+	req.end();
+	
+	
+
+}
+	
+	
+	
+	
 
 // Logs out the logged user and destroys the session
 app.post('/api/logout',function(req,res){
