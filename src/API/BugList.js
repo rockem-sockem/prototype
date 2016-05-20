@@ -138,7 +138,7 @@ var BugRow = React.createClass({
 		return (
 			<tr>
 				<td>{this.props.ranking}</td>
-				<td>{this.props.bug.title}</td>
+				<td><a onClick={this.fetchData}>{this.props.bug.title}</a></td>
 				<td>{this.props.bug.developer}</td>
 				<td>{this.props.bug.price}</td>
 				<td>{genres}</td>
@@ -180,6 +180,32 @@ var BugRow = React.createClass({
 			}
 		}
 		return devices;
+	},
+	
+	//This function sends a get request for the data of a selected game
+	fetchData: function() {
+		// Initial loading of scraped data for the table
+		var query = { 
+			id: this.props.bug.id,
+			device: (this.props.bug.devices === null) ? "android" : "ios"
+		};
+		// console.log(this.props.bug.id, " ", this.props.bug.devices)
+		// $.ajax('/api/gameDetails', query).done(function(data) {
+			// console.log("fetchData run");
+			// console.log(JSON.stringify(data));
+		// }.bind(this));
+		// In production, we'd also handle errors.
+		$.ajax({
+			type: 'POST', url: '/api/gameDetails', 
+			contentType: 'application/json',
+			data: JSON.stringify(query),
+			success: function(data) {
+				//Pass data into a module and display
+			}.bind(this),
+			error: function(xhr, status, err) {
+				console.log("Error changing collections:", err);
+			}
+		});
 	}
 });
 
@@ -223,6 +249,8 @@ var DataDDMenu = React.createClass({
 		});
 	}
 });
+
+
 
 var DataOptions = React.createClass({	
   render: function() {	
