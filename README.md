@@ -28,6 +28,16 @@ then update its role in the mongo shell.
 
 ---Small bugs/features/things to consider:
 
+* No cross data.collection update 
+
+* Field data value update only works with selected collection
+
+
+
+
+
+
+
 *Code cleanup(proper file/component names) and documentation!!!
 
 *Add enter key listener for all buttons.

@@ -3,6 +3,7 @@ var ReactDOM = require('react-dom');
 var $ = require('jquery');
 
 var Table = require('react-bootstrap/lib/Table');
+var Button = require('react-bootstrap/lib/Button');
 
 var BugFilter = require('./BugFilter');
 
@@ -15,10 +16,10 @@ var BugList = React.createClass({
 			<div>
 				<BugFilter submitHandler={this.loadData} />
 				<hr />
-				<DataDDMenu collections={this.state.collections} cbChangeColl={this.changeColl} />
+				<DataDDMenu collections={this.state.collections} cbChangeColl={this.loadCollection} />
 				<br />
 				<hr />
-				<BugTable bugs={this.state.bugs} fields={this.state.fields} />
+				<BugTable bugs={this.state.bugs} fields={this.state.fields} refresh={this.loadData} />
 			</div>
 		)
 	},
@@ -32,29 +33,32 @@ var BugList = React.createClass({
 	componentDidMount: function() {
 		this.loadData({});
 	},
+	
+	
 	loadData:function(filter) {
 		// Initial loading of scraped data for the table
 		$.ajax('/api/bugs', {data:filter}).done(function(data) {
 			this.setState({bugs: data});
 		}.bind(this));
-		// In production, we'd also handle errors.
-		
 		// Initial loading of collections name for dropdown menu
-		$.ajax('/api/datadbCollections', {data:filter}).done(function(data) {
+		this.loadDropdown();
+		// Initial loading of extra columns in the table
+		this.loadColumns();
+	},
+	loadCollection: function() { // Gets collection according to user selection
+		$.ajax('/api/bugs', {data:{}}).done(function(data) {
+			this.setState({bugs: data});
+		}.bind(this));
+		// In production, we'd also handle errors.
+	},
+	loadDropdown: function() {
+		$.ajax('/api/datadbCollections', {data:{}}).done(function(data) {
 			this.setState({collections: data});
 		}.bind(this));
-		
-		// Initial loading of extra columns in the table
-		$.ajax('/field', {data:filter}).done(function(data) {
-			this.setState({fields: data});
-		}.bind(this));
 	},
-	
-	
-	changeColl: function() { // Gets collection according to user selection
-		var filter = {};
-		$.ajax('/api/bugs', {data:filter}).done(function(data) {
-			this.setState({bugs: data});
+	loadColumns: function() {
+		$.ajax('/field', {data:{}}).done(function(data) {
+			this.setState({fields: data});
 		}.bind(this));
 	},
 	addBug: function(bug) {
@@ -81,34 +85,48 @@ var BugList = React.createClass({
 /**********************************************/
 
 var BugTable = React.createClass({
-  render: function() {
-	var counter = 0;
-	var pFields = this.props.fields;
-	var fields = this.props.fields.map(function(field) {
-		return <Field key={field._id} field={field} />
-	});
-	var bugRows = this.props.bugs.map(function(bug) {
-		return <BugRow key={bug._id} bug={bug} ranking={++counter} fields={pFields} />
-    });
-    return (
-		<Table striped bordered condensed hover>
-			<thead>
-				<tr>
-					<th>Rank</th>
-					<th>Title</th>
-					<th>Developer</th>
-					<th>Price</th>
-					<th>Category</th>
-					<th>Device</th>
-					{fields}
-				</tr>
-			</thead>
-			<tbody>
-				{bugRows}
-			</tbody>
-		</Table>
-    )
-  }
+	render: function() {
+		var counter = 0;
+		var pFields = this.props.fields;
+		var fields = this.props.fields.map(function(field) {
+			return <Field key={field._id} field={field} />
+		});
+		var bugRows = this.props.bugs.map(function(bug) {
+			return <BugRow key={bug._id} bug={bug} ranking={++counter} fields={pFields} />
+		});
+		return (
+			<div>
+				<Button onClick={this.handleRefresh}>Refresh</Button>
+				<br />
+				<br />
+				<Table striped bordered condensed hover>
+					<thead>
+						<tr>
+							<th>Rank</th>
+							<th>Title</th>
+							<th>Developer</th>
+							<th>Price</th>
+							<th>Category</th>
+							<th>Device</th>
+							{fields}
+						</tr>
+					</thead>
+					<tbody>
+						{bugRows}
+					</tbody>
+				</Table>
+			</div>
+		)
+	},
+	getInitialState: function() {
+		return{
+			bugs: this.props.bugs
+		};
+	},
+	handleRefresh: function(e) {
+		e.preventDefault();
+		this.props.refresh();
+	}
 });
 
 var Field = React.createClass({
@@ -147,6 +165,11 @@ var BugRow = React.createClass({
 				{fieldValues}
 			</tr>
 		)
+	},
+	getInitialState: function() {
+		return{
+			// bug: this.props.bug
+		};
 	},
 	formatGenres: function() {
 		var genres = "";
