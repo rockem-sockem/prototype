@@ -7,7 +7,8 @@ var Button = require('react-bootstrap/lib/Button');
 
 var BugFilter = require('./BugFilter');
 
-
+// Object to hold json data
+var obj;
 
 var BugList = React.createClass({
 	render: function() {
@@ -156,7 +157,7 @@ var BugRow = React.createClass({
 		return (
 			<tr>
 				<td>{this.props.ranking}</td>
-				<td>{this.props.bug.title}</td>
+				<td><a onClick={this.fetchData}>{this.props.bug.title}</a></td>
 				<td>{this.props.bug.developer}</td>
 				<td>{this.props.bug.price}</td>
 				<td>{genres}</td>
@@ -203,6 +204,25 @@ var BugRow = React.createClass({
 			}
 		}
 		return devices;
+	},
+	
+	//This function sends a get request for the data of a selected game
+	fetchData: function() {
+		// Initial loading of scraped data for the table
+		var query = { 
+			id: this.props.bug.id,
+			device: (this.props.bug.devices === null) ? "android" : "ios"
+		};
+		// console.log(this.props.bug.id, " ", this.props.bug.devices)
+		// $.ajax('/api/gameDetails', query).done(function(data) {
+			// console.log("fetchData run");
+			// console.log(JSON.stringify(data));
+		// }.bind(this));
+		// In production, we'd also handle errors.
+		$.ajax('/api/gameDetails', {data:query}).done(function(data) {
+      		//this.setState({bugs: data});
+      		console.log(data);
+    	}.bind(this));
 	}
 });
 
@@ -246,6 +266,8 @@ var DataDDMenu = React.createClass({
 		});
 	}
 });
+
+
 
 var DataOptions = React.createClass({	
   render: function() {	

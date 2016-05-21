@@ -12,11 +12,11 @@ var Signin = React.createClass({
 	 */
 	render: function() {
 		return(
-			<div>
+			<div id="signin">
 				<h2>Welcome Back!</h2> <br/>
 				<form name="signinForm">
-					<Input type="text" name="username" placeholder="Username"/> <br/>
-					<Input type="password" name="password" placeholder="Password"/> <br/>
+					<Input type="text" name="username" placeholder="Username" onKeyPress={this.handleEnter}/> <br/>
+					<Input type="password" name="password" placeholder="Password" onKeyPress={this.handleEnter}/> <br/>
 					<Button bsStyle="primary" onClick={this.handleLogin}>Sign In</Button>
 				</form>
 			</div>
@@ -63,7 +63,18 @@ var Signin = React.createClass({
 				console.log("(handleLogin)Callback error! ", err);
 			}
 		});
-	}
+	},
+	handleEnter: function(e) {
+		if (e.which == 13 || e.keyCode == 13) {
+			this.handleLogin(e);
+			console.log('enter key is pressed');
+			return false;
+		}
+		else
+			return true;
+    }
 });
+
+
 
 module.exports = Signin;

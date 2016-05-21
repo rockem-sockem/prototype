@@ -7,16 +7,21 @@ var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var schedule = require('node-schedule');
 var Scraping = require('./ScrapingAPI');
+var https = require('https');
+
+var events = require('events');
+var eventEmitter = new events.EventEmitter();
 
 var app = express();
-var app_port = 3000;
-var db1_url = 'mongodb://localhost/appdb';
-var db2_url = 'mongodb://localhost/datadb';
+var app_port =  process.env.PORT || 3000;
+var db1_url = 'mongodb://Kevin:adrian@ds025772.mlab.com:25772/data';
+var db2_url = 'mongodb://Kevin:adrian@ds025772.mlab.com:25772/data';
 var datadb, appdb;
 var data; // JSON data fetch from AppTweak
 var req; // HTTPS request for AppTweak
 var curColl = ""; // Current collection used in datadb. Collection will change.
 var sched; // Schedule/frequency of fetching data
+var sendData = "";
 
 app.use(bodyParser.json());
 app.use(express.static('static'));
@@ -101,15 +106,15 @@ function requestAPI() {
 	});  */
 	
 	// Use these for testing only.git 
-	// Scraping.requestToAppTweak("/ios/categories/6014/top.json", datadb, curColl);
-	// Scraping.requestToAppTweak("/ios/categories/6014/top.json?type=paid", datadb, curColl);
-	// Scraping.requestToAppTweak("/ios/categories/6014/top.json?type=grossing", datadb, curColl);
-	// Scraping.requestToAppTweak("/android/categories/game/top.json", datadb, curColl);
-	// Scraping.requestToAppTweak("/android/categories/game/top.json?type=paid", datadb, curColl);
-	// Scraping.requestToAppTweak("/android/categories/game/top.json?type=grossing", datadb, curColl);
+	Scraping.requestToAppTweak("/ios/categories/6014/top.json", datadb, curColl);
+	//Scraping.requestToAppTweak("/ios/categories/6014/top.json?type=paid", datadb, curColl);
+	//Scraping.requestToAppTweak("/ios/categories/6014/top.json?type=grossing", datadb, curColl);
+	//Scraping.requestToAppTweak("/android/categories/game/top.json", datadb, curColl);
+	//Scraping.requestToAppTweak("/android/categories/game/top.json?type=paid", datadb, curColl);
+	//Scraping.requestToAppTweak("/android/categories/game/top.json?type=grossing", datadb, curColl);
 	
-	// curColl = Scraping.getColl();
-	// console.log(">>>>>>This is curColl = ", curColl);
+	curColl = Scraping.getColl();
+	console.log(">>>>>>This is curColl = ", curColl);
 }
 
 
@@ -167,6 +172,84 @@ app.post('/api/login/', function(req, res) {
 		
 	});
 });
+
+app.get('/api/gameDetails', function(req, res) {	
+	var device = req.query.device;
+	var id = req.query.id;
+	//console.log("id", id);
+	requestForGameDetails(id, device);
+	eventEmitter.on('got_data', function() {
+		res.json(sendData);
+	});
+});
+
+/*
+app.get('/api/bugs', function(req,res){
+	var filter = {};
+	if(req.query.title)
+		filter.title = {"$in": [new RegExp(req.query.title,"i")]};
+	if(req.query.developer)
+		filter.developer = {"$in" : [new RegExp(req.query.developer,"i")]};
+
+	datadb.collection(curColl).find(filter).toArray(function(err, docs) {
+		assert.equal(null, err);
+		res.json(docs); 
+	});
+});
+ */
+//  Passes a data of the game being clicked in BugList and grabs all relevant data
+//  @param {id} is the id of the game
+//  @param {device} is the device used for the game
+function requestForGameDetails(id, device) {
+	
+	var datapath = "/" + device + "/applications/" + id + "/information.json";
+	console.log(datapath);
+	
+	
+	var header = {"X-Apptweak-Key": "QS5NiFFrLERBRML_ptL208cJoWc"};
+	var options = {
+		hostname: "api.apptweak.com",
+		port: 443,
+		path: datapath,
+		"rejectUnauthorized": false,
+		method:"GET",
+		headers: header
+	};
+	
+	//options.path = datapath;
+	// console.log(options);
+	req = https.request(options, function(res) {
+		var responseBody =""; 
+		// console.log("> Response from server started."); 
+		// console.log(`> Server Status: ${res.statusCode}`); 
+		// console.log("> Response Headers: %j", res.headers);
+		res.setEncoding("UTF-8"); 
+		//retrieve the data in chunks
+		res.on("data", function(chunk) {
+			responseBody += chunk;
+		});
+
+		res.on("end", function(){
+			//Once completed we parse the data in JSON format
+			sendData = JSON.parse(responseBody);
+			//console.log(sendData);
+			console.log(sendData);
+			eventEmitter.emit('got_data');
+		});
+	});
+	
+	req.on("error", function(err) {
+		console.log(`problem with request: ${err.message}`);
+	});
+	req.end();
+	
+	
+
+}
+	
+	
+	
+	
 
 // Logs out the logged user and destroys the session
 app.post('/api/logout',function(req,res){
@@ -287,8 +370,8 @@ mongodb.connect(db1_url, function(err, dbConnection) {
 	mongodb.connect(db2_url, function(err2, dbConnection2) {
 		assert.equal(null, err2)
 		datadb = dbConnection2;
-		// requestAPI();
-		curColl = "IOS_TopFree_2016_5_18_5_21";
+		//requestAPI();
+		curColl = "IOS_TopFree_2016_5_19_18_32";
 	
 		var server = app.listen(app_port, function() {
 			console.log('> Application listening on port ' + app_port + '!');

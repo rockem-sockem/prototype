@@ -44730,6 +44730,9 @@ var Button = require('react-bootstrap/lib/Button');
 
 var BugFilter = require('./BugFilter');
 
+// Object to hold json data
+var obj;
+
 var BugList = React.createClass({
 	displayName: 'BugList',
 
@@ -44934,7 +44937,11 @@ var BugRow = React.createClass({
 			React.createElement(
 				'td',
 				null,
-				this.props.bug.title
+				React.createElement(
+					'a',
+					{ onClick: this.fetchData },
+					this.props.bug.title
+				)
 			),
 			React.createElement(
 				'td',
@@ -44997,6 +45004,25 @@ var BugRow = React.createClass({
 			}
 		}
 		return devices;
+	},
+
+	//This function sends a get request for the data of a selected game
+	fetchData: function () {
+		// Initial loading of scraped data for the table
+		var query = {
+			id: this.props.bug.id,
+			device: this.props.bug.devices === null ? "android" : "ios"
+		};
+		// console.log(this.props.bug.id, " ", this.props.bug.devices)
+		// $.ajax('/api/gameDetails', query).done(function(data) {
+		// console.log("fetchData run");
+		// console.log(JSON.stringify(data));
+		// }.bind(this));
+		// In production, we'd also handle errors.
+		$.ajax('/api/gameDetails', { data: query }).done(function (data) {
+			//this.setState({bugs: data});
+			console.log(data);
+		}.bind(this));
 	}
 });
 
@@ -45618,7 +45644,7 @@ var Signin = React.createClass({
 	render: function () {
 		return React.createElement(
 			'div',
-			null,
+			{ id: 'signin' },
 			React.createElement(
 				'h2',
 				null,
@@ -45629,10 +45655,10 @@ var Signin = React.createClass({
 			React.createElement(
 				'form',
 				{ name: 'signinForm' },
-				React.createElement(Input, { type: 'text', name: 'username', placeholder: 'Username' }),
+				React.createElement(Input, { type: 'text', name: 'username', placeholder: 'Username', onKeyPress: this.handleEnter }),
 				' ',
 				React.createElement('br', null),
-				React.createElement(Input, { type: 'password', name: 'password', placeholder: 'Password' }),
+				React.createElement(Input, { type: 'password', name: 'password', placeholder: 'Password', onKeyPress: this.handleEnter }),
 				' ',
 				React.createElement('br', null),
 				React.createElement(
@@ -45683,6 +45709,13 @@ var Signin = React.createClass({
 				console.log("(handleLogin)Callback error! ", err);
 			}
 		});
+	},
+	handleEnter: function (e) {
+		if (e.which == 13 || e.keyCode == 13) {
+			this.handleLogin(e);
+			console.log('enter key is pressed');
+			return false;
+		} else return true;
 	}
 });
 
@@ -45717,10 +45750,10 @@ var Signup = React.createClass({
 			React.createElement(
 				'form',
 				{ name: 'signUpForm' },
-				React.createElement(Input, { type: 'text', name: 'username', placeholder: 'Username' }),
+				React.createElement(Input, { type: 'text', name: 'username', placeholder: 'Username', onKeyPress: this.handleEnter }),
 				' ',
 				React.createElement('br', null),
-				React.createElement(Input, { type: 'password', name: 'password', placeholder: 'Password' }),
+				React.createElement(Input, { type: 'password', name: 'password', placeholder: 'Password', onKeyPress: this.handleEnter }),
 				' ',
 				React.createElement('br', null),
 				React.createElement(
@@ -45769,6 +45802,13 @@ var Signup = React.createClass({
 				console.log("(handleSignup)Callback error! ", err);
 			}
 		});
+	},
+	handleEnter: function (e) {
+		if (e.which == 13 || e.keyCode == 13) {
+			this.handleSignup(e);
+			console.log('enter key is pressed');
+			return false;
+		} else return true;
 	}
 });
 
