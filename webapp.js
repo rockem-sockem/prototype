@@ -173,25 +173,37 @@ app.post('/api/login/', function(req, res) {
 	});
 });
 
-app.post('/api/gameDetails', function(req, res) {	
+app.get('/api/gameDetails', function(req, res) {	
 	var device = req.body.device;
 	var id = req.body.id;
 	//console.log("device", device);
 	//console.log("id", id);
 	requestForGameDetails(id, device);
-	
 	eventEmitter.on('got_data', function() {
-		console.log("this data ", sendData);
 		res.json(sendData);
 	});
 });
 
+/*
+app.get('/api/bugs', function(req,res){
+	var filter = {};
+	if(req.query.title)
+		filter.title = {"$in": [new RegExp(req.query.title,"i")]};
+	if(req.query.developer)
+		filter.developer = {"$in" : [new RegExp(req.query.developer,"i")]};
+
+	datadb.collection(curColl).find(filter).toArray(function(err, docs) {
+		assert.equal(null, err);
+		res.json(docs); 
+	});
+});
+ */
 //  Passes a data of the game being clicked in BugList and grabs all relevant data
 //  @param {id} is the id of the game
 //  @param {device} is the device used for the game
 function requestForGameDetails(id, device) {
 	
-	var datapath = "/" + device + "/applications/" + id + "/information.json";
+	var datapath = "/ios/applications/" + "1091944550" + "/information.json";
 	console.log(datapath);
 	
 	
@@ -199,13 +211,13 @@ function requestForGameDetails(id, device) {
 	var options = {
 		hostname: "api.apptweak.com",
 		port: 443,
-		path: "/",
+		path: datapath,
 		"rejectUnauthorized": false,
 		method:"GET",
 		headers: header
 	};
 	
-	options.path = datapath;
+	//options.path = datapath;
 	// console.log(options);
 	req = https.request(options, function(res) {
 		var responseBody =""; 
@@ -222,6 +234,7 @@ function requestForGameDetails(id, device) {
 			//Once completed we parse the data in JSON format
 			sendData = JSON.parse(responseBody);
 			//console.log(sendData);
+			console.log(sendData);
 			eventEmitter.emit('got_data');
 		});
 	});
