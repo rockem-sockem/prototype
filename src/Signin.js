@@ -1,6 +1,7 @@
 var React = require('react');
 var $ = require('jquery');
-var Input = require('react-bootstrap/lib/Input');
+var FormGroup = require('react-bootstrap/lib/FormGroup');
+var FormControl = require('react-bootstrap/lib/FormControl');
 var Button = require('react-bootstrap/lib/Button');
 var Auth = require('./Auth.js');
 
@@ -12,32 +13,37 @@ var Signin = React.createClass({
 	 */
 	render: function() {
 		return(
-			<div id="signin">
+			<div>
 				<h2>Welcome Back!</h2> <br/>
 				<form name="signinForm">
-					<Input type="text" name="username" placeholder="Username" onKeyPress={this.handleEnter}/> <br/>
-					<Input type="password" name="password" placeholder="Password" onKeyPress={this.handleEnter}/> <br/>
-					<Button bsStyle="primary" onClick={this.handleLogin}>Sign In</Button>
+					<FormGroup controlId="username">
+						<FormControl type="text" value={this.state.fUsername} placeholder="Username" 
+							onKeyPress={this.handleEnter} onChange={this.handleChange} />
+					</FormGroup>
+					<FormGroup controlId="password">
+						<FormControl type="password" value={this.state.fPassword} placeholder="Password" 
+							onKeyPress={this.handleEnter} onChange={this.handleChange} />
+					</FormGroup>
+					<Button bsStyle="primary" onClick={this.handleSignin}>Sign In</Button>
 				</form>
 			</div>
 		);
 	},
-	/**
-	 * Logins the user if the username exists in the database
-	 * and the correct password was input. After being log, It'll create a 
-	 * session for the user and redirect to the welcome page.
-	 * @param {e} button onClick event listener
-	 */
-	handleLogin: function(e) {
-		e.preventDefault();
+	getInitialState: function() {
+		return{
+			fUsername: "",
+			fPassword: ""
+		};
+	},
+	login: function() {
 		var form = document.forms.signinForm;
-		var username = form.username.value;
-		var password = form.password.value;
+		var username = this.state.fUsername;
+		var password = this.state.fPassword;
 		var user = { 
 			"username" : username,
 			"password" : password
 		};
-		
+
 		// No empty form fields allowed
 		if(username == null || username == "" ||
 		password == null || password == "") {
@@ -64,15 +70,25 @@ var Signin = React.createClass({
 			}
 		});
 	},
+	handleSignin: function(e) {
+		e.preventDefault();
+		this.login();
+	},
 	handleEnter: function(e) {
 		if (e.which == 13 || e.keyCode == 13) {
-			this.handleLogin(e);
+			this.login();
 			console.log('enter key is pressed');
-			return false;
+		} 
+    },
+	handleChange: function(e) {
+		var state;
+		if(e.target.id == "username") {
+			state = "fUsername";
+		} else {
+			state = "fPassword";
 		}
-		else
-			return true;
-    }
+		this.setState({ [state]: e.target.value });
+	}
 });
 
 
