@@ -231,6 +231,21 @@ app.post('/field/add', function(req, res) {
 	});
 });
 
+app.post('/field/remove', function(req, res) {
+	var field = { name: req.body.field} ;
+	// Checking if field exist
+	appdb.collection("fields").find(field).next(function(err, doc) {
+		assert.equal(null, err);
+		if(doc != null) { // field exists
+			// Inserting the field into the database 
+			appdb.collection("fields").remove(field);
+			res.json(true);
+		} else { 
+			res.json(false);
+		}
+	});
+});
+
 app.post('/field/data/update', function(req, res) {
 	var fieldName = { "name" : req.body.field };
 	var gameTitle = { "title" : req.body.title };
@@ -247,6 +262,15 @@ app.post('/field/data/update', function(req, res) {
 	});
 	
 	res.json("end");
+});
+
+app.post('/appdb/fields/removeOne', function(req, res) {
+	datadb.collection(req.body.name).drop();
+	
+	datadb.listCollections().toArray(function(err, collections){
+		assert.equal(null, err);
+		res.json(collections);
+	});
 });
 
 

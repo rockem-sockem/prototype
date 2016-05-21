@@ -44726,6 +44726,7 @@ var ReactDOM = require('react-dom');
 var $ = require('jquery');
 
 var Table = require('react-bootstrap/lib/Table');
+var Button = require('react-bootstrap/lib/Button');
 
 var BugFilter = require('./BugFilter');
 
@@ -44738,10 +44739,10 @@ var BugList = React.createClass({
 			null,
 			React.createElement(BugFilter, { submitHandler: this.loadData }),
 			React.createElement('hr', null),
-			React.createElement(DataDDMenu, { collections: this.state.collections, cbChangeColl: this.changeColl }),
+			React.createElement(DataDDMenu, { collections: this.state.collections, cbChangeColl: this.loadCollection }),
 			React.createElement('br', null),
 			React.createElement('hr', null),
-			React.createElement(BugTable, { bugs: this.state.bugs, fields: this.state.fields })
+			React.createElement(BugTable, { bugs: this.state.bugs, fields: this.state.fields, refresh: this.loadData })
 		);
 	},
 	getInitialState: function () {
@@ -44754,29 +44755,32 @@ var BugList = React.createClass({
 	componentDidMount: function () {
 		this.loadData({});
 	},
+
 	loadData: function (filter) {
 		// Initial loading of scraped data for the table
 		$.ajax('/api/bugs', { data: filter }).done(function (data) {
 			this.setState({ bugs: data });
 		}.bind(this));
-		// In production, we'd also handle errors.
-
 		// Initial loading of collections name for dropdown menu
-		$.ajax('/api/datadbCollections', { data: filter }).done(function (data) {
+		this.loadDropdown();
+		// Initial loading of extra columns in the table
+		this.loadColumns();
+	},
+	loadCollection: function () {
+		// Gets collection according to user selection
+		$.ajax('/api/bugs', { data: {} }).done(function (data) {
+			this.setState({ bugs: data });
+		}.bind(this));
+		// In production, we'd also handle errors.
+	},
+	loadDropdown: function () {
+		$.ajax('/api/datadbCollections', { data: {} }).done(function (data) {
 			this.setState({ collections: data });
 		}.bind(this));
-
-		// Initial loading of extra columns in the table
-		$.ajax('/field', { data: filter }).done(function (data) {
-			this.setState({ fields: data });
-		}.bind(this));
 	},
-
-	changeColl: function () {
-		// Gets collection according to user selection
-		var filter = {};
-		$.ajax('/api/bugs', { data: filter }).done(function (data) {
-			this.setState({ bugs: data });
+	loadColumns: function () {
+		$.ajax('/field', { data: {} }).done(function (data) {
+			this.setState({ fields: data });
 		}.bind(this));
 	},
 	addBug: function (bug) {
@@ -44814,53 +44818,73 @@ var BugTable = React.createClass({
 			return React.createElement(BugRow, { key: bug._id, bug: bug, ranking: ++counter, fields: pFields });
 		});
 		return React.createElement(
-			Table,
-			{ striped: true, bordered: true, condensed: true, hover: true },
+			'div',
+			null,
 			React.createElement(
-				'thead',
-				null,
+				Button,
+				{ onClick: this.handleRefresh },
+				'Refresh'
+			),
+			React.createElement('br', null),
+			React.createElement('br', null),
+			React.createElement(
+				Table,
+				{ striped: true, bordered: true, condensed: true, hover: true },
 				React.createElement(
-					'tr',
+					'thead',
 					null,
 					React.createElement(
-						'th',
+						'tr',
 						null,
-						'Rank'
-					),
-					React.createElement(
-						'th',
-						null,
-						'Title'
-					),
-					React.createElement(
-						'th',
-						null,
-						'Developer'
-					),
-					React.createElement(
-						'th',
-						null,
-						'Price'
-					),
-					React.createElement(
-						'th',
-						null,
-						'Category'
-					),
-					React.createElement(
-						'th',
-						null,
-						'Device'
-					),
-					fields
+						React.createElement(
+							'th',
+							null,
+							'Rank'
+						),
+						React.createElement(
+							'th',
+							null,
+							'Title'
+						),
+						React.createElement(
+							'th',
+							null,
+							'Developer'
+						),
+						React.createElement(
+							'th',
+							null,
+							'Price'
+						),
+						React.createElement(
+							'th',
+							null,
+							'Category'
+						),
+						React.createElement(
+							'th',
+							null,
+							'Device'
+						),
+						fields
+					)
+				),
+				React.createElement(
+					'tbody',
+					null,
+					bugRows
 				)
-			),
-			React.createElement(
-				'tbody',
-				null,
-				bugRows
 			)
 		);
+	},
+	getInitialState: function () {
+		return {
+			bugs: this.props.bugs
+		};
+	},
+	handleRefresh: function (e) {
+		e.preventDefault();
+		this.props.refresh();
 	}
 });
 
@@ -44934,6 +44958,11 @@ var BugRow = React.createClass({
 			),
 			fieldValues
 		);
+	},
+	getInitialState: function () {
+		return {
+			// bug: this.props.bug
+		};
 	},
 	formatGenres: function () {
 		var genres = "";
@@ -45024,7 +45053,7 @@ var DataOptions = React.createClass({
 
 module.exports = BugList;
 
-},{"./BugFilter":395,"jquery":25,"react":394,"react-bootstrap/lib/Table":58,"react-dom":189}],397:[function(require,module,exports){
+},{"./BugFilter":395,"jquery":25,"react":394,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/Table":58,"react-dom":189}],397:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
 var Router = require('react-router').Router;
@@ -45781,7 +45810,7 @@ var FieldAdd = React.createClass({
 			React.createElement(
 				'h2',
 				null,
-				'Add Field'
+				'Add/Remove Field'
 			),
 			React.createElement(
 				'form',
@@ -45793,6 +45822,11 @@ var FieldAdd = React.createClass({
 					Button,
 					{ bsStyle: 'primary', onClick: this.addField },
 					'Add Field'
+				),
+				React.createElement(
+					Button,
+					{ bsStyle: 'primary', onClick: this.removeField },
+					'Remove Field'
 				)
 			)
 		);
@@ -45813,7 +45847,6 @@ var FieldAdd = React.createClass({
 			url: '/field/add',
 			contentType: 'application/json',
 			data: JSON.stringify(sendData),
-			// @param {data} username, role
 			success: function (data) {
 				if (data != null) {
 					form.field.value = "";
@@ -45823,6 +45856,34 @@ var FieldAdd = React.createClass({
 			}.bind(this),
 			error: function (xhr, status, err) {
 				console.log("(FieldPanel-FieldAdd.addField)Callback error! ", err);
+			}
+		});
+	},
+	removeField: function (e) {
+		e.preventDefault();
+		var form = document.forms.addFieldForm;
+		var field = form.field.value;
+		var sendData = { "field": field };
+
+		if (field == null || field == "") {
+			alert("Empty field");
+			return;
+		}
+
+		$.ajax({
+			type: 'POST',
+			url: '/field/remove',
+			contentType: 'application/json',
+			data: JSON.stringify(sendData),
+			success: function (data) {
+				if (data == true) {
+					form.field.value = "";
+				} else {
+					alert("Field doesn't exists!");
+				}
+			}.bind(this),
+			error: function (xhr, status, err) {
+				console.log("(FieldPanel-FieldAdd.removeField)Callback error! ", err);
 			}
 		});
 	}
@@ -45901,11 +45962,13 @@ module.exports = FieldPanel;
 
 },{"jquery":25,"react":394,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/Input":37,"react-bootstrap/lib/Panel":51}],406:[function(require,module,exports){
 var React = require('react');
+var $ = require('jquery');
 
 var Grid = require('react-bootstrap/lib/Grid');
 var Row = require('react-bootstrap/lib/Row');
 var Col = require('react-bootstrap/lib/Col');
 var Panel = require('react-bootstrap/lib/Panel');
+var Button = require('react-bootstrap/lib/Button');
 
 var UserList = require('./UserList');
 var FieldPanel = require('./FieldPanel');
@@ -45940,6 +46003,8 @@ var Content = React.createClass({
 						React.createElement('hr', null),
 						React.createElement(FieldPanel, null),
 						React.createElement('hr', null),
+						React.createElement(Collections, null),
+						React.createElement('hr', null),
 						React.createElement(UserList, null)
 					)
 				)
@@ -45948,9 +46013,93 @@ var Content = React.createClass({
 	}
 });
 
+var Collections = React.createClass({
+	displayName: 'Collections',
+
+	render: function () {
+		var options = this.state.collections.map(function (coll) {
+			if (coll.name != "system.indexes") {
+				return React.createElement(DataOptions, { key: coll.name, collections: coll });
+			}
+		});
+
+		return React.createElement(
+			Panel,
+			null,
+			React.createElement(
+				'h2',
+				null,
+				'Remove Data Collection'
+			),
+			React.createElement(
+				'select',
+				{ id: 'removeColl', onChange: this.printSelected },
+				options
+			),
+			React.createElement('br', null),
+			React.createElement(
+				Button,
+				{ bsStyle: 'primary', onClick: this.removeSelected },
+				'Remove'
+			)
+		);
+	},
+	getInitialState: function () {
+		return {
+			collections: []
+		};
+	},
+	componentDidMount: function () {
+		this.loadDropdown();
+	},
+	componentWillReceiveProps: function () {
+		this.loadDropdown();
+	},
+
+	loadDropdown: function () {
+		$.ajax('/api/datadbCollections', { data: {} }).done(function (data) {
+			this.setState({ collections: data });
+		}.bind(this));
+	},
+	printSelected: function () {
+		var selected = document.getElementById("removeColl").value;
+		console.log("this is selected: ", selected);
+	},
+	removeSelected: function () {
+		var selected = document.getElementById("removeColl").value;
+		var query = { name: selected };
+
+		$.ajax({
+			type: 'POST', url: '/appdb/fields/removeOne',
+			contentType: 'application/json',
+			data: JSON.stringify(query),
+			success: function (data) {
+				this.setState({
+					collections: data
+				});
+			}.bind(this),
+			error: function (xhr, status, err) {
+				console.log("Error changing collections:", err);
+			}
+		});
+	}
+});
+
+var DataOptions = React.createClass({
+	displayName: 'DataOptions',
+
+	render: function () {
+		return React.createElement(
+			'option',
+			null,
+			this.props.collections.name
+		);
+	}
+});
+
 module.exports = Content;
 
-},{"./FieldPanel":405,"./UserList":407,"react":394,"react-bootstrap/lib/Col":28,"react-bootstrap/lib/Grid":35,"react-bootstrap/lib/Panel":51,"react-bootstrap/lib/Row":52}],407:[function(require,module,exports){
+},{"./FieldPanel":405,"./UserList":407,"jquery":25,"react":394,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/Col":28,"react-bootstrap/lib/Grid":35,"react-bootstrap/lib/Panel":51,"react-bootstrap/lib/Row":52}],407:[function(require,module,exports){
 var React = require('react');
 var $ = require('jquery');
 
