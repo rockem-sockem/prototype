@@ -83,7 +83,6 @@ module.exports = {
 	},
 	
 	requestForGameDetails(id, device) {
-		
 		var datapath = "/" + device + "/applications/" + "1091944550" + "/information.json";
 		console.log(datapath);
 		

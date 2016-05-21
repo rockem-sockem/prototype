@@ -6,7 +6,8 @@ var Table = require('react-bootstrap/lib/Table');
 
 var BugFilter = require('./BugFilter');
 
-
+// Object to hold json data
+var obj;
 
 var BugList = React.createClass({
 	render: function() {
@@ -200,6 +201,8 @@ var BugRow = React.createClass({
 			contentType: 'application/json',
 			data: JSON.stringify(query),
 			success: function(data) {
+				obj = JSON.parse(data);
+				console.log(obj);
 				//Pass data into a module and display
 			}.bind(this),
 			error: function(xhr, status, err) {
