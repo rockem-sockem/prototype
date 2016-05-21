@@ -196,19 +196,10 @@ var BugRow = React.createClass({
 			// console.log(JSON.stringify(data));
 		// }.bind(this));
 		// In production, we'd also handle errors.
-		$.ajax({
-			type: 'POST', url: '/api/gameDetails', 
-			contentType: 'application/json',
-			data: JSON.stringify(query),
-			success: function(data) {
-				obj = JSON.parse(data);
-				console.log(obj);
-				//Pass data into a module and display
-			}.bind(this),
-			error: function(xhr, status, err) {
-				console.log("Error changing collections:", err);
-			}
-		});
+		$.ajax('/api/gameDetails', {data:query}).done(function(data) {
+      		//this.setState({bugs: data});
+      		console.log(data);
+    	}.bind(this));
 	}
 });
 

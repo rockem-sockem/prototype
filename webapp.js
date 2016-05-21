@@ -174,9 +174,8 @@ app.post('/api/login/', function(req, res) {
 });
 
 app.get('/api/gameDetails', function(req, res) {	
-	var device = req.body.device;
-	var id = req.body.id;
-	//console.log("device", device);
+	var device = req.query.device;
+	var id = req.query.id;
 	//console.log("id", id);
 	requestForGameDetails(id, device);
 	eventEmitter.on('got_data', function() {
@@ -203,7 +202,7 @@ app.get('/api/bugs', function(req,res){
 //  @param {device} is the device used for the game
 function requestForGameDetails(id, device) {
 	
-	var datapath = "/ios/applications/" + "1091944550" + "/information.json";
+	var datapath = "/" + device + "/applications/" + id + "/information.json";
 	console.log(datapath);
 	
 	
