@@ -44813,6 +44813,9 @@ var Table = require('react-bootstrap/lib/Table');
 
 var BugFilter = require('./BugFilter');
 
+// Object to hold json data
+var obj;
+
 var BugList = React.createClass({
 	displayName: 'BugList',
 
@@ -45058,6 +45061,7 @@ var BugRow = React.createClass({
 		return devices;
 	},
 
+	//This function sends a get request for the data of a selected game
 	fetchData: function () {
 		// Initial loading of scraped data for the table
 		var query = {
@@ -45071,11 +45075,13 @@ var BugRow = React.createClass({
 		// }.bind(this));
 		// In production, we'd also handle errors.
 		$.ajax({
-			type: 'POST', url: '/api/gameDetails',
+			type: 'GET', url: '/api/gameDetails',
 			contentType: 'application/json',
 			data: JSON.stringify(query),
 			success: function (data) {
-				console.log(data, "testing 123");
+				obj = JSON.parse(data);
+				console.log(obj);
+				//Pass data into a module and display
 			}.bind(this),
 			error: function (xhr, status, err) {
 				console.log("Error changing collections:", err);
@@ -45615,7 +45621,7 @@ var Signin = React.createClass({
 	render: function () {
 		return React.createElement(
 			'div',
-			null,
+			{ id: 'signin' },
 			React.createElement(
 				'h2',
 				null,
@@ -45626,10 +45632,10 @@ var Signin = React.createClass({
 			React.createElement(
 				'form',
 				{ name: 'signinForm' },
-				React.createElement(Input, { type: 'text', name: 'username', placeholder: 'Username' }),
+				React.createElement(Input, { type: 'text', name: 'username', placeholder: 'Username', onKeyPress: this.handleEnter }),
 				' ',
 				React.createElement('br', null),
-				React.createElement(Input, { type: 'password', name: 'password', placeholder: 'Password' }),
+				React.createElement(Input, { type: 'password', name: 'password', placeholder: 'Password', onKeyPress: this.handleEnter }),
 				' ',
 				React.createElement('br', null),
 				React.createElement(
@@ -45680,6 +45686,13 @@ var Signin = React.createClass({
 				console.log("(handleLogin)Callback error! ", err);
 			}
 		});
+	},
+	handleEnter: function (e) {
+		if (e.which == 13 || e.keyCode == 13) {
+			this.handleLogin(e);
+			console.log('enter key is pressed');
+			return false;
+		} else return true;
 	}
 });
 
@@ -45714,10 +45727,10 @@ var Signup = React.createClass({
 			React.createElement(
 				'form',
 				{ name: 'signUpForm' },
-				React.createElement(Input, { type: 'text', name: 'username', placeholder: 'Username' }),
+				React.createElement(Input, { type: 'text', name: 'username', placeholder: 'Username', onKeyPress: this.handleEnter }),
 				' ',
 				React.createElement('br', null),
-				React.createElement(Input, { type: 'password', name: 'password', placeholder: 'Password' }),
+				React.createElement(Input, { type: 'password', name: 'password', placeholder: 'Password', onKeyPress: this.handleEnter }),
 				' ',
 				React.createElement('br', null),
 				React.createElement(
@@ -45766,6 +45779,13 @@ var Signup = React.createClass({
 				console.log("(handleSignup)Callback error! ", err);
 			}
 		});
+	},
+	handleEnter: function (e) {
+		if (e.which == 13 || e.keyCode == 13) {
+			this.handleSignup(e);
+			console.log('enter key is pressed');
+			return false;
+		} else return true;
 	}
 });
 

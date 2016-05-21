@@ -334,8 +334,8 @@ mongodb.connect(db1_url, function(err, dbConnection) {
 	mongodb.connect(db2_url, function(err2, dbConnection2) {
 		assert.equal(null, err2)
 		datadb = dbConnection2;
-		requestAPI();
-		//curColl = "IOS_TopFree_2016_5_18_5_21";
+		//requestAPI();
+		curColl = "IOS_TopFree_2016_5_19_18_32";
 	
 		var server = app.listen(app_port, function() {
 			console.log('> Application listening on port ' + app_port + '!');

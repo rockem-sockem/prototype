@@ -15,8 +15,8 @@ var Signup = React.createClass({
 			<div>
 				<h2>Welcome to Project ACAI!</h2> <br/>
 				<form name="signUpForm">
-					<Input type="text" name="username" placeholder="Username"/> <br/>
-					<Input type="password" name="password" placeholder="Password"/> <br/>
+					<Input type="text" name="username" placeholder="Username" onKeyPress={this.handleEnter}/> <br/>
+					<Input type="password" name="password" placeholder="Password" onKeyPress={this.handleEnter}/> <br/>
 					<Button bsStyle="primary" onClick={this.handleSignup}>Sign Up</Button>
 				</form>
 			</div>
@@ -61,7 +61,16 @@ var Signup = React.createClass({
 				console.log("(handleSignup)Callback error! ", err);
 			}
 		});
-	}
+	},
+	handleEnter: function(e) {
+		if (e.which == 13 || e.keyCode == 13) {
+			this.handleSignup(e);
+			console.log('enter key is pressed');
+			return false;
+		}
+		else
+			return true;
+    }
 });
 
 module.exports = Signup;
