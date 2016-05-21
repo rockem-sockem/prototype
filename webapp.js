@@ -15,7 +15,7 @@ var eventEmitter = new events.EventEmitter();
 var app = express();
 var app_port =  process.env.PORT || 3000;
 var db1_url = 'mongodb://Kevin:adrian@ds025772.mlab.com:25772/data';
-var db2_url = 'mongodb://Kevin:adrian@ds025772.mlab.com:25772/data';
+var db2_url = 'mongodb://Kevin:acai@ds011883.mlab.com:11883/acaiuser';
 var datadb, appdb;
 var data; // JSON data fetch from AppTweak
 var req; // HTTPS request for AppTweak
@@ -179,7 +179,7 @@ app.get('/api/gameDetails', function(req, res) {
 	//console.log("id", id);
 	requestForGameDetails(id, device);
 	eventEmitter.once('got_data', function() {
-		console.log(sendData);
+		//console.log(sendData);
 		return res.json(sendData);
 	});
 });
