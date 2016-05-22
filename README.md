@@ -2,12 +2,12 @@
 
 Database used:  
 	appdb:  
-		users: Registered users  
-		fields: Represents descriptions/features of a game. Makes a up the "column".  
-		mySession: session storing the current logged user until logout or 14 days expiration.  
+		users: Registered users    
+		fields: Represents descriptions/features of a game. Makes a up the "column".    
+		mySession: session storing the current logged user until logout or 14 days expiration.    
 	datadb:
-		Each collections represents the data fetch from different categories at different times.  
-		Format - DEVICE_CATEGORY_YEAR_MONTH_DAY_HOURS_MINUTES eg. "IOS_TopFree_2016_5_18_5_21"  
+		Each collections represents the data fetch from different categories at different times.    
+		Format - DEVICE_CATEGORY_YEAR_MONTH_DAY_HOURS_MINUTES (GMT) eg. "IOS_TopFree_2016_5_18_5_21"    
 		
 =======
 Create Admin
@@ -56,7 +56,7 @@ Small bugs/features/things to consider:
 	
 =======
 	
-#More important
+More important
 
 *Not sure how bootstrap routing works and may not be 100% restricted proof. 
 	
@@ -64,14 +64,15 @@ Small bugs/features/things to consider:
 
 *Initially get the latest scraped data to show.
 
-*Code a dropping function for scraped data collection in admin. (Use the collection dropdown menu)
-
 =======
 
-#Fixed / Solution
+Fixed / Solution
 
 *Fix login or singing up twice when clicking submit button. (Issue may be in modal). 
 	@Solution: Buttoninput was deprecated and so Button was used.
 	
 *Add enter key listener for all buttons. @Bug: login or singing up twice when pressing enter
 	@Solution: Fixed deprecated <Input> and used <FormControl>
+	
+*Fixed signup/signin being able to trigger multiple times because of async calls
+    @Solution: Set a state for waiting to be able to signin/signup	
