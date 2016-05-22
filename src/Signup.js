@@ -31,9 +31,13 @@ var Signup = React.createClass({
 	getInitialState: function() {
 		return{
 			fUsername: "",
-			fPassword: ""
+			fPassword: "",
+			wait: false // Used for avoiding spamming the signup button
 		};
 	},
+	
+	
+	
 	signup: function() {
 		var username = this.state.fUsername;
 		var password = this.state.fPassword;
@@ -45,7 +49,8 @@ var Signup = React.createClass({
 		// Can't submit blank form fields
 		if(username == null || username == "" ||
 		password == null || password == "") {
-			alert("Enter the Username and Password");
+			this.setState({ wait: false }); // Enable the use of signup button
+			alert("Enter Username and Password");
 			return;
 		}
 		// Request the server to insert a new user
@@ -56,23 +61,26 @@ var Signup = React.createClass({
 			data: JSON.stringify(user),
 			success: function(data) {
 				if(data == null) {
+					this.setState({ wait: false }); // Enable the use of signup button
 					alert(username + " already exists");
 				} else {
 					this.props.closeModal();
 				}
 			}.bind(this),
 			error: function(xhr, status, err) {
-				console.log("(handleSignup)Callback error! ", err);
+				console.log("(Signup.js/Signup.signup)Callback error! ", err);
 			}
 		});
 	},
 	handleSignup: function(e) {
 		e.preventDefault();
-		this.signup();
+		if(this.checkWaitState()) {	return; }
+		else { this.signup(); }
 	},
 	handleEnter: function(e) {
 		if (e.which == 13 || e.keyCode == 13) {
-			this.signup();
+			if(this.checkWaitState()) {	return; }
+			else { this.signup(); }
 		}
     },
 	handleChange: function(e) {
@@ -83,6 +91,14 @@ var Signup = React.createClass({
 			state = "fPassword";
 		}
 		this.setState({ [state]: e.target.value });
+	},
+	checkWaitState: function() {
+		// To avoid spamming signup being triggered multiple times
+		if(this.state.wait) {
+			return true;
+		}
+		this.setState({ wait: true }); // Disable the use of signup button
+		return false;
 	}
 });
 

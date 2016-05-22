@@ -45859,7 +45859,7 @@ var Signin = React.createClass({
 		return {
 			fUsername: "",
 			fPassword: "",
-			wait: false
+			wait: false // Used for avoiding spamming the signin button
 		};
 	},
 
@@ -45873,15 +45873,10 @@ var Signin = React.createClass({
 
 		// No empty form fields allowed
 		if (username == null || username == "" || password == null || password == "") {
-			alert("Username or Password is empty");
+			this.setState({ wait: false }); // Enable the use of signin button
+			alert("Enter Username and Password");
 			return;
 		}
-
-		// To avoid spamming login being triggered multiple times
-		if (this.state.wait) {
-			return;
-		}
-		this.setState({ wait: true }); // disable login
 
 		$.ajax({
 			type: 'POST',
@@ -45892,25 +45887,32 @@ var Signin = React.createClass({
 			success: function (data) {
 				if (data != null) {
 					Auth.setLoggedUser(data);
-					this.setState({ wait: false }); // disable login
 					this.props.signinOnSuccess();
 				} else {
+					this.setState({ wait: false }); // Enable the use of signin button
 					alert("Invalid username or wrong password");
-					this.setState({ wait: false }); // disable login
 				}
 			}.bind(this),
 			error: function (xhr, status, err) {
-				console.log("(handleLogin)Callback error! ", err);
+				console.log("(Signin.js/Signin.login)Callback error! ", err);
 			}
 		});
 	},
 	handleSignin: function (e) {
 		e.preventDefault();
-		this.login();
+		if (this.checkWaitState()) {
+			return;
+		} else {
+			this.login();
+		}
 	},
 	handleEnter: function (e) {
 		if (e.which == 13 || e.keyCode == 13) {
-			this.login();
+			if (this.checkWaitState()) {
+				return;
+			} else {
+				this.login();
+			}
 		}
 	},
 	handleChange: function (e) {
@@ -45921,6 +45923,14 @@ var Signin = React.createClass({
 			state = "fPassword";
 		}
 		this.setState({ [state]: e.target.value });
+	},
+	checkWaitState: function () {
+		// To avoid spamming login being triggered multiple times
+		if (this.state.wait) {
+			return true;
+		}
+		this.setState({ wait: true }); // Disable the use of signin button
+		return false;
 	}
 });
 
@@ -45978,9 +45988,11 @@ var Signup = React.createClass({
 	getInitialState: function () {
 		return {
 			fUsername: "",
-			fPassword: ""
+			fPassword: "",
+			wait: false // Used for avoiding spamming the signup button
 		};
 	},
+
 	signup: function () {
 		var username = this.state.fUsername;
 		var password = this.state.fPassword;
@@ -45991,7 +46003,8 @@ var Signup = React.createClass({
 
 		// Can't submit blank form fields
 		if (username == null || username == "" || password == null || password == "") {
-			alert("Enter the Username and Password");
+			this.setState({ wait: false }); // Enable the use of signup button
+			alert("Enter Username and Password");
 			return;
 		}
 		// Request the server to insert a new user
@@ -46002,23 +46015,32 @@ var Signup = React.createClass({
 			data: JSON.stringify(user),
 			success: function (data) {
 				if (data == null) {
+					this.setState({ wait: false }); // Enable the use of signup button
 					alert(username + " already exists");
 				} else {
 					this.props.closeModal();
 				}
 			}.bind(this),
 			error: function (xhr, status, err) {
-				console.log("(handleSignup)Callback error! ", err);
+				console.log("(Signup.js/Signup.signup)Callback error! ", err);
 			}
 		});
 	},
 	handleSignup: function (e) {
 		e.preventDefault();
-		this.signup();
+		if (this.checkWaitState()) {
+			return;
+		} else {
+			this.signup();
+		}
 	},
 	handleEnter: function (e) {
 		if (e.which == 13 || e.keyCode == 13) {
-			this.signup();
+			if (this.checkWaitState()) {
+				return;
+			} else {
+				this.signup();
+			}
 		}
 	},
 	handleChange: function (e) {
@@ -46029,6 +46051,14 @@ var Signup = React.createClass({
 			state = "fPassword";
 		}
 		this.setState({ [state]: e.target.value });
+	},
+	checkWaitState: function () {
+		// To avoid spamming signup being triggered multiple times
+		if (this.state.wait) {
+			return true;
+		}
+		this.setState({ wait: true }); // Disable the use of signup button
+		return false;
 	}
 });
 

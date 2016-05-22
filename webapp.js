@@ -175,10 +175,8 @@ app.post('/login', function(req, res) {
 app.get('/api/gameDetails', function(req, res) {	
 	var device = req.query.device;
 	var id = req.query.id;
-	//console.log("id", id);
 	requestForGameDetails(id, device);
 	eventEmitter.once('got_data', function() {
-		//console.log(sendData);
 		return res.json(sendData);
 	});
 });
@@ -201,11 +199,7 @@ app.get('/api/bugs', function(req,res){
 //  @param {id} is the id of the game
 //  @param {device} is the device used for the game
 function requestForGameDetails(id, device) {
-	
 	var datapath = "/" + device + "/applications/" + id + "/information.json";
-	console.log(datapath);
-	
-	
 	var header = {"X-Apptweak-Key": "QS5NiFFrLERBRML_ptL208cJoWc"};
 	var options = {
 		hostname: "api.apptweak.com",
@@ -216,13 +210,8 @@ function requestForGameDetails(id, device) {
 		headers: header
 	};
 	
-	//options.path = datapath;
-	// console.log(options);
 	req = https.request(options, function(res) {
 		var responseBody =""; 
-		// console.log("> Response from server started."); 
-		// console.log(`> Server Status: ${res.statusCode}`); 
-		// console.log("> Response Headers: %j", res.headers);
 		res.setEncoding("UTF-8"); 
 		//retrieve the data in chunks
 		res.on("data", function(chunk) {
@@ -233,7 +222,6 @@ function requestForGameDetails(id, device) {
 			//Once completed we parse the data in JSON format
 			sendData = JSON.parse(responseBody);
 			//console.log(sendData);
-			console.log(sendData);
 			eventEmitter.emit('got_data');
 		});
 	});
@@ -242,9 +230,6 @@ function requestForGameDetails(id, device) {
 		console.log(`problem with request: ${err.message}`);
 	});
 	req.end();
-	
-	
-
 }
 	
 	
@@ -277,7 +262,6 @@ app.post('/api/relog', function(req, res) {
 /**********************************************/
 
 app.get('/api/users', function(req,res){
-	// console.log("Query string", req.query);
 	var filter = {};
 	if(req.query.username)
 		filter.username = req.query.username;
@@ -371,7 +355,7 @@ mongodb.connect(db1_url, function(err, dbConnection) {
 		assert.equal(null, err2)
 		datadb = dbConnection2;
 		requestAPI();
-		curColl = "IOS_TopFree_2016_5_19_18_32";
+		//curColl = "IOS_TopFree_2016_5_19_18_32";
 	
 		var server = app.listen(app_port, function() {
 			console.log('> Application listening on port ' + app_port + '!');

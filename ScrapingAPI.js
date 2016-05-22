@@ -54,12 +54,11 @@ module.exports = {
 		}
 
 		options.path = datapath;
-		// console.log(options);
 		req = https.request(options, function(res) {
 			var responseBody =""; 
-			console.log("> Response from server started."); 
+			console.log("\n> Datapath sent: ", datapath); 
 			console.log(`> Server Status: ${res.statusCode}`); 
-			console.log("> Response Headers: %j", res.headers);
+			console.log("> Response Date: %j", res.headers.date, "\n");
 			res.setEncoding("UTF-8"); 
 			//retrieve the data in chunks
 			res.on("data", function(chunk) {
@@ -69,8 +68,6 @@ module.exports = {
 			res.on("end", function(){
 				//Once completed we parse the data in JSON format
 				data = JSON.parse(responseBody);
-				//Deleting old records to avoid overlaps
-				// db.collection("data").drop();
 				//Inserting scraped data 
 				insertNewData();
 			});
@@ -84,16 +81,10 @@ module.exports = {
 	
 	requestForGameDetails(id, device) {
 		var datapath = "/" + device + "/applications/" + "1091944550" + "/information.json";
-		console.log(datapath);
-		
-		
 		options.path = datapath;
-		// console.log(options);
+		
 		req = https.request(options, function(res) {
 			var responseBody =""; 
-			// console.log("> Response from server started."); 
-			// console.log(`> Server Status: ${res.statusCode}`); 
-			// console.log("> Response Headers: %j", res.headers);
 			res.setEncoding("UTF-8"); 
 			//retrieve the data in chunks
 			res.on("data", function(chunk) {
@@ -112,10 +103,6 @@ module.exports = {
 			console.log(`problem with request: ${err.message}`);
 		});
 		req.end();
-		
-		 
-		
-		// return sendData;
 	},
 	getMoreData: function() {
 		return sendData;
