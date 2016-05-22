@@ -14,8 +14,8 @@ var eventEmitter = new events.EventEmitter();
 
 var app = express();
 var app_port =  process.env.PORT || 3000;
-var db1_url = 'mongodb://Kevin:adrian@ds025772.mlab.com:25772/data';
-var db2_url = 'mongodb://Kevin:adrian@ds025772.mlab.com:25772/data';
+var db1_url = 'mongodb://Kevin:adrian@ds011883.mlab.com:11883/acaidata';
+var db2_url = 'mongodb://Kevin:crook@ds011883.mlab.com:11883/gamedata';
 var datadb, appdb;
 var data; // JSON data fetch from AppTweak
 var req; // HTTPS request for AppTweak
@@ -178,7 +178,7 @@ app.get('/api/gameDetails', function(req, res) {
 	//console.log("id", id);
 	requestForGameDetails(id, device);
 	eventEmitter.once('got_data', function() {
-		console.log(sendData);
+		//console.log(sendData);
 		return res.json(sendData);
 	});
 });
@@ -370,7 +370,7 @@ mongodb.connect(db1_url, function(err, dbConnection) {
 	mongodb.connect(db2_url, function(err2, dbConnection2) {
 		assert.equal(null, err2)
 		datadb = dbConnection2;
-		//requestAPI();
+		requestAPI();
 		curColl = "IOS_TopFree_2016_5_19_18_32";
 	
 		var server = app.listen(app_port, function() {
