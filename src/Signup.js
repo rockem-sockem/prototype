@@ -1,7 +1,7 @@
 var React = require('react');
 var $ = require('jquery');
-
-var Input = require('react-bootstrap/lib/Input');
+var FormGroup = require('react-bootstrap/lib/FormGroup');
+var FormControl = require('react-bootstrap/lib/FormControl');
 var Button = require('react-bootstrap/lib/Button');
 
 // Class used to sign up an user to the app.
@@ -14,24 +14,29 @@ var Signup = React.createClass({
 		return(
 			<div>
 				<h2>Welcome to Project ACAI!</h2> <br/>
-				<form name="signUpForm">
-					<Input type="text" name="username" placeholder="Username" onKeyPress={this.handleEnter}/> <br/>
-					<Input type="password" name="password" placeholder="Password" onKeyPress={this.handleEnter}/> <br/>
+				<form>
+					<FormGroup controlId="username">
+						<FormControl type="text" value={this.state.fUsername} placeholder="Username" 
+							onKeyPress={this.handleEnter} onChange={this.handleChange} />
+					</FormGroup>
+					<FormGroup controlId="password">
+						<FormControl type="password" value={this.state.fPassword} placeholder="Password" 
+							onKeyPress={this.handleEnter} onChange={this.handleChange} />
+					</FormGroup>
 					<Button bsStyle="primary" onClick={this.handleSignup}>Sign Up</Button>
 				</form>
 			</div>
 		);
 	},
-	/**
-	 * Submits the signup form by requesting an insert to the database.
-	 * It doesn't allow duplicate usernames.
-	 * @param {e} button onClick event listener
-	 */
-	handleSignup: function(e) {
-		e.preventDefault();
-		var form = document.forms.signUpForm;
-		var username = form.username.value;
-		var password = form.password.value;
+	getInitialState: function() {
+		return{
+			fUsername: "",
+			fPassword: ""
+		};
+	},
+	signup: function() {
+		var username = this.state.fUsername;
+		var password = this.state.fPassword;
 		var user = {
 			"username": username, 
 			"password": password
@@ -40,21 +45,20 @@ var Signup = React.createClass({
 		// Can't submit blank form fields
 		if(username == null || username == "" ||
 		password == null || password == "") {
-			alert("Fill the Username and Password");
+			alert("Enter the Username and Password");
 			return;
 		}
 		// Request the server to insert a new user
 		$.ajax({
 			type: 'POST', 
-			url: '/api/signup', 
+			url: '/signup', 
 			contentType: 'application/json',
 			data: JSON.stringify(user),
 			success: function(data) {
-				if(data != null) {
-					// Cleaning the form fields
-					form.username.value = form.password.value = "";
+				if(data == null) {
+					alert(username + " already exists");
 				} else {
-					alert(form.username.value + " already exists");
+					this.props.closeModal();
 				}
 			}.bind(this),
 			error: function(xhr, status, err) {
@@ -62,15 +66,24 @@ var Signup = React.createClass({
 			}
 		});
 	},
+	handleSignup: function(e) {
+		e.preventDefault();
+		this.signup();
+	},
 	handleEnter: function(e) {
 		if (e.which == 13 || e.keyCode == 13) {
-			this.handleSignup(e);
-			console.log('enter key is pressed');
-			return false;
+			this.signup();
 		}
-		else
-			return true;
-    }
+    },
+	handleChange: function(e) {
+		var state;
+		if(e.target.id == "username") {
+			state = "fUsername";
+		} else {
+			state = "fPassword";
+		}
+		this.setState({ [state]: e.target.value });
+	}
 });
 
 module.exports = Signup;

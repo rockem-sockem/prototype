@@ -7,9 +7,6 @@ var Button = require('react-bootstrap/lib/Button');
 
 var BugFilter = require('./BugFilter');
 
-// Object to hold json data
-var obj;
-
 var BugList = React.createClass({
 	render: function() {
 		return (
@@ -60,22 +57,6 @@ var BugList = React.createClass({
 		$.ajax('/field', {data:{}}).done(function(data) {
 			this.setState({fields: data});
 		}.bind(this));
-	},
-	addBug: function(bug) {
-		$.ajax({
-			type: 'POST', url: '/api/bugs', contentType: 'application/json',
-			data: JSON.stringify(bug),
-			success: function(data) {
-				var bug = data;
-				// We're advised not to modify the state, it's immutable. So, make a copy.
-				var bugsModified = this.state.bugs.concat(bug);
-				this.setState({bugs: bugsModified});
-			}.bind(this),
-			error: function(xhr, status, err) {
-				// ideally, show error to user.
-				console.log("Error adding bug:", err);
-			}
-		});
 	}
 });
 
@@ -213,12 +194,6 @@ var BugRow = React.createClass({
 			id: this.props.bug.id,
 			device: (this.props.bug.devices === null) ? "android" : "ios"
 		};
-		// console.log(this.props.bug.id, " ", this.props.bug.devices)
-		// $.ajax('/api/gameDetails', query).done(function(data) {
-			// console.log("fetchData run");
-			// console.log(JSON.stringify(data));
-		// }.bind(this));
-		// In production, we'd also handle errors.
 		$.ajax('/api/gameDetails', {data:query}).done(function(data) {
       		//this.setState({bugs: data});
       		console.log(data);

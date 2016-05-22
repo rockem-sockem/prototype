@@ -114,7 +114,6 @@ function requestAPI() {
 	//Scraping.requestToAppTweak("/android/categories/game/top.json?type=grossing", datadb, curColl);
 	
 	curColl = Scraping.getColl();
-	console.log(">>>>>>This is curColl = ", curColl);
 }
 
 
@@ -130,7 +129,7 @@ function requestAPI() {
 // Inserts a user into the "users" collection db
 // user: username, password, role
 // @param {req} form.username, form.password
-app.post('/api/signup/', function(req, res) {
+app.post('/signup', function(req, res) {
 	var username = { "username" : req.body.username };
 	var newUser = {
 		"username" : req.body.username,
@@ -156,7 +155,7 @@ app.post('/api/signup/', function(req, res) {
 // Checks if the username and password is in the database and logs the user in 
 // if its in the database.
 // @param {req} form.username, form.password
-app.post('/api/login/', function(req, res) {
+app.post('/login', function(req, res) {
 	var username = req.body.username;
 	var username_query = { "username" : username};
 	

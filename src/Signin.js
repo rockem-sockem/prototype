@@ -15,7 +15,7 @@ var Signin = React.createClass({
 		return(
 			<div>
 				<h2>Welcome Back!</h2> <br/>
-				<form name="signinForm">
+				<form>
 					<FormGroup controlId="username">
 						<FormControl type="text" value={this.state.fUsername} placeholder="Username" 
 							onKeyPress={this.handleEnter} onChange={this.handleChange} />
@@ -32,37 +32,48 @@ var Signin = React.createClass({
 	getInitialState: function() {
 		return{
 			fUsername: "",
-			fPassword: ""
+			fPassword: "", 
+			wait: false
 		};
 	},
+	
+	
+	
 	login: function() {
-		var form = document.forms.signinForm;
 		var username = this.state.fUsername;
 		var password = this.state.fPassword;
 		var user = { 
 			"username" : username,
 			"password" : password
 		};
-
+		
 		// No empty form fields allowed
 		if(username == null || username == "" ||
 		password == null || password == "") {
 			alert("Username or Password is empty");
 			return;
+		} 
+		
+		// To avoid spamming login being triggered multiple times
+		if(this.state.wait) {
+			return;
 		}
+		this.setState({ wait: true }); // disable login
 
 		$.ajax({
 			type: 'POST', 
-			url: '/api/login', 
+			url: '/login', 
 			contentType: 'application/json',
 			data: JSON.stringify(user),
 			// @param {data} username, role
 			success: function(data) {
 				if(data != null) {
 					Auth.setLoggedUser(data);
+					this.setState({ wait: false }); // disable login
 					this.props.signinOnSuccess();
 				} else {
 					alert("Invalid username or wrong password");
+					this.setState({ wait: false }); // disable login
 				}
 			}.bind(this),
 			error: function(xhr, status, err) {
@@ -77,7 +88,6 @@ var Signin = React.createClass({
 	handleEnter: function(e) {
 		if (e.which == 13 || e.keyCode == 13) {
 			this.login();
-			console.log('enter key is pressed');
 		} 
     },
 	handleChange: function(e) {

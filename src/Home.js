@@ -19,18 +19,6 @@ var ModalTitle = require('react-bootstrap/lib/ModalTitle');
 
 // Home page class
 var Home = React.createClass({
-	getInitialState() {
-		return { showModal: false };
-	},
-
-	close: function() {
-		this.setState({ showModal: false });
-	},
-
-	open: function() {
-		this.setState({ showModal: true });
-	},
-	
 	render: function() {		
 		return( 
 			<div>
@@ -64,7 +52,7 @@ var Home = React.createClass({
 						<Modal.Title>Sign Up</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>
-						<Signup />
+						<Signup closeModal={this.close} />
 					</Modal.Body>
 					<Modal.Footer>
 						<Button onClick={this.close}>Close</Button>
@@ -72,6 +60,16 @@ var Home = React.createClass({
 				</Modal>
 			</div>
 		);
+	},
+	getInitialState() {
+		return { showModal: false };
+	},
+
+	close: function() {
+		this.setState({ showModal: false });
+	},
+	open: function() {
+		this.setState({ showModal: true });
 	}
 });
 

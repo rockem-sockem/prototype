@@ -6,20 +6,10 @@ var Auth = require('./Auth');
 var Grid = require('react-bootstrap/lib/Grid');
 var Row = require('react-bootstrap/lib/Row');
 var Col = require('react-bootstrap/lib/Col');
-
-var Image = require('react-bootstrap/lib/Image');
 var Button = require('react-bootstrap/lib/Button');
 var PageHeader = require('react-bootstrap/lib/PageHeader');
 var Input = require('react-bootstrap/lib/Input');
-
-var Overlay = require('react-bootstrap/lib/Overlay');
-var OverlayTrigger = require('react-bootstrap/lib/OverlayTrigger');
 var Modal = require('react-bootstrap/lib/Modal');
-var ModalBody = require('react-bootstrap/lib/ModalBody');
-var ModalDialog = require('react-bootstrap/lib/ModalDialog');
-var ModalFooter = require('react-bootstrap/lib/ModalFooter');
-var ModalHeader = require('react-bootstrap/lib/ModalHeader');
-var ModalTitle = require('react-bootstrap/lib/ModalTitle');
 
 var Header = React.createClass({
 	/**
