@@ -10,7 +10,6 @@ var Button = require('react-bootstrap/lib/Button');
 var UserList = require('./UserList');
 var FieldPanel = require('./FieldPanel');
 
-// Testing
 var Content = React.createClass({
 	render: function() {
 		return( 

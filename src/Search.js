@@ -1,14 +1,10 @@
 var React = require('react');
 var $ = require('jquery');
-
-var BugList = require('./API/BugList');
-var BugFilter = require('./API/BugFilter');
-
 var Grid = require('react-bootstrap/lib/Grid');
 var Row = require('react-bootstrap/lib/Row');
 var Col = require('react-bootstrap/lib/Col');
-var Panel = require('react-bootstrap/lib/Panel');
-var ButtonInput = require('react-bootstrap/lib/ButtonInput');
+
+var BugList = require('./API/BugList');
 
 // Class used to sign up an user to the app.
 var Search = React.createClass({
@@ -31,21 +27,6 @@ var Search = React.createClass({
 				</Grid>
 			</div>
 		);
-	},	
-	/**
-	 * Searches the database for the related tags. Search still not fleshed out.
-	 */
-	handleSearch: function(e) {
-		e.preventDefault();
-		var form = document.forms.searchForm;
-		var filters = form.filters.value;
-		var tags = filters.split(" ");
-		
-		// No empty form fields allowed
-		if(filters == null || filters == "") {
-			alert("");
-			return;
-		}
 	}
 });
 

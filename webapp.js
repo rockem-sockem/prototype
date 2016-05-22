@@ -17,7 +17,6 @@ var app_port =  process.env.PORT || 3000;
 var db1_url = 'mongodb://Kevin:adrian@ds011883.mlab.com:11883/acaidata';
 var db2_url = 'mongodb://Kevin:crook@ds011883.mlab.com:11883/gamedata';
 var datadb, appdb;
-var data; // JSON data fetch from AppTweak
 var req; // HTTPS request for AppTweak
 var curColl = ""; // Current collection used in datadb. Collection will change.
 var sched; // Schedule/frequency of fetching data
@@ -120,11 +119,6 @@ function requestAPI() {
 /**********************************************/
 /**** Login Authentication ********************/
 /**********************************************/
-
-// Sends back the user's role from the session
-// app.post('/api/getRole', function(req, res) {
-	// res.json({"role": req.session.role});
-// });
 
 // Inserts a user into the "users" collection db
 // user: username, password, role

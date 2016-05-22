@@ -6,21 +6,10 @@ var https = require('https');
 var assert = require('assert');
 var db;
 var curColl;
-var sendData = "";
-
-var events = require('events');
-var eventEmitter = new events.EventEmitter();
+var data; // JSON data fetch from AppTweak
 
 //Information for the REST call
-var header = {"X-Apptweak-Key": "QS5NiFFrLERBRML_ptL208cJoWc"};
-var options = {
-	hostname: "api.apptweak.com",
-	port: 443,
-	path: "/",
-	"rejectUnauthorized": false,
-	method:"GET",
-	headers: header
-};
+
 
 module.exports = {
 	/**
@@ -29,6 +18,16 @@ module.exports = {
 	 * insert the new scraped data.
 	 */ 
 	requestToAppTweak(datapath, database, collection) {
+		var header = {"X-Apptweak-Key": "QS5NiFFrLERBRML_ptL208cJoWc"};
+		var options = {
+			hostname: "api.apptweak.com",
+			port: 443,
+			path: "/",
+			"rejectUnauthorized": false,
+			method:"GET",
+			headers: header
+		};
+
 		db = database;
 		curColl = collection;
 		var date = new Date();
@@ -77,35 +76,6 @@ module.exports = {
 			console.log(`problem with request: ${err.message}`);
 		});
 		req.end();
-	},
-	
-	requestForGameDetails(id, device) {
-		var datapath = "/" + device + "/applications/" + "1091944550" + "/information.json";
-		options.path = datapath;
-		
-		req = https.request(options, function(res) {
-			var responseBody =""; 
-			res.setEncoding("UTF-8"); 
-			//retrieve the data in chunks
-			res.on("data", function(chunk) {
-				responseBody += chunk;
-			});
-
-			res.on("end", function(){
-				//Once completed we parse the data in JSON format
-				sendData = JSON.parse(responseBody);
-				//console.log(sendData);
-				eventEmitter.emit('got_data');
-			});
-		});
-		
-		req.on("error", function(err) {
-			console.log(`problem with request: ${err.message}`);
-		});
-		req.end();
-	},
-	getMoreData: function() {
-		return sendData;
 	},
 	
 	getColl() {

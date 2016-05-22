@@ -1,5 +1,4 @@
 var React = require('react');
-var ReactDOM = require('react-dom');
 var $ = require('jquery');
 
 var Table = require('react-bootstrap/lib/Table');
@@ -218,6 +217,8 @@ var DataDDMenu = React.createClass({
 		});
 
 		return(
+			<h2>Categories</h2>
+			<br/><br/>
 			<select id="coll" onChange={this.getSelectedColl}>
 				{options}
 			</select>
