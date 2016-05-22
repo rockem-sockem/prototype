@@ -14,8 +14,8 @@ var eventEmitter = new events.EventEmitter();
 
 var app = express();
 var app_port =  process.env.PORT || 3000;
-var db2_url = 'mongodb://Kevin:adrian@ds025772.mlab.com:25772/data';
-var db1_url = 'mongodb://Kevin:acai@ds011883.mlab.com:11883/acaiuser';
+var db1_url = 'mongodb://Kevin:crook@ds011883.mlab.com:11883/acaidata';
+var db2_url = 'mongodb://Kevin:acai@ds011883.mlab.com:11883/gamedata';
 var datadb, appdb;
 var data; // JSON data fetch from AppTweak
 var req; // HTTPS request for AppTweak
