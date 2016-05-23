@@ -292,13 +292,12 @@ app.post('/field/add', function(req, res) {
 	});
 });
 
-app.post('/field/remove', function(req, res) {
+app.delete('/field/remove', function(req, res) {
 	var field = { name: req.body.field} ;
 	// Checking if field exist
 	appdb.collection("fields").find(field).next(function(err, doc) {
 		assert.equal(null, err);
-		if(doc != null) { // field exists
-			// Inserting the field into the database 
+		if(doc != null) { // field exists -> remove
 			appdb.collection("fields").remove(field);
 			res.json(true);
 		} else { 
@@ -333,7 +332,6 @@ app.post('/appdb/fields/removeOne', function(req, res) {
 		res.json(collections);
 	});
 });
-
 
 
 /**********************************************/

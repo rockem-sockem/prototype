@@ -44809,6 +44809,11 @@ var BugFilter = React.createClass({
 				'form',
 				null,
 				React.createElement(
+					'h2',
+					null,
+					'Filter'
+				),
+				React.createElement(
 					FormGroup,
 					{ controlId: 'filterTitle' },
 					React.createElement(FormControl, { type: 'text', value: this.state.title, placeholder: 'Title',
@@ -44856,7 +44861,6 @@ module.exports = BugFilter;
 
 },{"react":395,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/FormControl":30,"react-bootstrap/lib/FormGroup":35,"react-bootstrap/lib/Panel":52}],397:[function(require,module,exports){
 var React = require('react');
-var ReactDOM = require('react-dom');
 var $ = require('jquery');
 
 var Table = require('react-bootstrap/lib/Table');
@@ -45150,9 +45154,19 @@ var DataDDMenu = React.createClass({
 		});
 
 		return React.createElement(
-			'select',
-			{ id: 'coll', onChange: this.getSelectedColl },
-			options
+			'div',
+			null,
+			React.createElement(
+				'h2',
+				null,
+				'Categories'
+			),
+			React.createElement('br', null),
+			React.createElement(
+				'select',
+				{ id: 'coll', onChange: this.getSelectedColl },
+				options
+			)
 		);
 	},
 	getSelectedColl: function () {
@@ -45188,7 +45202,7 @@ var DataOptions = React.createClass({
 
 module.exports = BugList;
 
-},{"./BugFilter":396,"jquery":25,"react":395,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/Table":59,"react-dom":190}],398:[function(require,module,exports){
+},{"./BugFilter":396,"jquery":25,"react":395,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/Table":59}],398:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
 var Router = require('react-router').Router;
@@ -45970,22 +45984,40 @@ var $ = require('jquery');
 var Panel = require('react-bootstrap/lib/Panel');
 var Input = require('react-bootstrap/lib/Input');
 var Button = require('react-bootstrap/lib/Button');
+var FormGroup = require('react-bootstrap/lib/FormGroup');
+var FormControl = require('react-bootstrap/lib/FormControl');
 
 var FieldPanel = React.createClass({
 	displayName: 'FieldPanel',
 
 	render: function () {
+		//<FieldUpdate />
+
 		return React.createElement(
 			'div',
 			null,
 			React.createElement(
 				Panel,
 				null,
-				React.createElement(FieldAdd, null),
+				React.createElement(FieldAdd, { reloadData: this.loadData }),
 				React.createElement('br', null),
-				React.createElement(FieldUpdate, null)
+				React.createElement(FieldRemove, { options: this.state.fields, reloadData: this.loadData })
 			)
 		);
+	},
+	getInitialState: function () {
+		return {
+			fields: []
+		};
+	},
+	componentDidMount: function () {
+		this.loadData();
+	},
+
+	loadData: function () {
+		$.ajax('/field', { data: {} }).done(function (data) {
+			this.setState({ fields: data });
+		}.bind(this));
 	}
 });
 
@@ -45997,37 +46029,50 @@ var FieldAdd = React.createClass({
 			'div',
 			null,
 			React.createElement(
-				'h2',
+				'h3',
 				null,
-				'Add/Remove Field'
+				'Add Field'
 			),
 			React.createElement(
 				'form',
-				{ name: 'addFieldForm' },
-				React.createElement(Input, { type: 'text', name: 'field', placeholder: 'Field name' }),
-				' ',
-				React.createElement('br', null),
+				null,
 				React.createElement(
-					Button,
-					{ bsStyle: 'primary', onClick: this.addField },
-					'Add Field'
+					FormGroup,
+					{ controlId: 'field' },
+					React.createElement(FormControl, { type: 'text', value: this.state.fField, placeholder: 'Field name',
+						onKeyPress: this.handleEnter, onChange: this.handleChange })
 				),
 				React.createElement(
 					Button,
-					{ bsStyle: 'primary', onClick: this.removeField },
-					'Remove Field'
+					{ bsStyle: 'primary', onClick: this.onClickAdd },
+					'Add'
 				)
 			)
 		);
 	},
-	addField: function (e) {
-		e.preventDefault();
-		var form = document.forms.addFieldForm;
-		var field = form.field.value;
-		var sendData = { "field": field };
+	getInitialState: function () {
+		return {
+			fField: ""
+		};
+	},
 
-		if (field == null || field == "") {
-			alert("Empty field");
+	handleEnter: function (e) {
+		if (e.which == 13 || e.keyCode == 13) {
+			this.addField();
+		}
+	},
+	handleChange: function (e) {
+		this.setState({ fField: e.target.value });
+	},
+	onClickAdd: function (e) {
+		e.preventDefault();
+		this.addField();
+	},
+	addField: function () {
+		var sendData = { "field": this.state.fField };
+
+		if (this.state.fField == "") {
+			alert("Enter the field name");
 			return;
 		}
 
@@ -46038,35 +46083,71 @@ var FieldAdd = React.createClass({
 			data: JSON.stringify(sendData),
 			success: function (data) {
 				if (data != null) {
-					form.field.value = "";
+					this.setState({ fField: "" });
+					this.props.reloadData();
 				} else {
 					alert("Field already exists!");
 				}
 			}.bind(this),
 			error: function (xhr, status, err) {
-				console.log("(FieldPanel-FieldAdd.addField)Callback error! ", err);
+				console.log("(FieldPanel.js-FieldAdd.addField)Callback error! ", err);
 			}
 		});
+	}
+});
+
+var FieldRemove = React.createClass({
+	displayName: 'FieldRemove',
+
+	render: function () {
+		var options = this.props.options.map(function (opt) {
+			return React.createElement(RemoveOption, { key: opt._id, name: opt.name });
+		});
+
+		return React.createElement(
+			'div',
+			null,
+			React.createElement(
+				'h3',
+				null,
+				'Remove Field'
+			),
+			React.createElement(
+				'form',
+				{ id: 'fieldRemove' },
+				React.createElement(
+					FormGroup,
+					{ controlId: 'options' },
+					React.createElement(
+						FormControl,
+						{ componentClass: 'select' },
+						options
+					),
+					React.createElement('br', null),
+					React.createElement(
+						Button,
+						{ bsStyle: 'primary', onClick: this.remove },
+						'Remove'
+					)
+				)
+			)
+		);
 	},
-	removeField: function (e) {
+
+	remove: function (e) {
 		e.preventDefault();
-		var form = document.forms.addFieldForm;
-		var field = form.field.value;
+		console.log(document.forms.fieldRemove.options.value);
+		var field = document.forms.fieldRemove.options.value;
 		var sendData = { "field": field };
 
-		if (field == null || field == "") {
-			alert("Empty field");
-			return;
-		}
-
 		$.ajax({
-			type: 'POST',
+			type: 'DELETE',
 			url: '/field/remove',
 			contentType: 'application/json',
 			data: JSON.stringify(sendData),
 			success: function (data) {
 				if (data == true) {
-					form.field.value = "";
+					this.props.reloadData();
 				} else {
 					alert("Field doesn't exists!");
 				}
@@ -46075,6 +46156,18 @@ var FieldAdd = React.createClass({
 				console.log("(FieldPanel-FieldAdd.removeField)Callback error! ", err);
 			}
 		});
+	}
+});
+
+var RemoveOption = React.createClass({
+	displayName: 'RemoveOption',
+
+	render: function () {
+		return React.createElement(
+			'option',
+			null,
+			this.props.name
+		);
 	}
 });
 
@@ -46149,7 +46242,7 @@ var FieldUpdate = React.createClass({
 
 module.exports = FieldPanel;
 
-},{"jquery":25,"react":395,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/Input":38,"react-bootstrap/lib/Panel":52}],407:[function(require,module,exports){
+},{"jquery":25,"react":395,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/FormControl":30,"react-bootstrap/lib/FormGroup":35,"react-bootstrap/lib/Input":38,"react-bootstrap/lib/Panel":52}],407:[function(require,module,exports){
 var React = require('react');
 var $ = require('jquery');
 
@@ -46162,10 +46255,10 @@ var Button = require('react-bootstrap/lib/Button');
 var UserList = require('./UserList');
 var FieldPanel = require('./FieldPanel');
 
-// Testing
 var Content = React.createClass({
 	displayName: 'Content',
 
+	//<Collections />
 	render: function () {
 		return React.createElement(
 			'div',
@@ -46192,7 +46285,6 @@ var Content = React.createClass({
 						React.createElement('hr', null),
 						React.createElement(FieldPanel, null),
 						React.createElement('hr', null),
-						React.createElement(Collections, null),
 						React.createElement('hr', null),
 						React.createElement(UserList, null)
 					)

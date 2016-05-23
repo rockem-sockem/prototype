@@ -4,18 +4,40 @@ var $ = require('jquery');
 var Panel = require('react-bootstrap/lib/Panel');
 var Input = require('react-bootstrap/lib/Input');
 var Button = require('react-bootstrap/lib/Button');
+var FormGroup = require('react-bootstrap/lib/FormGroup');
+var FormControl = require('react-bootstrap/lib/FormControl');
 
 var FieldPanel = React.createClass({
 	render: function() {
+		//<FieldUpdate />
+	
 		return(
 			<div>
 				<Panel>
-					<FieldAdd />
+					<FieldAdd reloadData={this.loadData} />
 					<br />
-					<FieldUpdate />
+					<FieldRemove options={this.state.fields} reloadData={this.loadData} />
+					
 				</Panel>
 			</div>
 		);
+	}, 
+	getInitialState: function() {
+		return{
+			fields: []
+		};
+	},
+	componentDidMount: function() {
+		this.loadData();
+	},
+
+	
+	
+	
+	loadData: function() {
+		$.ajax('/field', { data: {} }).done(function(data) {
+			this.setState({fields: data});
+		}.bind(this));
 	}
 });
 
@@ -23,23 +45,42 @@ var FieldAdd = React.createClass({
 	render: function() {
 		return(
 			<div>
-				<h2>Add/Remove Field</h2>
-				<form name="addFieldForm">
-					<Input type="text" name="field" placeholder="Field name"/> <br/>
-					<Button bsStyle="primary" onClick={this.addField}>Add Field</Button>
-					<Button bsStyle="primary" onClick={this.removeField}>Remove Field</Button>
+				<h3>Add Field</h3>
+				<form>
+					<FormGroup controlId="field">
+						<FormControl type="text" value={this.state.fField} placeholder="Field name" 
+							onKeyPress={this.handleEnter} onChange={this.handleChange} />
+					</FormGroup>
+					<Button bsStyle="primary" onClick={this.onClickAdd}>Add</Button>
 				</form>
 			</div>
 		);
 	},
-	addField: function(e) {
+	getInitialState: function() {
+		return{
+			fField: ""
+		}
+	},
+	
+	
+	
+	handleEnter: function(e) {
+		if (e.which == 13 || e.keyCode == 13) {
+			this.addField();
+		} 
+	},	
+	handleChange: function(e) {
+		this.setState({ fField: e.target.value });
+	},
+	onClickAdd: function(e) {
 		e.preventDefault();
-		var form = document.forms.addFieldForm;
-		var field = form.field.value;
-		var sendData = { "field" : field };
+		this.addField();
+	},
+	addField: function() {
+		var sendData = { "field" : this.state.fField };
 		
-		if(field == null || field == "") {
-			alert("Empty field");
+		if(this.state.fField == "") {
+			alert("Enter the field name");
 			return;
 		}
 		
@@ -50,35 +91,57 @@ var FieldAdd = React.createClass({
 			data: JSON.stringify(sendData),
 			success: function(data) {
 				if(data != null) {
-					form.field.value = "";
+					this.setState({ fField: "" });
+					this.props.reloadData();
 				} else {
 					alert("Field already exists!");
 				}
 			}.bind(this),
 			error: function(xhr, status, err) {
-				console.log("(FieldPanel-FieldAdd.addField)Callback error! ", err);
+				console.log("(FieldPanel.js-FieldAdd.addField)Callback error! ", err);
 			}
 		});
+	}
+});
+
+var FieldRemove = React.createClass({
+	render: function() {
+		var options = this.props.options.map(function(opt) {
+			return <RemoveOption key={opt._id} name={opt.name} />;
+		});
+
+		return(
+			<div>
+				<h3>Remove Field</h3>
+				<form id="fieldRemove">
+					<FormGroup controlId="options">
+						<FormControl componentClass="select" >
+							{options}
+						</FormControl>
+						<br />
+						<Button bsStyle="primary" onClick={this.remove}>Remove</Button>
+					</FormGroup>
+				</form>
+			</div>
+		);
 	},
-	removeField: function(e) {
+	
+	
+	
+	remove: function(e) {
 		e.preventDefault();
-		var form = document.forms.addFieldForm;
-		var field = form.field.value;
+		console.log(document.forms.fieldRemove.options.value);
+		var field = document.forms.fieldRemove.options.value;
 		var sendData = { "field" : field };
-		
-		if(field == null || field == "") {
-			alert("Empty field");
-			return;
-		}
-		
+
 		$.ajax({
-			type: 'POST', 
+			type: 'DELETE', 
 			url: '/field/remove', 
 			contentType: 'application/json',
 			data: JSON.stringify(sendData),
 			success: function(data) {
 				if(data == true) {
-					form.field.value = "";
+					this.props.reloadData();
 				} else {
 					alert("Field doesn't exists!");
 				}
@@ -87,6 +150,14 @@ var FieldAdd = React.createClass({
 				console.log("(FieldPanel-FieldAdd.removeField)Callback error! ", err);
 			}
 		});
+	}
+});
+
+var RemoveOption = React.createClass({
+	render: function() {
+		return(
+			<option>{this.props.name}</option>
+		);
 	}
 });
 

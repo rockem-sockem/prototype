@@ -11,6 +11,7 @@ var UserList = require('./UserList');
 var FieldPanel = require('./FieldPanel');
 
 var Content = React.createClass({
+	//<Collections />
 	render: function() {
 		return( 
 			<div>
@@ -22,7 +23,7 @@ var Content = React.createClass({
 							<hr />
 							<FieldPanel />
 							<hr />
-							<Collections />
+							
 							<hr />
 							<UserList />
 						</Col>

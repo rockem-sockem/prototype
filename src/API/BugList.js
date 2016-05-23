@@ -217,11 +217,13 @@ var DataDDMenu = React.createClass({
 		});
 
 		return(
-			<h2>Categories</h2>
-			<br/><br/>
-			<select id="coll" onChange={this.getSelectedColl}>
-				{options}
-			</select>
+			<div>
+				<h2>Categories</h2>
+				<br/>
+				<select id="coll" onChange={this.getSelectedColl}>
+					{options}
+				</select>
+			</div>
 		);
 	},
 	getSelectedColl: function() {
