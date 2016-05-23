@@ -2,21 +2,21 @@ var React = require('react');
 var $ = require('jquery');
 
 var Panel = require('react-bootstrap/lib/Panel');
-var Input = require('react-bootstrap/lib/Input');
 var Button = require('react-bootstrap/lib/Button');
 var FormGroup = require('react-bootstrap/lib/FormGroup');
 var FormControl = require('react-bootstrap/lib/FormControl');
+var ControlLabel = require('react-bootstrap/lib/ControlLabel');
 
 var FieldPanel = React.createClass({
 	render: function() {
 		return(
 			<div>
 				<Panel>
-					<FieldAdd reloadData={this.loadData} />
+					<FieldAdd reloadData={this.loadFields} />
 					<br />
-					<FieldRemove options={this.state.fields} reloadData={this.loadData} />
+					<FieldRemove fields={this.state.fields} reloadData={this.loadFields} />
 					<br />
-					<FieldUpdate />
+					<FieldUpdate fields={this.state.fields} games={this.state.games} />
 				</Panel>
 			</div>
 		);
@@ -24,27 +24,30 @@ var FieldPanel = React.createClass({
 	getInitialState: function() {
 		return{
 			fields: [],
-			titles: []
+			games: []
 		};
 	},
 	componentDidMount: function() {
-		this.loadData();
+		this.loadFields();
+		//Gets the game titles 
+		$.ajax('/api/bugs', { data: {} }).done(function(data) {
+			this.setState({games: data});
+		}.bind(this));
 	},
 
 	
 	
-	
-	loadData: function() {
+	loadFields: function() {
 		// Gets the extra fields
 		$.ajax('/field', { data: {} }).done(function(data) {
 			this.setState({fields: data});
 		}.bind(this));
-		//Gets the game titles 
-		$.ajax('/field', { data: {} }).done(function(data) {
-			this.setState({titles: data});
-		}.bind(this));
+		
 	}
 });
+
+
+
 
 var FieldAdd = React.createClass({
 	render: function() {
@@ -109,10 +112,12 @@ var FieldAdd = React.createClass({
 	}
 });
 
+
+
 var FieldRemove = React.createClass({
 	render: function() {
-		var options = this.props.options.map(function(opt) {
-			return <RemoveOption key={opt._id} name={opt.name} />;
+		var fieldOptions = this.props.fields.map(function(field) {
+			return <FieldOption key={field._id} name={field.name} />;
 		});
 
 		return(
@@ -121,11 +126,10 @@ var FieldRemove = React.createClass({
 				<form id="fieldRemove">
 					<FormGroup controlId="options">
 						<FormControl componentClass="select" >
-							{options}
+							{fieldOptions}
 						</FormControl>
-						<br />
-						<Button bsStyle="primary" onClick={this.remove}>Remove</Button>
 					</FormGroup>
+					<Button bsStyle="primary" onClick={this.remove}>Remove</Button>
 				</form>
 			</div>
 		);
@@ -157,34 +161,59 @@ var FieldRemove = React.createClass({
 	}
 });
 
-var RemoveOption = React.createClass({
-	render: function() {
-		return(
-			<option>{this.props.name}</option>
-		);
-	}
-});
+
 
 var FieldUpdate = React.createClass({
 	render: function() {
+		var fieldOptions = this.props.fields.map(function(field) {
+			return <FieldOption key={field._id} name={field.name} />;
+		});
+		var titleOptions = this.props.games.map(function(game) {
+			return <TitleOption key={game._id} title={game.title} />;
+		});
+	
 		return(
 			<div>
-				<h2>Update Data</h2>
-				<form name="updateDataForm">
-					<Input type="text" name="field" placeholder="Field name"/> <br/>
-					<Input type="text" name="title" placeholder="Game Title"/> <br/>
-					<Input type="text" name="data" placeholder="Data to be inserted or modified"/> <br/>
-					<Button bsStyle="primary" onClick={this.updateData}>Update data</Button>
+				<h3>Update Data</h3>
+				<form id="updateField">
+					<FormGroup controlId="fieldsMenu">
+						<ControlLabel>Select Field</ControlLabel>
+						<FormControl componentClass="select" >
+							{fieldOptions}
+						</FormControl>
+					</FormGroup>
+					<FormGroup controlId="titleMenu">
+						<ControlLabel>Select Game Title</ControlLabel>
+						<FormControl componentClass="select" >
+							{titleOptions}
+						</FormControl>
+					</FormGroup>
+					<FormGroup controlId="updateText">
+						<FormControl type="text" placeholder="Data to be inserted/modified"
+							onKeyPress={this.handleEnter} />
+					</FormGroup>
+					<Button bsStyle="primary" onClick={this.onClickUpdate}>Update</Button>
 				</form>
 			</div>
 		);
 	},
-	updateData: function(e) {
+	
+	
+	
+	handleEnter: function(e) {
+		if (e.which == 13 || e.keyCode == 13) {
+			this.updateData();
+		} 
+	},
+	onClickUpdate: function(e) {
 		e.preventDefault();
-		var form = document.forms.updateDataForm;
-		var field = form.field.value;
-		var title = form.title.value;
-		var newData = form.data.value;
+		this.update();
+	},
+	update: function() {
+		var form = document.forms.updateField;
+		var field = form.fieldsMenu.value;
+		var title = form.titleMenu.value;
+		var newData = form.updateText.value;
 		var sendData = { 
 			"field" : field,
 			"title" : title,
@@ -197,22 +226,35 @@ var FieldUpdate = React.createClass({
 		}
 		
 		$.ajax({
-			type: 'POST', 
+			type: 'PUT', 
 			url: '/field/data/update', 
 			contentType: 'application/json',
 			data: JSON.stringify(sendData),
-			// @param {data} username, role
 			success: function(data) {
 				if(data != null) {
-					form.field.value = "";
-					form.title.value = "";
-					form.data.value = "";
+					form.updateText.value = "";
 				} 
 			}.bind(this),
 			error: function(xhr, status, err) {
 				console.log("(FieldPanel-FieldUpdate.updateData)Callback error! ", err);
 			}
 		});
+	}
+});
+
+var FieldOption = React.createClass({
+	render: function() {
+		return(
+			<option>{this.props.name}</option>
+		);
+	}
+});
+
+var TitleOption = React.createClass({
+	render: function() {
+		return(
+			<option>{this.props.title}</option>
+		);
 	}
 });
 
