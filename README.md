@@ -48,10 +48,6 @@ Small bugs/features/things to consider:
 
 *When re-logging, save the tab where last been.
 
-*Fix deprecated functions.
-
-*Design data collection drop-down menu
-
 *Do not display sign up when logged
 
 *For signup, better validation for password or username such as minimal length
