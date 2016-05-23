@@ -138,7 +138,8 @@ var BugRow = React.createClass({
 		return (
 			<tr>
 				<td>{this.props.bug.rank}</td>
-				<td><a onClick={this.fetchData}>{this.props.bug.title}</a></td>
+				<td><img alt="" src={this.props.bug.icon} width="50" height="50" />
+					<a onClick={this.fetchData}>{this.props.bug.title}</a></td>
 				<td>{this.props.bug.developer}</td>
 				<td>{this.props.bug.price}</td>
 				<td>{genres}</td>
@@ -232,23 +233,9 @@ var DataDDMenu = React.createClass({
 	},
 	getSelectedColl: function() {
 		var selected = document.forms.dataType.options.value;
-		console.log("this selected ", selected);
 		Auth.setColl(selected);
 		var query = { collName: Auth.getColl() };
-		
 		this.props.cbChangeColl(query);
-		
-		// $.ajax({
-			// type: 'GET', url: '/dataType/changeOnSelect', 
-			// contentType: 'application/json',
-			// data: JSON.stringify(query),
-			// success: function() {
-				// this.props.cbChangeColl();
-			// }.bind(this),
-			// error: function(xhr, status, err) {
-				// console.log("Error changing collections:", err);
-			// }
-		// });
 	}
 });
 

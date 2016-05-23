@@ -21,13 +21,13 @@ module.exports = {
 		this.setUsername(data.username);
 		this.setRole(data.role);
 		this.setColl(data.coll);
-		this.printLoggedUser();
+		// this.printLoggedUser();
 	},
 	setLogout() {
 		g_username = "";
 		g_role = "";
 		g_usedColl = "";
-		this.printLoggedUser();
+		// this.printLoggedUser();
 	},
 	getUsername() {
 		return g_username;

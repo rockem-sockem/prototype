@@ -197,6 +197,8 @@ function modifyDataAndUpdate() {
 				var updateGenres = {$set : {[genresIndex]: cat}};
 				db.collection(curColl).update(query, updateGenres);
 			}
-		} 
+		} else {
+			console.log("> Data modification is done.");
+		}
 	});
 }

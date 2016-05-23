@@ -66,19 +66,6 @@ app.get('/api/bugs', function(req, res){
 	});
 });
 
-//POST request from demo -> Not in use currently
-/* app.post('/api/bugs/', function(req, res) {
-	var newBug = req.body;
-	newBug.id = bugData.length + 1;
-	bugData.push(newBug);
-	res.json(newBug);
-}); */
-
-/* app.post('/dataType/changeOnSelect', function(req, res) {
-	curColl = req.body.name;
-	res.end()
-}); */
-
 app.get('/datadb/collections', function(req, res){
 	datadb.listCollections().toArray(function(err, collections){
 		assert.equal(null, err);
@@ -278,7 +265,7 @@ app.put('/field/data/update', function(req, res) {
 	var gameTitle = { "title" : req.body.title };
 	var update = {$set : {[req.body.field]: req.body.data}};
 	
-	var reqCollName = req.query.collName;
+	var reqCollName = req.body.collName;
 	var collName = "";
 	
 	// If requested collection is not given then use the latest collection
@@ -355,11 +342,11 @@ function requestAPI() {
 	
 	// Use these for testing only.git 
 	Scraping.requestToAppTweak("/ios/categories/6014/top.json", datadb);
-	//Scraping.requestToAppTweak("/ios/categories/6014/top.json?type=paid", datadb, curColl);
-	//Scraping.requestToAppTweak("/ios/categories/6014/top.json?type=grossing", datadb, curColl);
-	//Scraping.requestToAppTweak("/android/categories/game/top.json", datadb, curColl);
-	//Scraping.requestToAppTweak("/android/categories/game/top.json?type=paid", datadb, curColl);
-	//Scraping.requestToAppTweak("/android/categories/game/top.json?type=grossing", datadb, curColl);
+	// Scraping.requestToAppTweak("/ios/categories/6014/top.json?type=paid", datadb);
+	// Scraping.requestToAppTweak("/ios/categories/6014/top.json?type=grossing", datadb);
+	// Scraping.requestToAppTweak("/android/categories/game/top.json", datadb);
+	// Scraping.requestToAppTweak("/android/categories/game/top.json?type=paid", datadb);
+	// Scraping.requestToAppTweak("/android/categories/game/top.json?type=grossing", datadb);
 	
 	latestColl = Scraping.getColl();
 }
@@ -376,8 +363,6 @@ mongodb.connect(db1_url, function(err, dbConnection) {
 	
 		var server = app.listen(app_port, function() {
 			console.log('> Application listening on port ' + app_port + '!');
-			
-			console.log("> latestColl is ", latestColl);
 		});
 	});
 });

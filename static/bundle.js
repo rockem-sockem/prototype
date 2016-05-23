@@ -45155,6 +45155,7 @@ var BugRow = React.createClass({
 			React.createElement(
 				'td',
 				null,
+				React.createElement('img', { alt: '', src: this.props.bug.icon, width: '50', height: '50' }),
 				React.createElement(
 					'a',
 					{ onClick: this.fetchData },
@@ -45277,23 +45278,9 @@ var DataDDMenu = React.createClass({
 	},
 	getSelectedColl: function () {
 		var selected = document.forms.dataType.options.value;
-		console.log("this selected ", selected);
 		Auth.setColl(selected);
 		var query = { collName: Auth.getColl() };
-
 		this.props.cbChangeColl(query);
-
-		// $.ajax({
-		// type: 'GET', url: '/dataType/changeOnSelect',
-		// contentType: 'application/json',
-		// data: JSON.stringify(query),
-		// success: function() {
-		// this.props.cbChangeColl();
-		// }.bind(this),
-		// error: function(xhr, status, err) {
-		// console.log("Error changing collections:", err);
-		// }
-		// });
 	}
 });
 
@@ -45422,13 +45409,13 @@ module.exports = {
 		this.setUsername(data.username);
 		this.setRole(data.role);
 		this.setColl(data.coll);
-		this.printLoggedUser();
+		// this.printLoggedUser();
 	},
 	setLogout() {
 		g_username = "";
 		g_role = "";
 		g_usedColl = "";
-		this.printLoggedUser();
+		// this.printLoggedUser();
 	},
 	getUsername() {
 		return g_username;
@@ -46173,9 +46160,6 @@ var Collections = React.createClass({
 	},
 	componentDidMount: function () {
 		this.loadData();
-	},
-	componentWillReceiveProps: function () {
-		this.getLatestColl();
 	},
 
 	loadData: function () {
