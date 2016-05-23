@@ -8,8 +8,6 @@ var db;
 var curColl;
 var data; // JSON data fetch from AppTweak
 
-//Information for the REST call
-
 
 module.exports = {
 	/**
@@ -87,8 +85,8 @@ module.exports = {
 function insertNewData() {
 	db.collection(curColl).insertMany(data.content, function(err,result) {
 		assert.equal(err, null);
+		modifyDataAndUpdate();
 	});	
-	modifyDataAndUpdate();
 }
 
 function modifyDataAndUpdate() {
