@@ -40,7 +40,7 @@ Small bugs/features/things to consider:
 
 *Fix ranking which is hardcoded
 
-*Fix category code and price not being replaced
+
 
 
 
@@ -79,3 +79,5 @@ Fixed / Solution
 	
 *Fixed signup/signin being able to trigger multiple times because of async calls
     @Solution: Set a state for waiting to be able to signin/signup	
+	
+*Fix category code and price not being replaced

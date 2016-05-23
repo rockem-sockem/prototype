@@ -90,9 +90,15 @@ function insertNewData() {
 }
 
 function modifyDataAndUpdate() {
+	var ranking = 0;
+	
 	db.collection(curColl).find().each(function(err, doc) {
 		assert.equal(err, null);
 		if(doc != null) {
+			var query = {_id: doc._id};
+			var updateRank = {$set : {rank: ++ranking}};
+			db.collection(curColl).update(query, updateRank);
+			
 			if(doc.price == "$0.00" || doc.price == "") {
 				var query = {_id: doc._id};
 				var update = {$set : {price: "Free"}};
@@ -193,9 +199,8 @@ function modifyDataAndUpdate() {
 						cat = doc.genres[i];
 				}
 				var genresIndex = "genres."+i;
-				var query = {_id: doc._id};
-				var update = {$set : {[genresIndex]: cat}};
-				db.collection(curColl).update(query, update);
+				var updateGenres = {$set : {[genresIndex]: cat}};
+				db.collection(curColl).update(query, updateGenres);
 			}
 		} 
 	});

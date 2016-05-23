@@ -66,13 +66,12 @@ var BugList = React.createClass({
 
 var BugTable = React.createClass({
 	render: function() {
-		var counter = 0;
 		var pFields = this.props.fields;
 		var fields = this.props.fields.map(function(field) {
 			return <Field key={field._id} field={field} />
 		});
 		var bugRows = this.props.bugs.map(function(bug) {
-			return <BugRow key={bug._id} bug={bug} ranking={++counter} fields={pFields} />
+			return <BugRow key={bug._id} bug={bug} fields={pFields} />
 		});
 		return (
 			<div>
@@ -136,7 +135,7 @@ var BugRow = React.createClass({
 		
 		return (
 			<tr>
-				<td>{this.props.ranking}</td>
+				<td>{this.props.bug.rank}</td>
 				<td><a onClick={this.fetchData}>{this.props.bug.title}</a></td>
 				<td>{this.props.bug.developer}</td>
 				<td>{this.props.bug.price}</td>

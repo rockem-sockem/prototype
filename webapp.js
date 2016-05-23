@@ -361,5 +361,4 @@ mongodb.connect(db1_url, function(err, dbConnection) {
 			console.log('> Application listening on port ' + app_port + '!');
 		});
 	});
-	
 });

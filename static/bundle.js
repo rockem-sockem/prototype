@@ -45022,13 +45022,12 @@ var BugTable = React.createClass({
 	displayName: 'BugTable',
 
 	render: function () {
-		var counter = 0;
 		var pFields = this.props.fields;
 		var fields = this.props.fields.map(function (field) {
 			return React.createElement(Field, { key: field._id, field: field });
 		});
 		var bugRows = this.props.bugs.map(function (bug) {
-			return React.createElement(BugRow, { key: bug._id, bug: bug, ranking: ++counter, fields: pFields });
+			return React.createElement(BugRow, { key: bug._id, bug: bug, fields: pFields });
 		});
 		return React.createElement(
 			'div',
@@ -45142,7 +45141,7 @@ var BugRow = React.createClass({
 			React.createElement(
 				'td',
 				null,
-				this.props.ranking
+				this.props.bug.rank
 			),
 			React.createElement(
 				'td',
