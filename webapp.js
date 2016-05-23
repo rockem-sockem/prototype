@@ -298,14 +298,16 @@ app.get('/field', function(req, res) {
 	});
 });
 
-app.post('/appdb/fields/removeOne', function(req, res) {
-	datadb.collection(req.body.name).drop();
-	
-	datadb.listCollections().toArray(function(err, collections){
-		assert.equal(null, err);
-		res.json(collections);
-	});
+app.delete('/datadb/collection/drop', function(req, res) {
+	var selected = req.body.items;
+		
+	for(var i=0; i < selected.length; i++) {
+		datadb.collection(selected[i].name).drop();
+	}
+	res.end()
 });
+
+
 
 
 /**********************************************/

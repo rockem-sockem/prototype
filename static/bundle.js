@@ -45760,7 +45760,7 @@ var Layout = React.createClass({
 
 module.exports = Layout;
 
-},{"./Header":401,"./navbar/Navbar":410,"react":396}],404:[function(require,module,exports){
+},{"./Header":401,"./navbar/Navbar":411,"react":396}],404:[function(require,module,exports){
 var React = require('react');
 var $ = require('jquery');
 var Grid = require('react-bootstrap/lib/Grid');
@@ -46069,6 +46069,119 @@ var Signup = React.createClass({
 module.exports = Signup;
 
 },{"jquery":25,"react":396,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/FormControl":31,"react-bootstrap/lib/FormGroup":36}],407:[function(require,module,exports){
+var React = require('react');
+var $ = require('jquery');
+
+var FormGroup = require('react-bootstrap/lib/FormGroup');
+var FormControl = require('react-bootstrap/lib/FormControl');
+var ControlLabel = require('react-bootstrap/lib/ControlLabel');
+var Panel = require('react-bootstrap/lib/Panel');
+var Button = require('react-bootstrap/lib/Button');
+
+var Collections = React.createClass({
+	displayName: 'Collections',
+
+	render: function () {
+		var options = this.state.collections.map(function (coll) {
+			if (coll.name != "system.indexes") {
+				return React.createElement(DataOptions, { key: coll.name, collections: coll });
+			}
+		});
+
+		return React.createElement(
+			Panel,
+			null,
+			React.createElement(
+				'h3',
+				null,
+				'Remove Data Collection'
+			),
+			React.createElement(
+				'form',
+				{ id: 'collections' },
+				React.createElement(
+					FormGroup,
+					{ controlId: 'options' },
+					React.createElement(
+						ControlLabel,
+						null,
+						'Multiple Selection (Hold down CTRL)'
+					),
+					React.createElement(
+						FormControl,
+						{ componentClass: 'select', multiple: true },
+						options
+					)
+				),
+				React.createElement(
+					Button,
+					{ bsStyle: 'primary', onClick: this.removeSelected },
+					'Remove'
+				)
+			)
+		);
+	},
+	getInitialState: function () {
+		return {
+			collections: []
+		};
+	},
+	componentDidMount: function () {
+		this.loadDropdown();
+	},
+
+	loadDropdown: function () {
+		$.ajax('/api/datadbCollections', { data: {} }).done(function (data) {
+			this.setState({ collections: data });
+		}.bind(this));
+	},
+	createQuery: function () {
+		var selected = document.forms.collections.options;
+		var result = { items: [] };
+
+		for (var i = 0; i < selected.length; i++) {
+			var cur = selected[i];
+			if (cur.selected) {
+				result.items.push({ name: cur.value });
+			}
+		}
+		return result;
+	},
+	removeSelected: function (e) {
+		e.preventDefault();
+		var sendData = this.createQuery();
+		// var sendData = {items: selected};
+
+		// May drop multiple collections depending on selected values
+		$.ajax({
+			type: 'DELETE', url: '/datadb/collection/drop',
+			contentType: 'application/json',
+			data: JSON.stringify(sendData),
+			success: function () {
+				this.loadDropdown();
+			}.bind(this),
+			error: function (xhr, status, err) {
+				console.log("Error collections:", err);
+			}
+		});
+	}
+});
+
+var DataOptions = React.createClass({
+	displayName: 'DataOptions',
+
+	render: function () {
+		return React.createElement(
+			'option',
+			null,
+			this.props.collections.name
+		);
+	}
+});
+
+module.exports = Collections;
+
+},{"jquery":25,"react":396,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/ControlLabel":29,"react-bootstrap/lib/FormControl":31,"react-bootstrap/lib/FormGroup":36,"react-bootstrap/lib/Panel":53}],408:[function(require,module,exports){
 var React = require('react');
 var $ = require('jquery');
 
@@ -46387,23 +46500,21 @@ var TitleOption = React.createClass({
 
 module.exports = FieldPanel;
 
-},{"jquery":25,"react":396,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/ControlLabel":29,"react-bootstrap/lib/FormControl":31,"react-bootstrap/lib/FormGroup":36,"react-bootstrap/lib/Panel":53}],408:[function(require,module,exports){
+},{"jquery":25,"react":396,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/ControlLabel":29,"react-bootstrap/lib/FormControl":31,"react-bootstrap/lib/FormGroup":36,"react-bootstrap/lib/Panel":53}],409:[function(require,module,exports){
 var React = require('react');
 var $ = require('jquery');
 
 var Grid = require('react-bootstrap/lib/Grid');
 var Row = require('react-bootstrap/lib/Row');
 var Col = require('react-bootstrap/lib/Col');
-var Panel = require('react-bootstrap/lib/Panel');
-var Button = require('react-bootstrap/lib/Button');
 
 var UserList = require('./UserList');
 var FieldPanel = require('./FieldPanel');
+var Collections = require('./Collections');
 
 var Content = React.createClass({
 	displayName: 'Content',
 
-	//<Collections />
 	render: function () {
 		return React.createElement(
 			'div',
@@ -46430,6 +46541,7 @@ var Content = React.createClass({
 						React.createElement('hr', null),
 						React.createElement(FieldPanel, null),
 						React.createElement('hr', null),
+						React.createElement(Collections, null),
 						React.createElement('hr', null),
 						React.createElement(UserList, null)
 					)
@@ -46439,94 +46551,9 @@ var Content = React.createClass({
 	}
 });
 
-var Collections = React.createClass({
-	displayName: 'Collections',
-
-	render: function () {
-		var options = this.state.collections.map(function (coll) {
-			if (coll.name != "system.indexes") {
-				return React.createElement(DataOptions, { key: coll.name, collections: coll });
-			}
-		});
-
-		return React.createElement(
-			Panel,
-			null,
-			React.createElement(
-				'h2',
-				null,
-				'Remove Data Collection'
-			),
-			React.createElement(
-				'select',
-				{ id: 'removeColl', onChange: this.printSelected },
-				options
-			),
-			React.createElement('br', null),
-			React.createElement('br', null),
-			React.createElement(
-				Button,
-				{ bsStyle: 'primary', onClick: this.removeSelected },
-				'Remove'
-			)
-		);
-	},
-	getInitialState: function () {
-		return {
-			collections: []
-		};
-	},
-	componentDidMount: function () {
-		this.loadDropdown();
-	},
-	componentWillReceiveProps: function () {
-		this.loadDropdown();
-	},
-
-	loadDropdown: function () {
-		$.ajax('/api/datadbCollections', { data: {} }).done(function (data) {
-			this.setState({ collections: data });
-		}.bind(this));
-	},
-	printSelected: function () {
-		var selected = document.getElementById("removeColl").value;
-		console.log("this is selected: ", selected);
-	},
-	removeSelected: function () {
-		var selected = document.getElementById("removeColl").value;
-		var query = { name: selected };
-
-		$.ajax({
-			type: 'POST', url: '/appdb/fields/removeOne',
-			contentType: 'application/json',
-			data: JSON.stringify(query),
-			success: function (data) {
-				this.setState({
-					collections: data
-				});
-			}.bind(this),
-			error: function (xhr, status, err) {
-				console.log("Error changing collections:", err);
-			}
-		});
-	}
-});
-
-var DataOptions = React.createClass({
-	displayName: 'DataOptions',
-
-	render: function () {
-		return React.createElement(
-			'option',
-			null,
-			this.props.collections.name
-		);
-	}
-});
-
 module.exports = Content;
 
-},{"./FieldPanel":407,"./UserList":409,"jquery":25,"react":396,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/Col":27,"react-bootstrap/lib/Grid":38,"react-bootstrap/lib/Panel":53,"react-bootstrap/lib/Row":54}],409:[function(require,module,exports){
+},{"./Collections":407,"./FieldPanel":408,"./UserList":410,"jquery":25,"react":396,"react-bootstrap/lib/Col":27,"react-bootstrap/lib/Grid":38,"react-bootstrap/lib/Row":54}],410:[function(require,module,exports){
 var React = require('react');
 var $ = require('jquery');
 
@@ -46690,7 +46717,7 @@ var UserRow = React.createClass({
 
 module.exports = UserList;
 
-},{"../Auth.js":400,"jquery":25,"react":396,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/Table":60}],410:[function(require,module,exports){
+},{"../Auth.js":400,"jquery":25,"react":396,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/Table":60}],411:[function(require,module,exports){
 var React = require('react');
 var $ = require('jquery');
 var Auth = require('../Auth.js');
@@ -46799,4 +46826,4 @@ var Navbar = React.createClass({
 
 module.exports = Navbar;
 
-},{"../Auth.js":400,"../Home":402,"../Search":404,"../admin/Setting":408,"jquery":25,"react":396,"react-bootstrap/lib/Col":27,"react-bootstrap/lib/Glyphicon":37,"react-bootstrap/lib/Grid":38,"react-bootstrap/lib/Row":54,"react-bootstrap/lib/Tab":56,"react-bootstrap/lib/TabContainer":57,"react-bootstrap/lib/Tabs":61}]},{},[399]);
+},{"../Auth.js":400,"../Home":402,"../Search":404,"../admin/Setting":409,"jquery":25,"react":396,"react-bootstrap/lib/Col":27,"react-bootstrap/lib/Glyphicon":37,"react-bootstrap/lib/Grid":38,"react-bootstrap/lib/Row":54,"react-bootstrap/lib/Tab":56,"react-bootstrap/lib/TabContainer":57,"react-bootstrap/lib/Tabs":61}]},{},[399]);
