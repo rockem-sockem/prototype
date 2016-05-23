@@ -45991,8 +45991,6 @@ var FieldPanel = React.createClass({
 	displayName: 'FieldPanel',
 
 	render: function () {
-		//<FieldUpdate />
-
 		return React.createElement(
 			'div',
 			null,
@@ -46001,13 +45999,16 @@ var FieldPanel = React.createClass({
 				null,
 				React.createElement(FieldAdd, { reloadData: this.loadData }),
 				React.createElement('br', null),
-				React.createElement(FieldRemove, { options: this.state.fields, reloadData: this.loadData })
+				React.createElement(FieldRemove, { options: this.state.fields, reloadData: this.loadData }),
+				React.createElement('br', null),
+				React.createElement(FieldUpdate, null)
 			)
 		);
 	},
 	getInitialState: function () {
 		return {
-			fields: []
+			fields: [],
+			titles: []
 		};
 	},
 	componentDidMount: function () {
@@ -46015,8 +46016,13 @@ var FieldPanel = React.createClass({
 	},
 
 	loadData: function () {
+		// Gets the extra fields
 		$.ajax('/field', { data: {} }).done(function (data) {
 			this.setState({ fields: data });
+		}.bind(this));
+		//Gets the game titles
+		$.ajax('/field', { data: {} }).done(function (data) {
+			this.setState({ titles: data });
 		}.bind(this));
 	}
 });
@@ -46136,7 +46142,6 @@ var FieldRemove = React.createClass({
 
 	remove: function (e) {
 		e.preventDefault();
-		console.log(document.forms.fieldRemove.options.value);
 		var field = document.forms.fieldRemove.options.value;
 		var sendData = { "field": field };
 
@@ -46415,17 +46420,17 @@ var UserList = React.createClass({
 		return { users: [] };
 	},
 	componentDidMount: function () {
-		this.loadData({});
+		this.loadData();
 	},
 
-	loadData: function (filter) {
-		$.ajax('/api/users', { data: filter }).done(function (data) {
+	loadData: function () {
+		$.ajax('/users', { data: {} }).done(function (data) {
 			this.setState({ users: data });
 		}.bind(this));
 	},
 	handleRefresh: function (e) {
 		e.preventDefault();
-		this.loadData({});
+		this.loadData();
 	}
 });
 
@@ -46517,8 +46522,8 @@ var UserRow = React.createClass({
 		};
 
 		$.ajax({
-			type: 'POST',
-			url: '/api/switchRole',
+			type: 'PUT',
+			url: '/users/switchRole',
 			contentType: 'application/json',
 			data: JSON.stringify(user),
 			success: function () {

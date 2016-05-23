@@ -21,19 +21,19 @@ var UserList = React.createClass({
 		return {users: []};
 	},
 	componentDidMount: function() {
-		this.loadData({});
+		this.loadData();
 	},
 	
 	
 	
-	loadData: function(filter) {
-		$.ajax('/api/users', {data:filter}).done(function(data) {
+	loadData: function() {
+		$.ajax('/users', { data: {} }).done(function(data) {
 			this.setState({users: data});
 		}.bind(this));
 	},
 	handleRefresh: function(e) {
 		e.preventDefault();
-		this.loadData({});
+		this.loadData();
 	}
 });
 
@@ -90,8 +90,8 @@ var UserRow = React.createClass({
 		};
 		
 		$.ajax({
-			type: 'POST', 
-			url: '/api/switchRole', 
+			type: 'PUT', 
+			url: '/users/switchRole', 
 			contentType: 'application/json',
 			data: JSON.stringify(user),
 			success: function() {

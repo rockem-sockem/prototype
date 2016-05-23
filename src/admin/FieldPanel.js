@@ -9,22 +9,22 @@ var FormControl = require('react-bootstrap/lib/FormControl');
 
 var FieldPanel = React.createClass({
 	render: function() {
-		//<FieldUpdate />
-	
 		return(
 			<div>
 				<Panel>
 					<FieldAdd reloadData={this.loadData} />
 					<br />
 					<FieldRemove options={this.state.fields} reloadData={this.loadData} />
-					
+					<br />
+					<FieldUpdate />
 				</Panel>
 			</div>
 		);
 	}, 
 	getInitialState: function() {
 		return{
-			fields: []
+			fields: [],
+			titles: []
 		};
 	},
 	componentDidMount: function() {
@@ -35,8 +35,13 @@ var FieldPanel = React.createClass({
 	
 	
 	loadData: function() {
+		// Gets the extra fields
 		$.ajax('/field', { data: {} }).done(function(data) {
 			this.setState({fields: data});
+		}.bind(this));
+		//Gets the game titles 
+		$.ajax('/field', { data: {} }).done(function(data) {
+			this.setState({titles: data});
 		}.bind(this));
 	}
 });
@@ -130,7 +135,6 @@ var FieldRemove = React.createClass({
 	
 	remove: function(e) {
 		e.preventDefault();
-		console.log(document.forms.fieldRemove.options.value);
 		var field = document.forms.fieldRemove.options.value;
 		var sendData = { "field" : field };
 

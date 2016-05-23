@@ -255,7 +255,7 @@ app.post('/api/relog', function(req, res) {
 /**** Admin Content ***************************/
 /**********************************************/
 
-app.get('/api/users', function(req,res){
+app.get('/users', function(req, res){
 	var filter = {};
 	if(req.query.username)
 		filter.username = req.query.username;
@@ -266,7 +266,7 @@ app.get('/api/users', function(req,res){
 	});
 });
 
-app.post('/api/switchRole', function(req, res) {
+app.put('/users/switchRole', function(req, res) {
 	var query = {};
 	query.username = req.body.username;
 	var update = {$set : {role: req.body.role}};
