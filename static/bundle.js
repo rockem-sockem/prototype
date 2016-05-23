@@ -44889,6 +44889,8 @@ var FormGroup = require('react-bootstrap/lib/FormGroup');
 var FormControl = require('react-bootstrap/lib/FormControl');
 var Button = require('react-bootstrap/lib/Button');
 
+var Auth = require('../Auth.js');
+
 var BugFilter = React.createClass({
 	displayName: 'BugFilter',
 
@@ -44944,20 +44946,29 @@ var BugFilter = React.createClass({
 		}
 	},
 	submit: function () {
-		this.props.submitHandler({ title: this.state.title, developer: this.state.developer });
+		this.props.submitHandler({
+			title: this.state.title,
+			developer: this.state.developer,
+			collName: Auth.getColl()
+		});
 	}
 });
 
 module.exports = BugFilter;
 
-},{"react":396,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/FormControl":31,"react-bootstrap/lib/FormGroup":36,"react-bootstrap/lib/Panel":53}],398:[function(require,module,exports){
+},{"../Auth.js":400,"react":396,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/FormControl":31,"react-bootstrap/lib/FormGroup":36,"react-bootstrap/lib/Panel":53}],398:[function(require,module,exports){
 var React = require('react');
 var $ = require('jquery');
 
 var Table = require('react-bootstrap/lib/Table');
 var Button = require('react-bootstrap/lib/Button');
+var FormGroup = require('react-bootstrap/lib/FormGroup');
+var FormControl = require('react-bootstrap/lib/FormControl');
+var ControlLabel = require('react-bootstrap/lib/ControlLabel');
+var Panel = require('react-bootstrap/lib/Panel');
 
 var BugFilter = require('./BugFilter');
+var Auth = require('../Auth.js');
 
 var BugList = React.createClass({
 	displayName: 'BugList',
@@ -44966,7 +44977,7 @@ var BugList = React.createClass({
 		return React.createElement(
 			'div',
 			null,
-			React.createElement(BugFilter, { submitHandler: this.loadData }),
+			React.createElement(BugFilter, { submitHandler: this.loadCollection }),
 			React.createElement('hr', null),
 			React.createElement(DataDDMenu, { collections: this.state.collections, cbChangeColl: this.loadCollection }),
 			React.createElement('br', null),
@@ -44982,28 +44993,26 @@ var BugList = React.createClass({
 		};
 	},
 	componentDidMount: function () {
-		this.loadData({});
+		this.loadData();
 	},
 
-	loadData: function (filter) {
+	loadData: function () {
 		// Initial loading of scraped data for the table
-		$.ajax('/api/bugs', { data: filter }).done(function (data) {
-			this.setState({ bugs: data });
-		}.bind(this));
+		this.loadCollection({ collName: Auth.getColl() });
 		// Initial loading of collections name for dropdown menu
 		this.loadDropdown();
 		// Initial loading of extra columns in the table
 		this.loadColumns();
 	},
-	loadCollection: function () {
+	loadCollection: function (filter) {
 		// Gets collection according to user selection
-		$.ajax('/api/bugs', { data: {} }).done(function (data) {
+		$.ajax('/api/bugs', { data: filter }).done(function (data) {
 			this.setState({ bugs: data });
 		}.bind(this));
 		// In production, we'd also handle errors.
 	},
 	loadDropdown: function () {
-		$.ajax('/api/datadbCollections', { data: {} }).done(function (data) {
+		$.ajax('/datadb/collections', { data: {} }).done(function (data) {
 			this.setState({ collections: data });
 		}.bind(this));
 	},
@@ -45244,37 +45253,47 @@ var DataDDMenu = React.createClass({
 		});
 
 		return React.createElement(
-			'div',
+			Panel,
 			null,
 			React.createElement(
-				'h2',
+				'h3',
 				null,
-				'Categories'
+				'Data Type'
 			),
-			React.createElement('br', null),
 			React.createElement(
-				'select',
-				{ id: 'coll', onChange: this.getSelectedColl },
-				options
+				'form',
+				{ id: 'dataType' },
+				React.createElement(
+					FormGroup,
+					{ controlId: 'options' },
+					React.createElement(
+						FormControl,
+						{ componentClass: 'select', onChange: this.getSelectedColl },
+						options
+					)
+				)
 			)
 		);
 	},
 	getSelectedColl: function () {
-		var selected = document.getElementById("coll").value;
-		var query = { name: selected };
+		var selected = document.forms.dataType.options.value;
+		console.log("this selected ", selected);
+		Auth.setColl(selected);
+		var query = { collName: Auth.getColl() };
 
-		$.ajax({
-			type: 'POST', url: '/api/changeDatadbCollection',
-			contentType: 'application/json',
-			data: JSON.stringify(query),
-			success: function () {
-				this.props.cbChangeColl();
-			}.bind(this),
-			error: function (xhr, status, err) {
-				// ideally, show error to user.
-				console.log("Error changing collections:", err);
-			}
-		});
+		this.props.cbChangeColl(query);
+
+		// $.ajax({
+		// type: 'GET', url: '/dataType/changeOnSelect',
+		// contentType: 'application/json',
+		// data: JSON.stringify(query),
+		// success: function() {
+		// this.props.cbChangeColl();
+		// }.bind(this),
+		// error: function(xhr, status, err) {
+		// console.log("Error changing collections:", err);
+		// }
+		// });
 	}
 });
 
@@ -45292,7 +45311,7 @@ var DataOptions = React.createClass({
 
 module.exports = BugList;
 
-},{"./BugFilter":397,"jquery":25,"react":396,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/Table":60}],399:[function(require,module,exports){
+},{"../Auth.js":400,"./BugFilter":397,"jquery":25,"react":396,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/ControlLabel":29,"react-bootstrap/lib/FormControl":31,"react-bootstrap/lib/FormGroup":36,"react-bootstrap/lib/Panel":53,"react-bootstrap/lib/Table":60}],399:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
 var Router = require('react-router').Router;
@@ -45382,11 +45401,13 @@ ReactDOM.render(React.createElement(Layout, null), document.getElementById('main
 },{"./Layout":403,"jquery":25,"react":396,"react-dom":191,"react-router":221}],400:[function(require,module,exports){
 var g_username = "";
 var g_role = "";
+var g_usedColl = "";
 
 module.exports = {
 	printLoggedUser() {
 		console.log("this g_username = ", g_username);
 		console.log("this g_role = ", g_role);
+		console.log("this g_usedColl = ", g_usedColl);
 	},
 	setUsername(username) {
 		g_username = username;
@@ -45394,19 +45415,29 @@ module.exports = {
 	setRole(role) {
 		g_role = role;
 	},
+	setColl(coll) {
+		g_usedColl = coll;
+	},
 	setLoggedUser(data) {
 		this.setUsername(data.username);
 		this.setRole(data.role);
+		this.setColl(data.coll);
+		this.printLoggedUser();
 	},
 	setLogout() {
 		g_username = "";
 		g_role = "";
+		g_usedColl = "";
+		this.printLoggedUser();
 	},
 	getUsername() {
 		return g_username;
 	},
 	getRole() {
 		return g_role;
+	},
+	getColl() {
+		return g_usedColl;
 	}
 };
 
@@ -45543,7 +45574,7 @@ var Header = React.createClass({
 
 		$.ajax({
 			type: 'POST',
-			url: '/api/logout',
+			url: '/logout',
 			contentType: 'application/json',
 			success: function () {
 				this.setState({ logged: false });
@@ -45560,24 +45591,35 @@ var Header = React.createClass({
   * any similar actions of reopening a page. 
   */
 	relog: function () {
-		$.ajax({
-			type: 'POST',
-			url: '/api/relog',
-			contentType: 'application/json',
-			success: function (session) {
-				if (session != null) {
-					Auth.setLoggedUser(session);
-					this.setState({
-						logged: true,
-						username: Auth.getUsername()
-					});
-					this.props.getLoggedState(this.state.logged);
-				}
-			}.bind(this),
-			error: function (xhr, status, err) {
-				console.log("(relog)Callback error! ", err);
+		$.ajax('/relog', { data: {} }).done(function (session) {
+			if (session != null) {
+				Auth.setLoggedUser(session);
+				this.setState({
+					logged: true,
+					username: Auth.getUsername()
+				});
+				this.props.getLoggedState(this.state.logged);
 			}
-		});
+		}.bind(this));
+
+		// $.ajax({
+		// type: 'POST',
+		// url: '/api/relog',
+		// contentType: 'application/json',
+		// success: function(session) {
+		// if(session != null) {
+		// Auth.setLoggedUser(session);
+		// this.setState({	
+		// logged: true,
+		// username: Auth.getUsername()
+		// });
+		// this.props.getLoggedState(this.state.logged);
+		// }
+		// }.bind(this),
+		// error: function(xhr, status, err) {
+		// console.log("(relog)Callback error! ", err);
+		// }
+		// });
 	},
 	signinOnSuccess: function () {
 		this.setState({
@@ -46077,12 +46119,15 @@ var ControlLabel = require('react-bootstrap/lib/ControlLabel');
 var Panel = require('react-bootstrap/lib/Panel');
 var Button = require('react-bootstrap/lib/Button');
 
+var Auth = require('../Auth.js');
+
 var Collections = React.createClass({
 	displayName: 'Collections',
 
 	render: function () {
+		var latestColl = this.state.latestColl;
 		var options = this.state.collections.map(function (coll) {
-			if (coll.name != "system.indexes") {
+			if (coll.name != "system.indexes" && coll.name != latestColl) {
 				return React.createElement(DataOptions, { key: coll.name, collections: coll });
 			}
 		});
@@ -46122,15 +46167,28 @@ var Collections = React.createClass({
 	},
 	getInitialState: function () {
 		return {
-			collections: []
+			collections: [],
+			latestColl: ""
 		};
 	},
 	componentDidMount: function () {
-		this.loadDropdown();
+		this.loadData();
+	},
+	componentWillReceiveProps: function () {
+		this.getLatestColl();
 	},
 
+	loadData: function () {
+		this.loadDropdown();
+		this.getLatestColl();
+	},
+	getLatestColl: function () {
+		$.ajax('/datadb/collection/latest', { data: {} }).done(function (data) {
+			this.setState({ latestColl: data });
+		}.bind(this));
+	},
 	loadDropdown: function () {
-		$.ajax('/api/datadbCollections', { data: {} }).done(function (data) {
+		$.ajax('/datadb/collections', { data: {} }).done(function (data) {
 			this.setState({ collections: data });
 		}.bind(this));
 	},
@@ -46140,7 +46198,11 @@ var Collections = React.createClass({
 
 		for (var i = 0; i < selected.length; i++) {
 			var cur = selected[i];
+
 			if (cur.selected) {
+				if (cur.value == Auth.getColl()) {
+					Auth.setColl(this.state.latestColl);
+				}
 				result.items.push({ name: cur.value });
 			}
 		}
@@ -46149,7 +46211,6 @@ var Collections = React.createClass({
 	removeSelected: function (e) {
 		e.preventDefault();
 		var sendData = this.createQuery();
-		// var sendData = {items: selected};
 
 		// May drop multiple collections depending on selected values
 		$.ajax({
@@ -46180,7 +46241,7 @@ var DataOptions = React.createClass({
 
 module.exports = Collections;
 
-},{"jquery":25,"react":396,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/ControlLabel":29,"react-bootstrap/lib/FormControl":31,"react-bootstrap/lib/FormGroup":36,"react-bootstrap/lib/Panel":53}],408:[function(require,module,exports){
+},{"../Auth.js":400,"jquery":25,"react":396,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/ControlLabel":29,"react-bootstrap/lib/FormControl":31,"react-bootstrap/lib/FormGroup":36,"react-bootstrap/lib/Panel":53}],408:[function(require,module,exports){
 var React = require('react');
 var $ = require('jquery');
 
@@ -46189,6 +46250,8 @@ var Button = require('react-bootstrap/lib/Button');
 var FormGroup = require('react-bootstrap/lib/FormGroup');
 var FormControl = require('react-bootstrap/lib/FormControl');
 var ControlLabel = require('react-bootstrap/lib/ControlLabel');
+
+var Auth = require('../Auth.js');
 
 var FieldPanel = React.createClass({
 	displayName: 'FieldPanel',
@@ -46217,7 +46280,7 @@ var FieldPanel = React.createClass({
 	componentDidMount: function () {
 		this.loadFields();
 		//Gets the game titles
-		$.ajax('/api/bugs', { data: {} }).done(function (data) {
+		$.ajax('/api/bugs', { data: { collName: Auth.getColl() } }).done(function (data) {
 			this.setState({ games: data });
 		}.bind(this));
 	},
@@ -46448,7 +46511,8 @@ var FieldUpdate = React.createClass({
 		var sendData = {
 			"field": field,
 			"title": title,
-			"data": newData
+			"data": newData,
+			"collName": Auth.getColl()
 		};
 
 		if (field == null || field == "" || title == null || title == "") {
@@ -46499,7 +46563,7 @@ var TitleOption = React.createClass({
 
 module.exports = FieldPanel;
 
-},{"jquery":25,"react":396,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/ControlLabel":29,"react-bootstrap/lib/FormControl":31,"react-bootstrap/lib/FormGroup":36,"react-bootstrap/lib/Panel":53}],409:[function(require,module,exports){
+},{"../Auth.js":400,"jquery":25,"react":396,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/ControlLabel":29,"react-bootstrap/lib/FormControl":31,"react-bootstrap/lib/FormGroup":36,"react-bootstrap/lib/Panel":53}],409:[function(require,module,exports){
 var React = require('react');
 var $ = require('jquery');
 

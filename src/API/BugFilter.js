@@ -4,6 +4,8 @@ var FormGroup = require('react-bootstrap/lib/FormGroup');
 var FormControl = require('react-bootstrap/lib/FormControl');
 var Button = require('react-bootstrap/lib/Button');
 
+var Auth = require('../Auth.js');
+
 var BugFilter = React.createClass({
 	render: function() {
 		return (
@@ -45,7 +47,11 @@ var BugFilter = React.createClass({
 		} 
     },
 	submit: function() {
-		this.props.submitHandler({title:this.state.title, developer:this.state.developer});
+		this.props.submitHandler({
+			title: this.state.title, 
+			developer: this.state.developer,
+			collName: Auth.getColl()
+		});
 	}
 });
 

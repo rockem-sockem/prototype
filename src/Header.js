@@ -88,7 +88,7 @@ var Header = React.createClass({
 
 		$.ajax({
 			type: 'POST', 
-			url: '/api/logout', 
+			url: '/logout', 
 			contentType: 'application/json',
 			success: function() {
 				this.setState({ logged: false });
@@ -105,24 +105,35 @@ var Header = React.createClass({
 	 * any similar actions of reopening a page. 
 	 */
 	relog: function() {
-		$.ajax({
-			type: 'POST',
-			url: '/api/relog',
-			contentType: 'application/json',
-			success: function(session) {
-				if(session != null) {
-					Auth.setLoggedUser(session);
-					this.setState({	
-						logged: true,
-						username: Auth.getUsername()
-					}); 
-					this.props.getLoggedState(this.state.logged);
-				}
-			}.bind(this),
-			error: function(xhr, status, err) {
-				console.log("(relog)Callback error! ", err);
+		$.ajax('/relog', { data: {} }).done(function(session) {
+			if(session != null) {
+				Auth.setLoggedUser(session);
+				this.setState({	
+					logged: true,
+					username: Auth.getUsername()
+				}); 
+				this.props.getLoggedState(this.state.logged);
 			}
-		});
+		}.bind(this));
+		
+		// $.ajax({
+			// type: 'POST',
+			// url: '/api/relog',
+			// contentType: 'application/json',
+			// success: function(session) {
+				// if(session != null) {
+					// Auth.setLoggedUser(session);
+					// this.setState({	
+						// logged: true,
+						// username: Auth.getUsername()
+					// }); 
+					// this.props.getLoggedState(this.state.logged);
+				// }
+			// }.bind(this),
+			// error: function(xhr, status, err) {
+				// console.log("(relog)Callback error! ", err);
+			// }
+		// });
 	},
 	signinOnSuccess: function() {
 		this.setState({ 

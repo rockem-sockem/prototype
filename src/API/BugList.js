@@ -3,14 +3,19 @@ var $ = require('jquery');
 
 var Table = require('react-bootstrap/lib/Table');
 var Button = require('react-bootstrap/lib/Button');
+var FormGroup = require('react-bootstrap/lib/FormGroup');
+var FormControl = require('react-bootstrap/lib/FormControl');
+var ControlLabel = require('react-bootstrap/lib/ControlLabel');
+var Panel = require('react-bootstrap/lib/Panel');
 
 var BugFilter = require('./BugFilter');
+var Auth = require('../Auth.js');
 
 var BugList = React.createClass({
 	render: function() {
 		return (
 			<div>
-				<BugFilter submitHandler={this.loadData} />
+				<BugFilter submitHandler={this.loadCollection} />
 				<hr />
 				<DataDDMenu collections={this.state.collections} cbChangeColl={this.loadCollection} />
 				<br />
@@ -27,28 +32,25 @@ var BugList = React.createClass({
 		};
 	},
 	componentDidMount: function() {
-		this.loadData({});
+		this.loadData();
 	},
 	
-	
-	loadData:function(filter) {
+	loadData: function() {
 		// Initial loading of scraped data for the table
-		$.ajax('/api/bugs', {data:filter}).done(function(data) {
-			this.setState({bugs: data});
-		}.bind(this));
+		this.loadCollection({ collName: Auth.getColl() });
 		// Initial loading of collections name for dropdown menu
 		this.loadDropdown();
 		// Initial loading of extra columns in the table
 		this.loadColumns();
 	},
-	loadCollection: function() { // Gets collection according to user selection
-		$.ajax('/api/bugs', {data:{}}).done(function(data) {
+	loadCollection: function(filter) { // Gets collection according to user selection
+		$.ajax('/api/bugs', { data: filter }).done(function(data) {
 			this.setState({bugs: data});
 		}.bind(this));
 		// In production, we'd also handle errors.
 	},
 	loadDropdown: function() {
-		$.ajax('/api/datadbCollections', {data:{}}).done(function(data) {
+		$.ajax('/datadb/collections', {data:{}}).done(function(data) {
 			this.setState({collections: data});
 		}.bind(this));
 	},
@@ -216,31 +218,37 @@ var DataDDMenu = React.createClass({
 		});
 
 		return(
-			<div>
-				<h2>Categories</h2>
-				<br/>
-				<select id="coll" onChange={this.getSelectedColl}>
-					{options}
-				</select>
-			</div>
+			<Panel>
+				<h3>Data Type</h3>
+					<form id="dataType">
+						<FormGroup controlId="options">
+							<FormControl componentClass="select" onChange={this.getSelectedColl}>
+								{options}
+							</FormControl>
+						</FormGroup>
+					</form>
+			</Panel>
 		);
 	},
 	getSelectedColl: function() {
-		var selected = document.getElementById("coll").value;
-		var query = {name: selected};
+		var selected = document.forms.dataType.options.value;
+		console.log("this selected ", selected);
+		Auth.setColl(selected);
+		var query = { collName: Auth.getColl() };
 		
-		$.ajax({
-			type: 'POST', url: '/api/changeDatadbCollection', 
-			contentType: 'application/json',
-			data: JSON.stringify(query),
-			success: function() {
-				this.props.cbChangeColl();
-			}.bind(this),
-			error: function(xhr, status, err) {
-				// ideally, show error to user.
-				console.log("Error changing collections:", err);
-			}
-		});
+		this.props.cbChangeColl(query);
+		
+		// $.ajax({
+			// type: 'GET', url: '/dataType/changeOnSelect', 
+			// contentType: 'application/json',
+			// data: JSON.stringify(query),
+			// success: function() {
+				// this.props.cbChangeColl();
+			// }.bind(this),
+			// error: function(xhr, status, err) {
+				// console.log("Error changing collections:", err);
+			// }
+		// });
 	}
 });
 

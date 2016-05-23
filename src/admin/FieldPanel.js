@@ -7,6 +7,8 @@ var FormGroup = require('react-bootstrap/lib/FormGroup');
 var FormControl = require('react-bootstrap/lib/FormControl');
 var ControlLabel = require('react-bootstrap/lib/ControlLabel');
 
+var Auth = require('../Auth.js');
+
 var FieldPanel = React.createClass({
 	render: function() {
 		return(
@@ -30,7 +32,7 @@ var FieldPanel = React.createClass({
 	componentDidMount: function() {
 		this.loadFields();
 		//Gets the game titles 
-		$.ajax('/api/bugs', { data: {} }).done(function(data) {
+		$.ajax('/api/bugs', { data: { collName: Auth.getColl() } }).done(function(data) {
 			this.setState({games: data});
 		}.bind(this));
 	},
@@ -217,7 +219,8 @@ var FieldUpdate = React.createClass({
 		var sendData = { 
 			"field" : field,
 			"title" : title,
-			"data" : newData
+			"data" : newData,
+			"collName": Auth.getColl()
 		};
 		
 		if(field == null || field == "" || title == null || title == "") {

@@ -1,7 +1,3 @@
-/**********************************************/
-/**** Scraping API ****************************/
-/**********************************************/
-
 var https = require('https');
 var assert = require('assert');
 var db;
@@ -15,7 +11,7 @@ module.exports = {
 	 * it'll drop the old collection of data if any, and then 
 	 * insert the new scraped data.
 	 */ 
-	requestToAppTweak(datapath, database, collection) {
+	requestToAppTweak(datapath, database) {
 		var header = {"X-Apptweak-Key": "QS5NiFFrLERBRML_ptL208cJoWc"};
 		var options = {
 			hostname: "api.apptweak.com",
@@ -27,7 +23,6 @@ module.exports = {
 		};
 
 		db = database;
-		curColl = collection;
 		var date = new Date();
 		var time = date.getUTCFullYear() + "_" + (date.getUTCMonth() + 1)  + "_" + 
 			date.getUTCDate() + "_" + date.getUTCHours() + "_" + date.getUTCMinutes();

@@ -7,10 +7,14 @@ var ControlLabel = require('react-bootstrap/lib/ControlLabel');
 var Panel = require('react-bootstrap/lib/Panel');
 var Button = require('react-bootstrap/lib/Button');
 
+var Auth = require('../Auth.js');
+
 var Collections = React.createClass({
 	render: function() {
+		var latestColl = this.state.latestColl;
 		var options = this.state.collections.map(function(coll) {
-			if(coll.name != "system.indexes") {
+			if(coll.name != "system.indexes" &&
+			coll.name != latestColl) {
 				return <DataOptions key={coll.name} collections={coll} />;
 			}
 		});
@@ -32,17 +36,27 @@ var Collections = React.createClass({
 	},
 	getInitialState: function() {
 		return{
-			collections: []
+			collections: [],
+			latestColl: ""
 		};
 	},
 	componentDidMount: function() {
-		this.loadDropdown();
+		this.loadData();
 	},
 
 	
 	
+	loadData:function() {
+		this.loadDropdown();
+		this.getLatestColl();
+	},
+	getLatestColl: function() {
+		$.ajax('/datadb/collection/latest', { data: {} }).done(function(data) {
+			this.setState({latestColl: data});
+		}.bind(this));
+	},
 	loadDropdown: function() {
-		$.ajax('/api/datadbCollections', { data: {} }).done(function(data) {
+		$.ajax('/datadb/collections', { data: {} }).done(function(data) {
 			this.setState({collections: data});
 		}.bind(this));
 	},
@@ -52,7 +66,11 @@ var Collections = React.createClass({
 		
 		for(var i=0; i < selected.length; i++) {
 			var cur = selected[i];
+			
 			if(cur.selected) {
+				if(cur.value == Auth.getColl()) {
+					Auth.setColl(this.state.latestColl);
+				}
 				result.items.push({ name: cur.value });
 			}
 		}
@@ -61,7 +79,6 @@ var Collections = React.createClass({
 	removeSelected: function(e) {
 		e.preventDefault();
 		var sendData = this.createQuery();
-		// var sendData = {items: selected};
 		
 		// May drop multiple collections depending on selected values
 		$.ajax({
