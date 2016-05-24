@@ -45653,6 +45653,10 @@ var BugFilter = React.createClass({
 			developer: this.state.developer,
 			collName: Auth.getColl()
 		});
+		this.setState({
+			title: "",
+			developer: ""
+		});
 	}
 });
 
@@ -45666,19 +45670,8 @@ var Table = require('react-bootstrap/lib/Table');
 var Button = require('react-bootstrap/lib/Button');
 
 var Image = require('react-bootstrap/lib/Image');
-
 var Carousel = require('react-bootstrap/lib/Carousel');
-var CarouselCaption = require('react-bootstrap/lib/CarouselCaption');
-var CarouselItem = require('react-bootstrap/lib/CarouselItem');
-
-var Overlay = require('react-bootstrap/lib/Overlay');
-var OverlayTrigger = require('react-bootstrap/lib/OverlayTrigger');
 var Modal = require('react-bootstrap/lib/Modal');
-var ModalBody = require('react-bootstrap/lib/ModalBody');
-var ModalDialog = require('react-bootstrap/lib/ModalDialog');
-var ModalFooter = require('react-bootstrap/lib/ModalFooter');
-var ModalHeader = require('react-bootstrap/lib/ModalHeader');
-var ModalTitle = require('react-bootstrap/lib/ModalTitle');
 
 var FormGroup = require('react-bootstrap/lib/FormGroup');
 var FormControl = require('react-bootstrap/lib/FormControl');
@@ -45854,12 +45847,208 @@ var FieldValue = React.createClass({
 	}
 });
 
-var Attribute = React.createClass({
-	displayName: 'Attribute',
+var AndroidTable = React.createClass({
+	displayName: 'AndroidTable',
 
 	render: function () {
-		var achievements = this.props.data.features.game_center ? "Yes" : "No";
-		var inappstore = this.props.data.features.in_apps ? "Yes" : "No";
+		var versions = this.getVersions();
+		var price = this.props.data.price == "" ? "Free" : this.props.data.price;
+
+		return React.createElement(
+			'tbody',
+			null,
+			React.createElement(
+				'tr',
+				null,
+				React.createElement(
+					'td',
+					null,
+					this.props.data.title
+				),
+				React.createElement(
+					'td',
+					null,
+					React.createElement(Image, { src: this.props.data.icon, rounded: true })
+				)
+			),
+			React.createElement(
+				'tr',
+				null,
+				React.createElement(
+					'td',
+					null,
+					'Description'
+				),
+				React.createElement(
+					'td',
+					null,
+					this.props.data.description
+				)
+			),
+			React.createElement(
+				'tr',
+				null,
+				React.createElement(
+					'td',
+					null,
+					'Genres'
+				),
+				React.createElement(
+					'td',
+					null,
+					this.props.genres
+				)
+			),
+			React.createElement(
+				'tr',
+				null,
+				React.createElement(
+					'td',
+					null,
+					'Latest Version'
+				),
+				React.createElement(
+					'td',
+					null,
+					this.props.data.versions[0].version
+				)
+			),
+			React.createElement(
+				'tr',
+				null,
+				React.createElement(
+					'td',
+					null,
+					'Latest Release Notes'
+				),
+				React.createElement(
+					'td',
+					null,
+					this.props.data.versions[0].release_notes
+				)
+			),
+			React.createElement(
+				'tr',
+				null,
+				React.createElement(
+					'td',
+					null,
+					'Latest Release Date'
+				),
+				React.createElement(
+					'td',
+					null,
+					this.props.data.versions[0].release_date
+				)
+			),
+			React.createElement(
+				'tr',
+				null,
+				React.createElement(
+					'td',
+					null,
+					'Price'
+				),
+				React.createElement(
+					'td',
+					null,
+					price
+				)
+			),
+			React.createElement(
+				'tr',
+				null,
+				React.createElement(
+					'td',
+					null,
+					'ScreenShots'
+				),
+				React.createElement(
+					'td',
+					null,
+					React.createElement(
+						Carousel,
+						null,
+						React.createElement(
+							Carousel.Item,
+							null,
+							React.createElement(Image, { src: this.props.data.screenshots[0] }),
+							React.createElement(
+								Carousel.Caption,
+								null,
+								React.createElement(
+									'h3',
+									null,
+									'"01"'
+								)
+							)
+						),
+						React.createElement(
+							Carousel.Item,
+							null,
+							React.createElement(Image, { src: this.props.data.screenshots[1] }),
+							React.createElement(
+								Carousel.Caption,
+								null,
+								React.createElement(
+									'h3',
+									null,
+									'"02"'
+								)
+							)
+						),
+						React.createElement(
+							Carousel.Item,
+							null,
+							React.createElement(Image, { src: this.props.data.screenshots[2] }),
+							React.createElement(
+								Carousel.Caption,
+								null,
+								React.createElement(
+									'h3',
+									null,
+									'F"03"'
+								)
+							)
+						),
+						React.createElement(
+							Carousel.Item,
+							null,
+							React.createElement(Image, { src: this.props.data.screenshots[3] }),
+							React.createElement(
+								Carousel.Caption,
+								null,
+								React.createElement(
+									'h3',
+									null,
+									'"04"'
+								)
+							)
+						)
+					)
+				)
+			)
+		);
+	},
+
+	getVersions: function () {
+		var versions = this.props.data.versions;
+		var result = [];
+		for (var i = 0; i < versions.length; i++) {
+			var temp = JSON.stringify(versions[i]);
+			result.push(temp);
+		}
+		console.log(result);
+	}
+});
+
+var IosTable = React.createClass({
+	displayName: 'IosTable',
+
+	render: function () {
+		var features = JSON.stringify(this.props.data.features);
+		var achievements = features.game_center ? "Yes" : "No";
+		var inappstore = features.in_apps ? "Yes" : "No";
 		var genres = this.iterateOverGenres(this.props.data.genres);
 		var devices = this.iterateOverDevices(this.props.data.devices);
 
@@ -46075,20 +46264,6 @@ var Attribute = React.createClass({
 									'"04"'
 								)
 							)
-						),
-						React.createElement(
-							Carousel.Item,
-							null,
-							React.createElement(Image, { src: this.props.data.screenshots.iphone5[4].url }),
-							React.createElement(
-								Carousel.Caption,
-								null,
-								React.createElement(
-									'h3',
-									null,
-									'"05"'
-								)
-							)
 						)
 					)
 				)
@@ -46214,10 +46389,8 @@ var BugRow = React.createClass({
 		var fieldValues = this.props.fields.map(function (field) {
 			return React.createElement(FieldValue, { key: field._id, bug: bug, field: field });
 		});
-		/*
-  var attributes = this.state.gameData.map(function(attribute) {
-  	return <Attribute key={attribute._id} attribute={attribute} />
-  });*/
+		var iosTable = this.state.deviceModal == "ios" ? React.createElement(IosTable, { data: this.state.gameData }) : React.createElement('tbody', null);
+		var androidTable = this.state.deviceModal == "android" ? React.createElement(AndroidTable, { data: this.state.gameData }) : React.createElement('tbody', null);
 
 		return React.createElement(
 			'tr',
@@ -46230,7 +46403,7 @@ var BugRow = React.createClass({
 			React.createElement(
 				'td',
 				null,
-				React.createElement('img', { alt: '', src: this.props.bug.icon, width: '30', height: '30' }),
+				React.createElement('img', { alt: '', src: this.props.bug.icon, width: '50', height: '50' }),
 				React.createElement(
 					'a',
 					{ onClick: this.fetchData },
@@ -46276,7 +46449,8 @@ var BugRow = React.createClass({
 					React.createElement(
 						Table,
 						{ bordered: true, condensed: true, hover: true },
-						React.createElement(Attribute, { data: this.state.gameData })
+						iosTable,
+						androidTable
 					)
 				),
 				React.createElement(
@@ -46294,7 +46468,8 @@ var BugRow = React.createClass({
 	getInitialState: function () {
 		return {
 			showModal: false,
-			gameData: {}
+			gameData: {},
+			deviceModal: "" // To identify the correct modal depending on device
 		};
 	},
 
@@ -46343,24 +46518,28 @@ var BugRow = React.createClass({
 	//This function sends a get request for the data of a selected game
 	fetchData: function () {
 		// Initial loading of scraped data for the table
-		var query = {
-			id: this.props.bug.id,
-			device: this.props.bug.devices === null ? "android" : "ios"
-		};
+		var device = this.props.bug.devices == null || this.props.bug.devices == "" ? "android" : "ios";
+		var id = this.props.bug.id;
+
+		var query = {};
+		query.id = id;
+		query.device = device;
+
+		this.setState({ deviceModal: device });
 		$.ajax('/api/gameDetails', { data: query }).done(function (data) {
 			this.setState({ gameData: data });
-			console.log(this.state.gameData);
+			console.log(data);
+			this.open();
 		}.bind(this));
-		this.open();
 	}
+	//because button doesn't allow conventional way of including two events
+	//creating this function to run both fetch and display functions
 });
 
 /**********************************************/
 /**** Collection Drop-down Menu ***************/
 /**********************************************/
 
-//because button doesn't allow conventional way of including two events
-//creating this function to run both fetch and display functions
 var DataDDMenu = React.createClass({
 	displayName: 'DataDDMenu',
 
@@ -46416,7 +46595,7 @@ var DataOptions = React.createClass({
 
 module.exports = BugList;
 
-},{"../Auth.js":405,"./BugFilter":402,"jquery":25,"react":401,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/Carousel":27,"react-bootstrap/lib/CarouselCaption":28,"react-bootstrap/lib/CarouselItem":29,"react-bootstrap/lib/ControlLabel":32,"react-bootstrap/lib/FormControl":34,"react-bootstrap/lib/FormGroup":39,"react-bootstrap/lib/Image":42,"react-bootstrap/lib/Modal":46,"react-bootstrap/lib/ModalBody":47,"react-bootstrap/lib/ModalDialog":48,"react-bootstrap/lib/ModalFooter":49,"react-bootstrap/lib/ModalHeader":50,"react-bootstrap/lib/ModalTitle":51,"react-bootstrap/lib/Overlay":54,"react-bootstrap/lib/OverlayTrigger":55,"react-bootstrap/lib/Panel":57,"react-bootstrap/lib/Table":64}],404:[function(require,module,exports){
+},{"../Auth.js":405,"./BugFilter":402,"jquery":25,"react":401,"react-bootstrap/lib/Button":26,"react-bootstrap/lib/Carousel":27,"react-bootstrap/lib/ControlLabel":32,"react-bootstrap/lib/FormControl":34,"react-bootstrap/lib/FormGroup":39,"react-bootstrap/lib/Image":42,"react-bootstrap/lib/Modal":46,"react-bootstrap/lib/Panel":57,"react-bootstrap/lib/Table":64}],404:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
 var Router = require('react-router').Router;

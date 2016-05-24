@@ -52,6 +52,10 @@ var BugFilter = React.createClass({
 			developer: this.state.developer,
 			collName: Auth.getColl()
 		});
+		this.setState({
+			title: "",
+			developer: ""
+		});
 	}
 });
 

@@ -5,19 +5,8 @@ var Table = require('react-bootstrap/lib/Table');
 var Button = require('react-bootstrap/lib/Button');
 
 var Image = require('react-bootstrap/lib/Image');
-
 var Carousel = require('react-bootstrap/lib/Carousel');
-var CarouselCaption = require('react-bootstrap/lib/CarouselCaption');
-var CarouselItem = require('react-bootstrap/lib/CarouselItem');
-
-var Overlay = require('react-bootstrap/lib/Overlay');
-var OverlayTrigger = require('react-bootstrap/lib/OverlayTrigger');
 var Modal = require('react-bootstrap/lib/Modal');
-var ModalBody = require('react-bootstrap/lib/ModalBody');
-var ModalDialog = require('react-bootstrap/lib/ModalDialog');
-var ModalFooter = require('react-bootstrap/lib/ModalFooter');
-var ModalHeader = require('react-bootstrap/lib/ModalHeader');
-var ModalTitle = require('react-bootstrap/lib/ModalTitle');
 
 var FormGroup = require('react-bootstrap/lib/FormGroup');
 var FormControl = require('react-bootstrap/lib/FormControl');
@@ -146,10 +135,92 @@ var FieldValue = React.createClass({
 	}
 });
 
-var Attribute = React.createClass({
-	render: function() {		
-		var achievements = ((this.props.data.features.game_center) ? "Yes" : "No");
-		var inappstore = ((this.props.data.features.in_apps) ? "Yes" : "No");
+var AndroidTable = React.createClass({
+	render: function() {	
+		// var versions = this.getVersions();
+		var price = (this.props.data.price == "") ? "Free" : this.props.data.price;
+		
+		return(
+			<tbody>
+				<tr>
+					<td>{this.props.data.title}</td>
+					<td><Image src={this.props.data.icon} rounded /></td>
+				</tr>
+				<tr>
+					<td>Description</td>
+					<td>{this.props.data.description}</td>
+				</tr>
+				<tr>
+					<td>Genres</td>
+					<td>{this.props.genres}</td>
+				</tr>
+				<tr>
+					<td>Latest Version</td>
+					<td>{this.props.data.versions[0].version}</td>
+				</tr>
+				<tr>
+					<td>Latest Release Notes</td>
+					<td>{this.props.data.versions[0].release_notes}</td>
+				</tr>
+				<tr>
+					<td>Latest Release Date</td>
+					<td>{this.props.data.versions[0].release_date}</td>
+				</tr>
+				<tr>
+					<td>Price</td>
+					<td>{price}</td>
+				</tr>
+				
+				<tr>
+					<td>ScreenShots</td>
+					<td>
+						<Carousel>
+							<Carousel.Item>
+							<Image src={this.props.data.screenshots[0]}/>
+								<Carousel.Caption>
+									<h3>"01"</h3>
+								</Carousel.Caption>
+							</Carousel.Item>
+							<Carousel.Item>
+								<Image src={this.props.data.screenshots[1]}/>
+								<Carousel.Caption>
+									<h3>"02"</h3>
+								</Carousel.Caption>
+							</Carousel.Item>
+							<Carousel.Item>
+								<Image src={this.props.data.screenshots[2]}/>
+								<Carousel.Caption>
+									<h3>F"03"</h3>
+								</Carousel.Caption>
+							</Carousel.Item>
+							<Carousel.Item>
+								<Image src={this.props.data.screenshots[3]}/>
+								<Carousel.Caption>
+									<h3>"04"</h3>
+								</Carousel.Caption>
+							</Carousel.Item>
+						</Carousel>
+					</td>
+				</tr>
+			</tbody>
+		);
+	},
+	
+	getVersions: function() {
+		var versions = this.props.data.versions;
+		var result = [];
+		for(var i=0; i < versions.length; i++) {
+			var temp = JSON.stringify(versions[i]);
+			result.push(temp);
+		}
+	}
+});
+
+var IosTable = React.createClass({
+	render: function() {	
+		var features = JSON.stringify(this.props.data.features);
+		var achievements = (features.game_center) ? "Yes" : "No";
+		var inappstore = (features.in_apps) ? "Yes" : "No";
 		var genres = this.iterateOverGenres(this.props.data.genres);
 		var devices = this.iterateOverDevices(this.props.data.devices);
 		
@@ -199,37 +270,31 @@ var Attribute = React.createClass({
 					<td>ScreenShots</td>
 					<td>
 						<Carousel>
-						<Carousel.Item>
-						<Image src={this.props.data.screenshots.iphone5[0].url}/>
-							<Carousel.Caption>
-								<h3>"01"</h3>
-							</Carousel.Caption>
-						</Carousel.Item>
-						<Carousel.Item>
-							<Image src={this.props.data.screenshots.iphone5[1].url}/>
-							<Carousel.Caption>
-								<h3>"02"</h3>
-							</Carousel.Caption>
-						</Carousel.Item>
-						<Carousel.Item>
-							<Image src={this.props.data.screenshots.iphone5[2].url}/>
-							<Carousel.Caption>
-								<h3>F"03"</h3>
-							</Carousel.Caption>
-						</Carousel.Item>
-						<Carousel.Item>
-							<Image src={this.props.data.screenshots.iphone5[3].url}/>
-							<Carousel.Caption>
-								<h3>"04"</h3>
-							</Carousel.Caption>
-						</Carousel.Item>
-						<Carousel.Item>
-							<Image src={this.props.data.screenshots.iphone5[4].url}/>
-							<Carousel.Caption>
-								<h3>"05"</h3>
-							</Carousel.Caption>
-						</Carousel.Item>
-					</Carousel>
+							<Carousel.Item>
+							<Image src={this.props.data.screenshots.iphone5[0].url}/>
+								<Carousel.Caption>
+									<h3>"01"</h3>
+								</Carousel.Caption>
+							</Carousel.Item>
+							<Carousel.Item>
+								<Image src={this.props.data.screenshots.iphone5[1].url}/>
+								<Carousel.Caption>
+									<h3>"02"</h3>
+								</Carousel.Caption>
+							</Carousel.Item>
+							<Carousel.Item>
+								<Image src={this.props.data.screenshots.iphone5[2].url}/>
+								<Carousel.Caption>
+									<h3>F"03"</h3>
+								</Carousel.Caption>
+							</Carousel.Item>
+							<Carousel.Item>
+								<Image src={this.props.data.screenshots.iphone5[3].url}/>
+								<Carousel.Caption>
+									<h3>"04"</h3>
+								</Carousel.Caption>
+							</Carousel.Item>
+						</Carousel>
 					</td>
 				</tr>
 			</tbody>
@@ -352,10 +417,10 @@ var BugRow = React.createClass({
 		var fieldValues = this.props.fields.map(function(field) {
 			return <FieldValue key={field._id} bug={bug} field={field} />
 		});
-		/*
-		var attributes = this.state.gameData.map(function(attribute) {
-			return <Attribute key={attribute._id} attribute={attribute} />
-		});*/
+		var iosTable = (this.state.deviceModal == "ios") ?
+			<IosTable data={this.state.gameData} /> : <tbody></tbody>;
+		var androidTable = (this.state.deviceModal == "android") ?
+			<AndroidTable data={this.state.gameData} /> : <tbody></tbody>;
 		
 		return (
 			<tr>
@@ -373,7 +438,8 @@ var BugRow = React.createClass({
 					</Modal.Header>
 					<Modal.Body>
 						<Table bordered condensed hover>
-							<Attribute data={this.state.gameData} />
+							{iosTable}
+							{androidTable}
 						</Table>
 					</Modal.Body>
 					<Modal.Footer>
@@ -386,7 +452,8 @@ var BugRow = React.createClass({
 	getInitialState: function() {
 		return{
 			showModal: false,
-			gameData: {}
+			gameData: {},
+			deviceModal: "" // To identify the correct modal depending on device
 		};
 	},
 	
@@ -435,16 +502,20 @@ var BugRow = React.createClass({
 	//This function sends a get request for the data of a selected game
 	fetchData: function() {
 		// Initial loading of scraped data for the table
-		var query = { 
-			id: this.props.bug.id,
-			device: (this.props.bug.devices === null) ? "android" : "ios"
-		};
+		var device = (this.props.bug.devices == null || this.props.bug.devices == "") 
+			? "android" : "ios";
+		var id = this.props.bug.id;
+		
+		var query = {};
+		query.id = id;
+		query.device = device;
+
+		this.setState({ deviceModal: device	});		
 		$.ajax('/api/gameDetails', {data:query}).done(function(data) {
-      		this.setState({gameData: data});
-      		console.log(this.state.gameData);
+      		this.setState({	gameData: data });
+			this.open();
     	}.bind(this));
-		this.open();
-	},
+	}
 	//because button doesn't allow conventional way of including two events
 	//creating this function to run both fetch and display functions
 });
