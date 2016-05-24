@@ -190,7 +190,7 @@ var AndroidTable = React.createClass({
 							<Carousel.Item>
 								<Image src={this.props.data.screenshots[2]}/>
 								<Carousel.Caption>
-									<h3>F"03"</h3>
+									<h3>"03"</h3>
 								</Carousel.Caption>
 							</Carousel.Item>
 							<Carousel.Item>
@@ -285,7 +285,7 @@ var IosTable = React.createClass({
 							<Carousel.Item>
 								<Image src={this.props.data.screenshots.iphone5[2].url}/>
 								<Carousel.Caption>
-									<h3>F"03"</h3>
+									<h3>"03"</h3>
 								</Carousel.Caption>
 							</Carousel.Item>
 							<Carousel.Item>
