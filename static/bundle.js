@@ -45851,7 +45851,7 @@ var AndroidTable = React.createClass({
 	displayName: 'AndroidTable',
 
 	render: function () {
-		var versions = this.getVersions();
+		// var versions = this.getVersions();
 		var price = this.props.data.price == "" ? "Free" : this.props.data.price;
 
 		return React.createElement(
@@ -46007,7 +46007,7 @@ var AndroidTable = React.createClass({
 								React.createElement(
 									'h3',
 									null,
-									'F"03"'
+									'"03"'
 								)
 							)
 						),
@@ -46038,7 +46038,6 @@ var AndroidTable = React.createClass({
 			var temp = JSON.stringify(versions[i]);
 			result.push(temp);
 		}
-		console.log(result);
 	}
 });
 
@@ -46528,7 +46527,6 @@ var BugRow = React.createClass({
 		this.setState({ deviceModal: device });
 		$.ajax('/api/gameDetails', { data: query }).done(function (data) {
 			this.setState({ gameData: data });
-			console.log(data);
 			this.open();
 		}.bind(this));
 	}
