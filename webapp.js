@@ -138,7 +138,8 @@ app.get('/api/gameDetails', function(req, res) {
 	var id = req.query.id;
 	requestForGameDetails(id, device);
 	eventEmitter.once('got_data', function() {
-		return res.json(sendData);
+		console.log(sendData);
+		return res.json(sendData.content);
 	});
 });
 
