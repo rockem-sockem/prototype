@@ -322,30 +322,30 @@ app.get('/datadb/collection/latest', function(req, res) {
 function requestAPI() {
 	// For every minute: '*/1 * * * *'
 	// Scheduled a minute apart to prevent race conditions
-	sched = schedule.scheduleJob('1 0 * * *', function() {
-		Scraping.requestToAppTweak("/ios/categories/6014/top.json", datadb);
+	sched = schedule.scheduleJob('/1 * * * *', function() {
+		Scraping.requestToAppTweak("*/ios/categories/6014/top.json", datadb);
 		latestColl = Scraping.getColl();
 	});
-	sched = schedule.scheduleJob('2 0 * * *', function() {
+	sched = schedule.scheduleJob('*/2 * * * *', function() {
 		Scraping.requestToAppTweak("/ios/categories/6014/top.json?type=paid", datadb);
 		latestColl = Scraping.getColl();
 	});
-	sched = schedule.scheduleJob('3 0 * * *', function() {
-		Scraping.requestToAppTweak("/ios/categories/6014/top.json?type=grossing", datadb);
-		latestColl = Scraping.getColl();
-	});
-	sched = schedule.scheduleJob('4 0 * * *', function() {
-		Scraping.requestToAppTweak("/android/categories/game/top.json", datadb);
-		latestColl = Scraping.getColl();
-	});
-	sched = schedule.scheduleJob('5 0 * * *', function() {
-		Scraping.requestToAppTweak("/android/categories/game/top.json?type=paid", datadb);
-		latestColl = Scraping.getColl();
-	});
-	sched = schedule.scheduleJob('6 0 * * *', function() {
-		Scraping.requestToAppTweak("/android/categories/game/top.json?type=grossing", datadb);
-		latestColl = Scraping.getColl();
-	});
+	// sched = schedule.scheduleJob('/3 * * * *', function() {
+		// Scraping.requestToAppTweak("/ios/categories/6014/top.json?type=grossing", datadb);
+		// latestColl = Scraping.getColl();
+	// });
+	// sched = schedule.scheduleJob('/4 * * * *', function() {
+		// Scraping.requestToAppTweak("/android/categories/game/top.json", datadb);
+		// latestColl = Scraping.getColl();
+	// });
+	// sched = schedule.scheduleJob('/5 * * * *', function() {
+		// Scraping.requestToAppTweak("/android/categories/game/top.json?type=paid", datadb);
+		// latestColl = Scraping.getColl();
+	// });
+	// sched = schedule.scheduleJob('*/6 * * * *', function() {
+		// Scraping.requestToAppTweak("/android/categories/game/top.json?type=grossing", datadb);
+		// latestColl = Scraping.getColl();
+	// });
 	
 	// Use these for testing only.git. Try once at a time or race condition may happen
 	// Scraping.requestToAppTweak("/ios/categories/6014/top.json", datadb);
