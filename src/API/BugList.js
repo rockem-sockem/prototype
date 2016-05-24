@@ -3,13 +3,32 @@ var $ = require('jquery');
 
 var Table = require('react-bootstrap/lib/Table');
 var Button = require('react-bootstrap/lib/Button');
+
+var Image = require('react-bootstrap/lib/Image');
+
+var Carousel = require('react-bootstrap/lib/Carousel');
+var CarouselCaption = require('react-bootstrap/lib/CarouselCaption');
+var CarouselItem = require('react-bootstrap/lib/CarouselItem');
+
+var Overlay = require('react-bootstrap/lib/Overlay');
+var OverlayTrigger = require('react-bootstrap/lib/OverlayTrigger');
+var Modal = require('react-bootstrap/lib/Modal');
+var ModalBody = require('react-bootstrap/lib/ModalBody');
+var ModalDialog = require('react-bootstrap/lib/ModalDialog');
+var ModalFooter = require('react-bootstrap/lib/ModalFooter');
+var ModalHeader = require('react-bootstrap/lib/ModalHeader');
+var ModalTitle = require('react-bootstrap/lib/ModalTitle');
+
 var FormGroup = require('react-bootstrap/lib/FormGroup');
 var FormControl = require('react-bootstrap/lib/FormControl');
 var ControlLabel = require('react-bootstrap/lib/ControlLabel');
 var Panel = require('react-bootstrap/lib/Panel');
 
+
 var BugFilter = require('./BugFilter');
 var Auth = require('../Auth.js');
+
+var displayData; //this variable will hold the data of the game clicked
 
 var BugList = React.createClass({
 	render: function() {
@@ -101,7 +120,8 @@ var BugTable = React.createClass({
 	},
 	getInitialState: function() {
 		return{
-			bugs: this.props.bugs
+			bugs: this.props.bugs,
+
 		};
 	},
 	handleRefresh: function(e) {
@@ -126,6 +146,204 @@ var FieldValue = React.createClass({
 	}
 });
 
+var Attribute = React.createClass({
+	render: function() {		
+		var achievements = ((this.props.data.features.game_center) ? "Yes" : "No");
+		var inappstore = ((this.props.data.features.in_apps) ? "Yes" : "No");
+		var genres = this.iterateOverGenres(this.props.data.genres);
+		var devices = this.iterateOverDevices(this.props.data.devices);
+		
+		return(
+			<tbody>
+				<tr>
+					<td>{this.props.data.title}</td>
+					<td><Image src={this.props.data.icon} rounded /></td>
+				</tr>
+				<tr>
+					<td>Description</td>
+					<td>{this.props.data.description}</td>
+				</tr>
+				<tr>
+					<td>Genres</td>
+					<td>{genres}</td>
+				</tr>
+				<tr>
+					<td>Latest Version</td>
+					<td>{this.props.data.versions[0].version}</td>
+				</tr>
+				<tr>
+					<td>Release Notes</td>
+					<td>{this.props.data.versions[0].release_notes}</td>
+				</tr>
+				<tr>
+					<td>Devices</td>
+					<td>{this.props.data.devices}</td>
+				</tr>
+				<tr>
+					<td>Price</td>
+					<td>{this.props.data.price}</td>
+				</tr>
+				<tr>
+					<td>Release Date</td>
+					<td>{this.props.data.release_date}</td>
+				</tr>
+				<tr>
+					<td>Achievements</td>
+					<td>{achievements}</td>
+				</tr>
+				<tr>
+					<td>In-App Store</td>
+					<td>{inappstore}</td>
+				</tr>
+				<tr>
+					<td>ScreenShots</td>
+					<td>
+						<Carousel>
+						<Carousel.Item>
+						<Image src={this.props.data.screenshots.iphone5[0].url}/>
+							<Carousel.Caption>
+								<h3>"01"</h3>
+							</Carousel.Caption>
+						</Carousel.Item>
+						<Carousel.Item>
+							<Image src={this.props.data.screenshots.iphone5[1].url}/>
+							<Carousel.Caption>
+								<h3>"02"</h3>
+							</Carousel.Caption>
+						</Carousel.Item>
+						<Carousel.Item>
+							<Image src={this.props.data.screenshots.iphone5[2].url}/>
+							<Carousel.Caption>
+								<h3>F"03"</h3>
+							</Carousel.Caption>
+						</Carousel.Item>
+						<Carousel.Item>
+							<Image src={this.props.data.screenshots.iphone5[3].url}/>
+							<Carousel.Caption>
+								<h3>"04"</h3>
+							</Carousel.Caption>
+						</Carousel.Item>
+						<Carousel.Item>
+							<Image src={this.props.data.screenshots.iphone5[4].url}/>
+							<Carousel.Caption>
+								<h3>"05"</h3>
+							</Carousel.Caption>
+						</Carousel.Item>
+					</Carousel>
+					</td>
+				</tr>
+			</tbody>
+		);
+	},
+	iterateOverGenres: function(array) {
+		var length = array.length;
+		var genres = "";
+		for(var i = 0; i < length - 1; i++) {
+			var cat;
+			switch(array[i]) {
+				case 0:
+					cat = "All"; break;
+				case 6000:
+					cat = "Business"; break;
+				case 6001:
+					cat = "Weather"; break;
+				case 6002:
+					cat = "Utilities"; break;
+				case 6003:
+					cat = "Travel"; break;
+				case 6004:
+					cat = "Sports"; break;
+				case 6005:
+					cat = "Social Networking"; break;
+				case 6006:
+					cat = "Reference"; break;
+				case 6007:
+					cat = "Productivity"; break;
+				case 6008:
+					cat = "Photo & Video"; break;
+				case 6009:
+					cat = "News"; break;
+				case 6010: 
+					cat = "Navigation"; break;
+				case 6011:
+					cat = "Music"; break;
+				case 6012:
+					cat = "Lifestyle"; break;
+				case 6013:
+					cat = "Health & Fitness"; break;
+				case 6014:
+					cat = "Games"; break;
+				case 6015:
+					cat = "Finance"; break;
+				case 6016:
+					cat = "Entertainment"; break;
+				case 6017:
+					cat = "Education"; break;
+				case 6018:
+					cat = "Books"; break;
+				case 6020:
+					cat = "Medical"; break;
+				case 6021:
+					cat = "Newsstand"; break;
+				case 6022:
+					cat = "Catalogs"; break;
+				case 6023:
+					cat = "Food & Drink"; break;
+				case 7001:
+					cat = "Action"; break;
+				case 7002:
+					cat = "Adventure"; break;
+				case 7003:
+					cat = "Arcade"; break;
+				case 7004:
+					cat = "Board"; break;
+				case 7005:
+					cat = "Card"; break;
+				case 7006:
+					cat = "Casino"; break;
+				case 7007:
+					cat = "Dice"; break;
+				case 7008:
+					cat = "Educational"; break;
+				case 7009:
+					cat = "Family"; break;
+				case 7010:
+					cat = "Kids"; break;
+				case 7011:
+					cat = "Music"; break;
+				case 7012:
+					cat = "Puzzle"; break;
+				case 7013:
+					cat = "Racing"; break;
+				case 7014:
+					cat = "Role Playing"; break;
+				case 7015:
+					cat = "Simulation"; break;
+				case 7016:
+					cat = "Sports"; break;
+				case 7017:
+					cat = "Strategy"; break;
+				case 7018:
+					cat = "Trivia"; break;
+				case 7019:
+					cat = "Word"; break;
+				default:
+					cat = "undefined"
+			}
+			genres = genres + ", " + cat;
+		}
+		return genres;
+	},
+	iterateOverDevices: function(array) {
+		var length = array.length;
+		var devices = "";
+		for(var i = 0; i < length - 1; i++) {
+			devices =  + array[i] + ", " + devices
+		}
+		return devices;
+	}
+});
+
 var BugRow = React.createClass({	
 	render: function() {
 		var bug = this.props.bug;
@@ -134,6 +352,10 @@ var BugRow = React.createClass({
 		var fieldValues = this.props.fields.map(function(field) {
 			return <FieldValue key={field._id} bug={bug} field={field} />
 		});
+		/*
+		var attributes = this.state.gameData.map(function(attribute) {
+			return <Attribute key={attribute._id} attribute={attribute} />
+		});*/
 		
 		return (
 			<tr>
@@ -145,14 +367,29 @@ var BugRow = React.createClass({
 				<td>{genres}</td>
 				<td>{devices}</td>
 				{fieldValues}
+				<Modal show={this.state.showModal} onHide={this.close}>
+					<Modal.Header closeButton>
+						<Modal.Title>Data</Modal.Title>
+					</Modal.Header>
+					<Modal.Body>
+						<Table bordered condensed hover>
+							<Attribute data={this.state.gameData} />
+						</Table>
+					</Modal.Body>
+					<Modal.Footer>
+						<Button onClick={this.close}>Close</Button>
+					</Modal.Footer>
+				</Modal>
 			</tr>
 		)
 	},
 	getInitialState: function() {
 		return{
-			// bug: this.props.bug
+			showModal: false,
+			gameData: {}
 		};
 	},
+	
 	formatGenres: function() {
 		var genres = "";
 		var length = this.props.bug.genres.length;
@@ -187,7 +424,14 @@ var BugRow = React.createClass({
 		}
 		return devices;
 	},
-	
+	//closes modal
+	close: function() {
+		this.setState({ showModal: false });
+	},
+	//opens modal
+	open: function() {
+		this.setState({ showModal: true });
+	},
 	//This function sends a get request for the data of a selected game
 	fetchData: function() {
 		// Initial loading of scraped data for the table
@@ -196,10 +440,13 @@ var BugRow = React.createClass({
 			device: (this.props.bug.devices === null) ? "android" : "ios"
 		};
 		$.ajax('/api/gameDetails', {data:query}).done(function(data) {
-      		//this.setState({bugs: data});
-      		console.log(data);
+      		this.setState({gameData: data});
+      		console.log(this.state.gameData);
     	}.bind(this));
-	}
+		this.open();
+	},
+	//because button doesn't allow conventional way of including two events
+	//creating this function to run both fetch and display functions
 });
 
 
