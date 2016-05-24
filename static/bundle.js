@@ -46038,7 +46038,6 @@ var Attribute = React.createClass({
 							Carousel.Item,
 							null,
 							React.createElement(Image, { src: this.props.data.screenshots.iphone5[1].url }),
-							React.createElement(Image, { src: this.props.data.screenshots.iphone5[1].url }),
 							React.createElement(
 								Carousel.Caption,
 								null,

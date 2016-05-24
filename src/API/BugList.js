@@ -207,7 +207,6 @@ var Attribute = React.createClass({
 						</Carousel.Item>
 						<Carousel.Item>
 							<Image src={this.props.data.screenshots.iphone5[1].url}/>
-							<Image src={this.props.data.screenshots.iphone5[1].url}/>
 							<Carousel.Caption>
 								<h3>"02"</h3>
 							</Carousel.Caption>
