@@ -45155,7 +45155,7 @@ var BugRow = React.createClass({
 			React.createElement(
 				'td',
 				null,
-				React.createElement('img', { alt: '', src: this.props.bug.icon, width: '50', height: '50' }),
+				React.createElement('img', { alt: '', src: this.props.bug.icon, width: '30', height: '30' }),
 				React.createElement(
 					'a',
 					{ onClick: this.fetchData },
@@ -46282,7 +46282,7 @@ var FieldAdd = React.createClass({
 
 	render: function () {
 		return React.createElement(
-			'div',
+			'form',
 			null,
 			React.createElement(
 				'h3',
@@ -46290,19 +46290,15 @@ var FieldAdd = React.createClass({
 				'Add Field'
 			),
 			React.createElement(
-				'form',
-				null,
-				React.createElement(
-					FormGroup,
-					{ controlId: 'field' },
-					React.createElement(FormControl, { type: 'text', value: this.state.fField, placeholder: 'Field name',
-						onKeyPress: this.handleEnter, onChange: this.handleChange })
-				),
-				React.createElement(
-					Button,
-					{ bsStyle: 'primary', onClick: this.onClickAdd },
-					'Add'
-				)
+				FormGroup,
+				{ controlId: 'field' },
+				React.createElement(FormControl, { type: 'text', value: this.state.fField, placeholder: 'Field name',
+					onKeyPress: this.handleEnter, onChange: this.handleChange })
+			),
+			React.createElement(
+				Button,
+				{ bsStyle: 'primary', onClick: this.onClickAdd },
+				'Add'
 			)
 		);
 	},
@@ -46361,30 +46357,26 @@ var FieldRemove = React.createClass({
 		});
 
 		return React.createElement(
-			'div',
-			null,
+			'form',
+			{ id: 'fieldRemove' },
 			React.createElement(
 				'h3',
 				null,
 				'Remove Field'
 			),
 			React.createElement(
-				'form',
-				{ id: 'fieldRemove' },
+				FormGroup,
+				{ controlId: 'options' },
 				React.createElement(
-					FormGroup,
-					{ controlId: 'options' },
-					React.createElement(
-						FormControl,
-						{ componentClass: 'select' },
-						fieldOptions
-					)
-				),
-				React.createElement(
-					Button,
-					{ bsStyle: 'primary', onClick: this.remove },
-					'Remove'
+					FormControl,
+					{ componentClass: 'select' },
+					fieldOptions
 				)
+			),
+			React.createElement(
+				Button,
+				{ bsStyle: 'primary', onClick: this.remove },
+				'Remove'
 			)
 		);
 	},
@@ -46425,55 +46417,51 @@ var FieldUpdate = React.createClass({
 		});
 
 		return React.createElement(
-			'div',
-			null,
+			'form',
+			{ id: 'updateField' },
 			React.createElement(
 				'h3',
 				null,
 				'Update Data'
 			),
 			React.createElement(
-				'form',
-				{ id: 'updateField' },
+				FormGroup,
+				{ controlId: 'fieldsMenu' },
 				React.createElement(
-					FormGroup,
-					{ controlId: 'fieldsMenu' },
-					React.createElement(
-						ControlLabel,
-						null,
-						'Select Field'
-					),
-					React.createElement(
-						FormControl,
-						{ componentClass: 'select' },
-						fieldOptions
-					)
+					ControlLabel,
+					null,
+					'Select Field'
 				),
 				React.createElement(
-					FormGroup,
-					{ controlId: 'titleMenu' },
-					React.createElement(
-						ControlLabel,
-						null,
-						'Select Game Title'
-					),
-					React.createElement(
-						FormControl,
-						{ componentClass: 'select' },
-						titleOptions
-					)
-				),
-				React.createElement(
-					FormGroup,
-					{ controlId: 'updateText' },
-					React.createElement(FormControl, { type: 'text', placeholder: 'Data to be inserted/modified',
-						onKeyPress: this.handleEnter })
-				),
-				React.createElement(
-					Button,
-					{ bsStyle: 'primary', onClick: this.onClickUpdate },
-					'Update'
+					FormControl,
+					{ componentClass: 'select' },
+					fieldOptions
 				)
+			),
+			React.createElement(
+				FormGroup,
+				{ controlId: 'titleMenu' },
+				React.createElement(
+					ControlLabel,
+					null,
+					'Select Game Title'
+				),
+				React.createElement(
+					FormControl,
+					{ componentClass: 'select' },
+					titleOptions
+				)
+			),
+			React.createElement(
+				FormGroup,
+				{ controlId: 'updateText' },
+				React.createElement(FormControl, { type: 'text', placeholder: 'Data to be inserted/modified',
+					onKeyPress: this.handleEnter })
+			),
+			React.createElement(
+				Button,
+				{ bsStyle: 'primary', onClick: this.onClickUpdate },
+				'Update'
 			)
 		);
 	},

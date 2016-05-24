@@ -54,16 +54,14 @@ var FieldPanel = React.createClass({
 var FieldAdd = React.createClass({
 	render: function() {
 		return(
-			<div>
+			<form>
 				<h3>Add Field</h3>
-				<form>
-					<FormGroup controlId="field">
-						<FormControl type="text" value={this.state.fField} placeholder="Field name" 
-							onKeyPress={this.handleEnter} onChange={this.handleChange} />
-					</FormGroup>
-					<Button bsStyle="primary" onClick={this.onClickAdd}>Add</Button>
-				</form>
-			</div>
+				<FormGroup controlId="field">
+					<FormControl type="text" value={this.state.fField} placeholder="Field name" 
+						onKeyPress={this.handleEnter} onChange={this.handleChange} />
+				</FormGroup>
+				<Button bsStyle="primary" onClick={this.onClickAdd}>Add</Button>
+			</form>
 		);
 	},
 	getInitialState: function() {
@@ -123,17 +121,15 @@ var FieldRemove = React.createClass({
 		});
 
 		return(
-			<div>
+			<form id="fieldRemove">
 				<h3>Remove Field</h3>
-				<form id="fieldRemove">
-					<FormGroup controlId="options">
-						<FormControl componentClass="select" >
-							{fieldOptions}
-						</FormControl>
-					</FormGroup>
-					<Button bsStyle="primary" onClick={this.remove}>Remove</Button>
-				</form>
-			</div>
+				<FormGroup controlId="options">
+					<FormControl componentClass="select" >
+						{fieldOptions}
+					</FormControl>
+				</FormGroup>
+				<Button bsStyle="primary" onClick={this.remove}>Remove</Button>
+			</form>
 		);
 	},
 	
@@ -175,28 +171,26 @@ var FieldUpdate = React.createClass({
 		});
 	
 		return(
-			<div>
+			<form id="updateField">
 				<h3>Update Data</h3>
-				<form id="updateField">
-					<FormGroup controlId="fieldsMenu">
-						<ControlLabel>Select Field</ControlLabel>
-						<FormControl componentClass="select" >
-							{fieldOptions}
-						</FormControl>
-					</FormGroup>
-					<FormGroup controlId="titleMenu">
-						<ControlLabel>Select Game Title</ControlLabel>
-						<FormControl componentClass="select" >
-							{titleOptions}
-						</FormControl>
-					</FormGroup>
-					<FormGroup controlId="updateText">
-						<FormControl type="text" placeholder="Data to be inserted/modified"
-							onKeyPress={this.handleEnter} />
-					</FormGroup>
-					<Button bsStyle="primary" onClick={this.onClickUpdate}>Update</Button>
-				</form>
-			</div>
+				<FormGroup controlId="fieldsMenu">
+					<ControlLabel>Select Field</ControlLabel>
+					<FormControl componentClass="select" >
+						{fieldOptions}
+					</FormControl>
+				</FormGroup>
+				<FormGroup controlId="titleMenu">
+					<ControlLabel>Select Game Title</ControlLabel>
+					<FormControl componentClass="select" >
+						{titleOptions}
+					</FormControl>
+				</FormGroup>
+				<FormGroup controlId="updateText">
+					<FormControl type="text" placeholder="Data to be inserted/modified"
+						onKeyPress={this.handleEnter} />
+				</FormGroup>
+				<Button bsStyle="primary" onClick={this.onClickUpdate}>Update</Button>
+			</form>
 		);
 	},
 	

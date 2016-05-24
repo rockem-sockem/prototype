@@ -5,8 +5,6 @@ var Grid = require('react-bootstrap/lib/Grid');
 var Row = require('react-bootstrap/lib/Row');
 var Col = require('react-bootstrap/lib/Col');
 
-
-
 var UserList = require('./UserList');
 var FieldPanel = require('./FieldPanel');
 var Collections = require('./Collections');
