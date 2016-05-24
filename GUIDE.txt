@@ -3,11 +3,14 @@
 
 ===Starting the app
 
-1. Open CMD and go to the app workplace directory
-	Type "node SERVER_FILENAME.js" to start the server // SERVER_FILENAME.js is the main index file when npm install
-	So, for this project cmd: "node webapp"
+1. Open CMD and go to the project's workplace directory and 
+	type "node install" to install necessary modules from package.json
 
-	
+2. In the same CMD and directory, type "node webapp"
+
+3. Open web browser and type the url "localhost:3000"
+
+4. Done
 	
 	
 (optional) If src files have been modified, it has to be gulped.
