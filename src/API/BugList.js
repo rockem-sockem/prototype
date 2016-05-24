@@ -3,12 +3,12 @@ var $ = require('jquery');
 
 var Table = require('react-bootstrap/lib/Table');
 var Button = require('react-bootstrap/lib/Button');
+
 var Image = require('react-bootstrap/lib/Image');
 
 var Carousel = require('react-bootstrap/lib/Carousel');
 var CarouselCaption = require('react-bootstrap/lib/CarouselCaption');
 var CarouselItem = require('react-bootstrap/lib/CarouselItem');
-
 
 var Overlay = require('react-bootstrap/lib/Overlay');
 var OverlayTrigger = require('react-bootstrap/lib/OverlayTrigger');
@@ -19,7 +19,14 @@ var ModalFooter = require('react-bootstrap/lib/ModalFooter');
 var ModalHeader = require('react-bootstrap/lib/ModalHeader');
 var ModalTitle = require('react-bootstrap/lib/ModalTitle');
 
+var FormGroup = require('react-bootstrap/lib/FormGroup');
+var FormControl = require('react-bootstrap/lib/FormControl');
+var ControlLabel = require('react-bootstrap/lib/ControlLabel');
+var Panel = require('react-bootstrap/lib/Panel');
+
+
 var BugFilter = require('./BugFilter');
+var Auth = require('../Auth.js');
 
 var displayData; //this variable will hold the data of the game clicked
 
@@ -27,7 +34,7 @@ var BugList = React.createClass({
 	render: function() {
 		return (
 			<div>
-				<BugFilter submitHandler={this.loadData} />
+				<BugFilter submitHandler={this.loadCollection} />
 				<hr />
 				<DataDDMenu collections={this.state.collections} cbChangeColl={this.loadCollection} />
 				<br />
@@ -44,28 +51,25 @@ var BugList = React.createClass({
 		};
 	},
 	componentDidMount: function() {
-		this.loadData({});
+		this.loadData();
 	},
 	
-	
-	loadData:function(filter) {
+	loadData: function() {
 		// Initial loading of scraped data for the table
-		$.ajax('/api/bugs', {data:filter}).done(function(data) {
-			this.setState({bugs: data});
-		}.bind(this));
+		this.loadCollection({ collName: Auth.getColl() });
 		// Initial loading of collections name for dropdown menu
 		this.loadDropdown();
 		// Initial loading of extra columns in the table
 		this.loadColumns();
 	},
-	loadCollection: function() { // Gets collection according to user selection
-		$.ajax('/api/bugs', {data:{}}).done(function(data) {
+	loadCollection: function(filter) { // Gets collection according to user selection
+		$.ajax('/api/bugs', { data: filter }).done(function(data) {
 			this.setState({bugs: data});
 		}.bind(this));
 		// In production, we'd also handle errors.
 	},
 	loadDropdown: function() {
-		$.ajax('/api/datadbCollections', {data:{}}).done(function(data) {
+		$.ajax('/datadb/collections', {data:{}}).done(function(data) {
 			this.setState({collections: data});
 		}.bind(this));
 	},
@@ -83,13 +87,12 @@ var BugList = React.createClass({
 
 var BugTable = React.createClass({
 	render: function() {
-		var counter = 0;
 		var pFields = this.props.fields;
 		var fields = this.props.fields.map(function(field) {
 			return <Field key={field._id} field={field} />
 		});
 		var bugRows = this.props.bugs.map(function(bug) {
-			return <BugRow key={bug._id} bug={bug} ranking={++counter} fields={pFields} />
+			return <BugRow key={bug._id} bug={bug} fields={pFields} />
 		});
 		return (
 			<div>
@@ -357,8 +360,9 @@ var BugRow = React.createClass({
 		
 		return (
 			<tr>
-				<td>{this.props.ranking}</td>
-				<td><a onClick={this.fetchData}>{this.props.bug.title}</a></td>
+				<td>{this.props.bug.rank}</td>
+				<td><img alt="" src={this.props.bug.icon} width="50" height="50" />
+					<a onClick={this.fetchData}>{this.props.bug.title}</a></td>
 				<td>{this.props.bug.developer}</td>
 				<td>{this.props.bug.price}</td>
 				<td>{genres}</td>
@@ -463,31 +467,23 @@ var DataDDMenu = React.createClass({
 		});
 
 		return(
-			<div>
-				<h2>Categories</h2>
-				<br/>
-				<select id="coll" onChange={this.getSelectedColl}>
-					{options}
-				</select>
-			</div>
+			<Panel>
+				<h3>Data Type</h3>
+					<form id="dataType">
+						<FormGroup controlId="options">
+							<FormControl componentClass="select" onChange={this.getSelectedColl}>
+								{options}
+							</FormControl>
+						</FormGroup>
+					</form>
+			</Panel>
 		);
 	},
 	getSelectedColl: function() {
-		var selected = document.getElementById("coll").value;
-		var query = {name: selected};
-		
-		$.ajax({
-			type: 'POST', url: '/api/changeDatadbCollection', 
-			contentType: 'application/json',
-			data: JSON.stringify(query),
-			success: function() {
-				this.props.cbChangeColl();
-			}.bind(this),
-			error: function(xhr, status, err) {
-				// ideally, show error to user.
-				console.log("Error changing collections:", err);
-			}
-		});
+		var selected = document.forms.dataType.options.value;
+		Auth.setColl(selected);
+		var query = { collName: Auth.getColl() };
+		this.props.cbChangeColl(query);
 	}
 });
 

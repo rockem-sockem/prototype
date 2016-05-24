@@ -38,10 +38,6 @@ Small bugs/features/things to consider:
 
 *Fix "Add Field" button. Works but refreshes the page or redirects to "localhost:3000/?"
 
-*Fix ranking which is hardcoded
-
-*Fix category code and price not being replaced
-
 
 
 *Code cleanup(proper file/component names) and documentation!!!
@@ -79,3 +75,7 @@ Fixed / Solution
 	
 *Fixed signup/signin being able to trigger multiple times because of async calls
     @Solution: Set a state for waiting to be able to signin/signup	
+	
+*Fix category code and price not being replaced
+
+*Fix ranking which is hardcoded

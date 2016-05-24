@@ -1,7 +1,3 @@
-/**********************************************/
-/**** Scraping API ****************************/
-/**********************************************/
-
 var https = require('https');
 var assert = require('assert');
 var db;
@@ -15,7 +11,7 @@ module.exports = {
 	 * it'll drop the old collection of data if any, and then 
 	 * insert the new scraped data.
 	 */ 
-	requestToAppTweak(datapath, database, collection) {
+	requestToAppTweak(datapath, database) {
 		var header = {"X-Apptweak-Key": "QS5NiFFrLERBRML_ptL208cJoWc"};
 		var options = {
 			hostname: "api.apptweak.com",
@@ -27,7 +23,6 @@ module.exports = {
 		};
 
 		db = database;
-		curColl = collection;
 		var date = new Date();
 		var time = date.getUTCFullYear() + "_" + (date.getUTCMonth() + 1)  + "_" + 
 			date.getUTCDate() + "_" + date.getUTCHours() + "_" + date.getUTCMinutes();
@@ -90,9 +85,15 @@ function insertNewData() {
 }
 
 function modifyDataAndUpdate() {
+	var ranking = 0;
+	
 	db.collection(curColl).find().each(function(err, doc) {
 		assert.equal(err, null);
 		if(doc != null) {
+			var query = {_id: doc._id};
+			var updateRank = {$set : {rank: ++ranking}};
+			db.collection(curColl).update(query, updateRank);
+			
 			if(doc.price == "$0.00" || doc.price == "") {
 				var query = {_id: doc._id};
 				var update = {$set : {price: "Free"}};
@@ -193,10 +194,11 @@ function modifyDataAndUpdate() {
 						cat = doc.genres[i];
 				}
 				var genresIndex = "genres."+i;
-				var query = {_id: doc._id};
-				var update = {$set : {[genresIndex]: cat}};
-				db.collection(curColl).update(query, update);
+				var updateGenres = {$set : {[genresIndex]: cat}};
+				db.collection(curColl).update(query, updateGenres);
 			}
-		} 
+		} else {
+			console.log("> Data modification is done.");
+		}
 	});
 }
