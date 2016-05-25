@@ -28,6 +28,15 @@ then update its role in the mongo shell.
 
 =======
 
+SCHEDULING
+
+When starting the server, it'll fetch the first data from just 
+one category and then run the scheduler that fetches the remaining
+data at a given time, which executes at 1.00am to 1.07am
+everyday. 
+
+=======
+
 Small bugs/features/things to consider:
 
 * No cross data.collection update 
@@ -36,7 +45,7 @@ Small bugs/features/things to consider:
 
 
 
-*Fix "Add Field" button. Works but refreshes the page or redirects to "localhost:3000/?"
+
 
 
 
@@ -79,3 +88,5 @@ Fixed / Solution
 *Fix category code and price not being replaced
 
 *Fix ranking which is hardcoded
+
+*Fix "Add Field" button. Works but refreshes the page or redirects to "localhost:3000/?"

@@ -25,10 +25,12 @@ var BugList = React.createClass({
 			<div>
 				<BugFilter submitHandler={this.loadCollection} />
 				<hr />
-				<DataDDMenu collections={this.state.collections} cbChangeColl={this.loadCollection} />
+				<DataDDMenu collections={this.state.collections} cbChangeColl={this.loadCollection} 
+					refresh={this.loadDropdown} />
 				<br />
 				<hr />
-				<BugTable bugs={this.state.bugs} fields={this.state.fields} refresh={this.loadData} />
+				<BugTable bugs={this.state.bugs} fields={this.state.fields} 
+					refreshData={this.loadCollection} refreshColumns={this.loadColumns} />
 			</div>
 		)
 	},
@@ -115,7 +117,8 @@ var BugTable = React.createClass({
 	},
 	handleRefresh: function(e) {
 		e.preventDefault();
-		this.props.refresh();
+		this.props.refreshColumns();
+		this.props.refreshData();
 	}
 });
 
@@ -176,28 +179,16 @@ var AndroidTable = React.createClass({
 					<td>
 						<Carousel>
 							<Carousel.Item>
-							<Image src={this.props.data.screenshots[0]}/>
-								<Carousel.Caption>
-									<h3>"01"</h3>
-								</Carousel.Caption>
+								<Image src={this.props.data.screenshots[0]}/>
 							</Carousel.Item>
 							<Carousel.Item>
 								<Image src={this.props.data.screenshots[1]}/>
-								<Carousel.Caption>
-									<h3>"02"</h3>
-								</Carousel.Caption>
 							</Carousel.Item>
 							<Carousel.Item>
 								<Image src={this.props.data.screenshots[2]}/>
-								<Carousel.Caption>
-									<h3>"03"</h3>
-								</Carousel.Caption>
 							</Carousel.Item>
 							<Carousel.Item>
 								<Image src={this.props.data.screenshots[3]}/>
-								<Carousel.Caption>
-									<h3>"04"</h3>
-								</Carousel.Caption>
 							</Carousel.Item>
 						</Carousel>
 					</td>
@@ -271,28 +262,16 @@ var IosTable = React.createClass({
 					<td>
 						<Carousel>
 							<Carousel.Item>
-							<Image src={this.props.data.screenshots.iphone5[0].url}/>
-								<Carousel.Caption>
-									<h3>"01"</h3>
-								</Carousel.Caption>
+								<Image src={this.props.data.screenshots.iphone5[0].url}/>
 							</Carousel.Item>
 							<Carousel.Item>
 								<Image src={this.props.data.screenshots.iphone5[1].url}/>
-								<Carousel.Caption>
-									<h3>"02"</h3>
-								</Carousel.Caption>
 							</Carousel.Item>
 							<Carousel.Item>
 								<Image src={this.props.data.screenshots.iphone5[2].url}/>
-								<Carousel.Caption>
-									<h3>"03"</h3>
-								</Carousel.Caption>
 							</Carousel.Item>
 							<Carousel.Item>
 								<Image src={this.props.data.screenshots.iphone5[3].url}/>
-								<Carousel.Caption>
-									<h3>"04"</h3>
-								</Carousel.Caption>
 							</Carousel.Item>
 						</Carousel>
 					</td>
@@ -540,6 +519,8 @@ var DataDDMenu = React.createClass({
 			<Panel>
 				<h3>Data Type</h3>
 					<form id="dataType">
+						<Button onClick={this.handleRefresh}>Refresh</Button>
+						<br /><br />
 						<FormGroup controlId="options">
 							<FormControl componentClass="select" onChange={this.getSelectedColl}>
 								{options}
@@ -554,6 +535,10 @@ var DataDDMenu = React.createClass({
 		Auth.setColl(selected);
 		var query = { collName: Auth.getColl() };
 		this.props.cbChangeColl(query);
+	},
+	handleRefresh: function(e) {
+		e.preventDefault();
+		this.props.refresh();
 	}
 });
 

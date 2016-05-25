@@ -45692,10 +45692,12 @@ var BugList = React.createClass({
 			null,
 			React.createElement(BugFilter, { submitHandler: this.loadCollection }),
 			React.createElement('hr', null),
-			React.createElement(DataDDMenu, { collections: this.state.collections, cbChangeColl: this.loadCollection }),
+			React.createElement(DataDDMenu, { collections: this.state.collections, cbChangeColl: this.loadCollection,
+				refresh: this.loadDropdown }),
 			React.createElement('br', null),
 			React.createElement('hr', null),
-			React.createElement(BugTable, { bugs: this.state.bugs, fields: this.state.fields, refresh: this.loadData })
+			React.createElement(BugTable, { bugs: this.state.bugs, fields: this.state.fields,
+				refreshData: this.loadCollection, refreshColumns: this.loadColumns })
 		);
 	},
 	getInitialState: function () {
@@ -45819,7 +45821,8 @@ var BugTable = React.createClass({
 	},
 	handleRefresh: function (e) {
 		e.preventDefault();
-		this.props.refresh();
+		this.props.refreshColumns();
+		this.props.refreshData();
 	}
 });
 
@@ -45972,58 +45975,22 @@ var AndroidTable = React.createClass({
 						React.createElement(
 							Carousel.Item,
 							null,
-							React.createElement(Image, { src: this.props.data.screenshots[0] }),
-							React.createElement(
-								Carousel.Caption,
-								null,
-								React.createElement(
-									'h3',
-									null,
-									'"01"'
-								)
-							)
+							React.createElement(Image, { src: this.props.data.screenshots[0] })
 						),
 						React.createElement(
 							Carousel.Item,
 							null,
-							React.createElement(Image, { src: this.props.data.screenshots[1] }),
-							React.createElement(
-								Carousel.Caption,
-								null,
-								React.createElement(
-									'h3',
-									null,
-									'"02"'
-								)
-							)
+							React.createElement(Image, { src: this.props.data.screenshots[1] })
 						),
 						React.createElement(
 							Carousel.Item,
 							null,
-							React.createElement(Image, { src: this.props.data.screenshots[2] }),
-							React.createElement(
-								Carousel.Caption,
-								null,
-								React.createElement(
-									'h3',
-									null,
-									'"03"'
-								)
-							)
+							React.createElement(Image, { src: this.props.data.screenshots[2] })
 						),
 						React.createElement(
 							Carousel.Item,
 							null,
-							React.createElement(Image, { src: this.props.data.screenshots[3] }),
-							React.createElement(
-								Carousel.Caption,
-								null,
-								React.createElement(
-									'h3',
-									null,
-									'"04"'
-								)
-							)
+							React.createElement(Image, { src: this.props.data.screenshots[3] })
 						)
 					)
 				)
@@ -46211,58 +46178,22 @@ var IosTable = React.createClass({
 						React.createElement(
 							Carousel.Item,
 							null,
-							React.createElement(Image, { src: this.props.data.screenshots.iphone5[0].url }),
-							React.createElement(
-								Carousel.Caption,
-								null,
-								React.createElement(
-									'h3',
-									null,
-									'"01"'
-								)
-							)
+							React.createElement(Image, { src: this.props.data.screenshots.iphone5[0].url })
 						),
 						React.createElement(
 							Carousel.Item,
 							null,
-							React.createElement(Image, { src: this.props.data.screenshots.iphone5[1].url }),
-							React.createElement(
-								Carousel.Caption,
-								null,
-								React.createElement(
-									'h3',
-									null,
-									'"02"'
-								)
-							)
+							React.createElement(Image, { src: this.props.data.screenshots.iphone5[1].url })
 						),
 						React.createElement(
 							Carousel.Item,
 							null,
-							React.createElement(Image, { src: this.props.data.screenshots.iphone5[2].url }),
-							React.createElement(
-								Carousel.Caption,
-								null,
-								React.createElement(
-									'h3',
-									null,
-									'F"03"'
-								)
-							)
+							React.createElement(Image, { src: this.props.data.screenshots.iphone5[2].url })
 						),
 						React.createElement(
 							Carousel.Item,
 							null,
-							React.createElement(Image, { src: this.props.data.screenshots.iphone5[3].url }),
-							React.createElement(
-								Carousel.Caption,
-								null,
-								React.createElement(
-									'h3',
-									null,
-									'"04"'
-								)
-							)
+							React.createElement(Image, { src: this.props.data.screenshots.iphone5[3].url })
 						)
 					)
 				)
@@ -46560,6 +46491,13 @@ var DataDDMenu = React.createClass({
 				'form',
 				{ id: 'dataType' },
 				React.createElement(
+					Button,
+					{ onClick: this.handleRefresh },
+					'Refresh'
+				),
+				React.createElement('br', null),
+				React.createElement('br', null),
+				React.createElement(
 					FormGroup,
 					{ controlId: 'options' },
 					React.createElement(
@@ -46576,6 +46514,10 @@ var DataDDMenu = React.createClass({
 		Auth.setColl(selected);
 		var query = { collName: Auth.getColl() };
 		this.props.cbChangeColl(query);
+	},
+	handleRefresh: function (e) {
+		e.preventDefault();
+		this.props.refresh();
 	}
 });
 
@@ -47605,6 +47547,7 @@ var FieldAdd = React.createClass({
 
 	handleEnter: function (e) {
 		if (e.which == 13 || e.keyCode == 13) {
+			e.preventDefault();
 			this.addField();
 		}
 	},
@@ -47763,7 +47706,8 @@ var FieldUpdate = React.createClass({
 
 	handleEnter: function (e) {
 		if (e.which == 13 || e.keyCode == 13) {
-			this.updateData();
+			e.preventDefault();
+			this.update();
 		}
 	},
 	onClickUpdate: function (e) {

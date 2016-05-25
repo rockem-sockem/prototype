@@ -1,8 +1,7 @@
 var https = require('https');
 var assert = require('assert');
-var db;
-var curColl;
-var data; // JSON data fetch from AppTweak
+
+var g_collection = "";
 
 
 module.exports = {
@@ -11,7 +10,11 @@ module.exports = {
 	 * it'll drop the old collection of data if any, and then 
 	 * insert the new scraped data.
 	 */ 
-	requestToAppTweak(datapath, database) {
+	requestToAppTweak(datapath, database, isCalled, getCollCallback) {
+		var curColl;
+		var db = database;
+		var data = "";
+		
 		var header = {"X-Apptweak-Key": "QS5NiFFrLERBRML_ptL208cJoWc"};
 		var options = {
 			hostname: "api.apptweak.com",
@@ -21,8 +24,6 @@ module.exports = {
 			method:"GET",
 			headers: header
 		};
-
-		db = database;
 		var date = new Date();
 		var time = date.getUTCFullYear() + "_" + (date.getUTCMonth() + 1)  + "_" + 
 			date.getUTCDate() + "_" + date.getUTCHours() + "_" + date.getUTCMinutes();
@@ -44,7 +45,12 @@ module.exports = {
 			default:
 				return;
 		}
-
+		
+		if(isCalled) {
+			g_collection = curColl;
+			getCollCallback();
+		}
+		
 		options.path = datapath;
 		req = https.request(options, function(res) {
 			var responseBody =""; 
@@ -61,30 +67,37 @@ module.exports = {
 				//Once completed we parse the data in JSON format
 				data = JSON.parse(responseBody);
 				//Inserting scraped data 
-				insertNewData();
+				insertNewData(db, curColl, data);
 			});
 		});
 		
 		req.on("error", function(err) {
 			console.log(`problem with request: ${err.message}`);
 		});
+		
 		req.end();
+		
 	},
 	
 	getColl() {
-		return curColl;
+		return g_collection;
 	}
 }
 
 
-function insertNewData() {
-	db.collection(curColl).insertMany(data.content, function(err,result) {
+function insertNewData(database, collection, data) {
+	var db = database;
+	var curColl = collection;
+	
+	db.collection(curColl).insertMany(data.content, function(err, result) {
 		assert.equal(err, null);
-		modifyDataAndUpdate();
+		modifyDataAndUpdate(db, curColl);
 	});	
 }
 
-function modifyDataAndUpdate() {
+function modifyDataAndUpdate(database, collection) {
+	var db = database;
+	var curColl = collection;
 	var ranking = 0;
 	
 	db.collection(curColl).find().each(function(err, doc) {
@@ -196,9 +209,9 @@ function modifyDataAndUpdate() {
 				var genresIndex = "genres."+i;
 				var updateGenres = {$set : {[genresIndex]: cat}};
 				db.collection(curColl).update(query, updateGenres);
-			}
-		} else {
-			console.log("> Data modification is done.");
+			}// end forEach
+		} else { // else 
+			console.log("end modifying");
 		}
 	});
 }

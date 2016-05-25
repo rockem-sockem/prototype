@@ -67,13 +67,14 @@ var FieldAdd = React.createClass({
 	getInitialState: function() {
 		return{
 			fField: ""
-		}
+		};
 	},
 	
 	
 	
 	handleEnter: function(e) {
 		if (e.which == 13 || e.keyCode == 13) {
+			e.preventDefault();
 			this.addField();
 		} 
 	},	
@@ -198,7 +199,8 @@ var FieldUpdate = React.createClass({
 	
 	handleEnter: function(e) {
 		if (e.which == 13 || e.keyCode == 13) {
-			this.updateData();
+			e.preventDefault();
+			this.update();
 		} 
 	},
 	onClickUpdate: function(e) {
